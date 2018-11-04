@@ -45,6 +45,7 @@
         </encoder>
     </appender>
 
+    <logger name="com.zereao" level="DEBUG"/>
     <logger name="com" level="INFO"/>
     <logger name="ch.qos.logback" level="INFO"/>
     <logger name="org" level="INFO"/>

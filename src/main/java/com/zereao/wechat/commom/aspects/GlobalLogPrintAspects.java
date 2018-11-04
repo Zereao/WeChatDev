@@ -3,6 +3,7 @@ package com.zereao.wechat.commom.aspects;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Aspect
 @Component
 public class GlobalLogPrintAspects {
-    @Before("execution(* com.zereao.wechat.controller.*.*(..))")
+    @Before("execution(* com.zereao.wechat.controller..*.*(..))")
     public void beforeLogPrinter(JoinPoint joinPoint) {
 
         Object[] args = joinPoint.getArgs();
@@ -40,4 +41,8 @@ public class GlobalLogPrintAspects {
         log.info("--------> method = {}, parameters = {}", method, paramMap);
     }
 
+    @AfterReturning(returning = "result", pointcut = "execution(* com.zereao.wechat.controller..*.*(..))")
+    public void afterReturnLogPrinter(Object result) {
+        log.info("--------> result = {}", result);
+    }
 }

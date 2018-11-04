@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author Zereao
  * @version 2018/11/03  18:13
@@ -24,8 +22,7 @@ public class TestController {
     public TestController(ApiTestService apiTestService) {this.apiTestService = apiTestService;}
 
     @RequestMapping(value = "/apiTest")
-    public String apiTest(HttpServletRequest request, ApiTestVo apiTestVo) {
-        log.info("-------->  requestMap = {}", request.getParameterMap().toString());
+    public String apiTest(ApiTestVo apiTestVo) {
         return apiTestService.checkParams(apiTestVo);
     }
 }

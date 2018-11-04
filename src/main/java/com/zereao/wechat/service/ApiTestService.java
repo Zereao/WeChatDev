@@ -4,6 +4,7 @@ import com.zereao.wechat.commom.utils.encrypt.EncryptAlgorithmEnum;
 import com.zereao.wechat.commom.utils.encrypt.Encrypter;
 import com.zereao.wechat.commom.utils.encrypt.EncrypterFactory;
 import com.zereao.wechat.data.vo.ApiTestVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.Arrays;
  * @author Zereao
  * @version 2018/11/03  21:18
  */
+@Slf4j
 @Service
 public class ApiTestService {
     public String checkParams(ApiTestVo apiTestVo) {
@@ -28,6 +30,8 @@ public class ApiTestService {
         }
         Encrypter sha1Encrypter = EncrypterFactory.getInstance(EncryptAlgorithmEnum.SHA1);
         String result = sha1Encrypter.encrypt(sb.toString());
+        log.debug("signature = {}", signature);
+        log.debug("encryptStr = {}", result);
         if (result.equals(signature)) {
             return apiTestVo.getEchostr();
         }
