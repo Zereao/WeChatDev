@@ -6,6 +6,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,8 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Aspect
+@Component
 public class GlobalLogPrintAspects {
-    @Before("execution(* com.zereao.wechat.controller..*.*(..))")
+    @Before("execution(* com.zereao.wechat.controller.*.*(..))")
     public void beforeLogPrinter(JoinPoint joinPoint) {
 
         Object[] args = joinPoint.getArgs();

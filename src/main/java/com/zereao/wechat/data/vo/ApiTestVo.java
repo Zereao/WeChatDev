@@ -1,14 +1,12 @@
 package com.zereao.wechat.data.vo;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * @author Zereao
  * @version 2018/11/03  19:15
  */
-@Getter
-@Setter
+@Data
 public class ApiTestVo {
     /**
      * 微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。
