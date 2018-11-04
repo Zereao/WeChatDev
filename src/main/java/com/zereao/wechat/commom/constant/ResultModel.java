@@ -1,4 +1,4 @@
-package com.zereao.wechat.com.zereao.wechat.commom.constant;
+package com.zereao.wechat.commom.constant;
 
 /**
  * @author Zereao

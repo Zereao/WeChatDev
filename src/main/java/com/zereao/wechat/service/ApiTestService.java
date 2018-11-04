@@ -1,9 +1,9 @@
-package com.zereao.wechat.com.zereao.wechat.service;
+package com.zereao.wechat.service;
 
-import com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.EncryptAlgorithmEnum;
-import com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.Encrypter;
-import com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.EncrypterFactory;
-import com.zereao.wechat.com.zereao.wechat.data.vo.ApiTestVo;
+import com.zereao.wechat.commom.utils.encrypt.EncryptAlgorithmEnum;
+import com.zereao.wechat.commom.utils.encrypt.Encrypter;
+import com.zereao.wechat.commom.utils.encrypt.EncrypterFactory;
+import com.zereao.wechat.data.vo.ApiTestVo;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

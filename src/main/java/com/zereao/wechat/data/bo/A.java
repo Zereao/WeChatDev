@@ -1,4 +1,4 @@
-package com.zereao.wechat.com.zereao.wechat.data.bo;
+package com.zereao.wechat.data.bo;
 
 /**
  * @author Zereao

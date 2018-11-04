@@ -1,4 +1,4 @@
-package com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt;
+package com.zereao.wechat.commom.utils.encrypt;
 
 /**
  * @author Zereao

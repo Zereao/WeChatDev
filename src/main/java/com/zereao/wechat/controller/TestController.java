@@ -1,7 +1,7 @@
-package com.zereao.wechat.com.zereao.wechat.controller;
+package com.zereao.wechat.controller;
 
-import com.zereao.wechat.com.zereao.wechat.data.vo.ApiTestVo;
-import com.zereao.wechat.com.zereao.wechat.service.ApiTestService;
+import com.zereao.wechat.data.vo.ApiTestVo;
+import com.zereao.wechat.service.ApiTestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

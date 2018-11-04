@@ -1,7 +1,7 @@
-package com.zereao.wechat.com.zereao.wechat.commom.global;
+package com.zereao.wechat.commom.global;
 
-import com.zereao.wechat.com.zereao.wechat.commom.constant.ResultCode;
-import com.zereao.wechat.com.zereao.wechat.commom.constant.ResultModel;
+import com.zereao.wechat.commom.constant.ResultCode;
+import com.zereao.wechat.commom.constant.ResultModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

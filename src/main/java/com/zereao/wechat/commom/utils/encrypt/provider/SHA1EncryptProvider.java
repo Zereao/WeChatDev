@@ -1,6 +1,6 @@
-package com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.provider;
+package com.zereao.wechat.commom.utils.encrypt.provider;
 
-import com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.Encrypter;
+import com.zereao.wechat.commom.utils.encrypt.Encrypter;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

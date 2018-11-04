@@ -1,4 +1,4 @@
-package com.zereao.wechat.com.zereao.wechat.data.vo;
+package com.zereao.wechat.data.vo;
 
 import lombok.Getter;
 import lombok.Setter;

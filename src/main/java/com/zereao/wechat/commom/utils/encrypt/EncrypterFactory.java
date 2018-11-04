@@ -1,6 +1,6 @@
-package com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt;
+package com.zereao.wechat.commom.utils.encrypt;
 
-import com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.provider.SHA1EncryptProvider;
+import com.zereao.wechat.commom.utils.encrypt.provider.SHA1EncryptProvider;
 
 /**
  * @author Zereao
