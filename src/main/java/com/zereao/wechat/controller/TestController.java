@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Zereao
  * @version 2018/11/03  18:13
@@ -22,8 +24,9 @@ public class TestController {
     @Autowired
     public TestController(ApiTestService apiTestService) {this.apiTestService = apiTestService;}
 
-    @GetMapping(value = "/apiTest")
-    public String apiTest(ApiTestVo apiTestVo) {
+    @RequestMapping(value = "/apiTest")
+    public String apiTest(HttpServletRequest request, ApiTestVo apiTestVo) {
+        log.info("-------->  requestMap = {}", request.getParameterMap());
         return apiTestService.checkParams(apiTestVo);
     }
 }

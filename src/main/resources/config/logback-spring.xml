@@ -47,8 +47,9 @@
 
     <logger name="com" level="INFO"/>
     <logger name="ch.qos.logback" level="INFO"/>
-    <!--<logger name="org.mybatis" level="INFO"/>-->
     <logger name="org" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+
 
     <root>
         <level value="DEBUG"/>

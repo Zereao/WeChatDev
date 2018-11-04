@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GlobalLogPrintAspects {
     @Before("execution(* com.zereao.wechat.controller..*.*(..))")
     public void beforeLogPrinter(JoinPoint joinPoint) {
+
         Object[] args = joinPoint.getArgs();
         Signature signature = joinPoint.getSignature();
         String method = signature.getName();
