@@ -7,7 +7,6 @@ import com.zereao.wechat.com.zereao.wechat.commom.utils.encrypt.provider.SHA1Enc
  * @version 2018/11/03  22:04
  */
 public class EncrypterFactory {
-    private Encrypter encrypter = null;
 
     private enum EncrypterEnum {
         /**
