@@ -21,7 +21,7 @@ public class ApiTestService {
         String timestamp = apiTestVo.getTimestamp();
         Integer nonce = apiTestVo.getNonce();
 
-        String token = "LOVE_BLUE_SKY";
+        String token = "lovebluesky";
         String[] tempStr = new String[]{token, signature, timestamp};
         Arrays.sort(tempStr);
         StringBuilder sb = new StringBuilder();
