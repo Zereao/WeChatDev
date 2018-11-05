@@ -28,10 +28,17 @@ public class ApiTestService {
         for (String str : tempStr) {
             sb.append(str);
         }
+        log.info("========================================================");
+        log.info(sb.toString());
+        String concatStr = tempStr[0].concat(tempStr[1]).concat(tempStr[2]);
+        log.info(concatStr);
+        log.info("========================================================");
         Encrypter sha1Encrypter = EncrypterFactory.getInstance(EncryptAlgorithmEnum.SHA1);
         String result = sha1Encrypter.encrypt(sb.toString());
+        String theStr = sha1Encrypter.encrypt(concatStr);
         log.debug("signature = {}", signature);
-        log.debug("encryptStr = {}", result);
+        log.debug("encryptStringBuilderStr = {}", result);
+        log.debug("encryptConcatStr = {}", theStr);
         if (result.equals(signature)) {
             return apiTestVo.getEchostr();
         }
