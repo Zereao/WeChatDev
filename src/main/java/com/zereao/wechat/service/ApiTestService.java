@@ -19,27 +19,17 @@ public class ApiTestService {
     public String checkParams(ApiTestVo apiTestVo) {
         String signature = apiTestVo.getSignature();
         String timestamp = apiTestVo.getTimestamp();
-        Integer nonce = apiTestVo.getNonce();
+        String nonce = apiTestVo.getNonce();
 
         String token = "lovebluesky";
-        String[] tempStr = new String[]{token, signature, timestamp};
-        log.info(tempStr[0].concat(tempStr[1]).concat(tempStr[2]));
+        String[] tempStr = new String[]{token, timestamp, nonce};
         Arrays.sort(tempStr);
         StringBuilder sb = new StringBuilder();
         for (String str : tempStr) {
             sb.append(str);
         }
-        log.info("========================================================");
-        log.info(sb.toString());
-        String concatStr = tempStr[0].concat(tempStr[1]).concat(tempStr[2]);
-        log.info(concatStr);
-        log.info("========================================================");
         Encrypter sha1Encrypter = EncrypterFactory.getInstance(EncryptAlgorithmEnum.SHA1);
         String result = sha1Encrypter.encrypt(sb.toString());
-        String theStr = sha1Encrypter.encrypt(concatStr);
-        log.debug("signature = {}", signature);
-        log.debug("encryptStringBuilderStr = {}", result);
-        log.debug("encryptConcatStr = {}", theStr);
         if (result.equals(signature)) {
             return apiTestVo.getEchostr();
         }
