@@ -23,6 +23,7 @@ public class ApiTestService {
 
         String token = "lovebluesky";
         String[] tempStr = new String[]{token, signature, timestamp};
+        log.info(tempStr[0].concat(tempStr[1]).concat(tempStr[2]));
         Arrays.sort(tempStr);
         StringBuilder sb = new StringBuilder();
         for (String str : tempStr) {
