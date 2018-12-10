@@ -4,7 +4,6 @@ import com.zereao.wechat.data.vo.ApiTestVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -16,9 +15,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Service
-@PropertySource("classpath:config/wechat.properties")
 public class ApiTestService {
-    @Value("wechat.token")
+    @Value("${wechat.token}")
     private String token;
 
     public String checkParams(ApiTestVo apiTestVo) {

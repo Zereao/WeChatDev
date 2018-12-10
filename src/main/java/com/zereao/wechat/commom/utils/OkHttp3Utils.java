@@ -3,6 +3,7 @@ package com.zereao.wechat.commom.utils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -75,6 +76,7 @@ public enum OkHttp3Utils {
      * @throws IOException IOException
      */
     public String doGet(String url) throws IOException {
+        log.info("========================= 准备发起GET请求：{} =========================", url);
         Request request = new Request.Builder().url(url).build();
         return this.sendRequest(request);
     }
@@ -87,6 +89,7 @@ public enum OkHttp3Utils {
      * @return 请求结果
      */
     public String doPost(String url, Map<String, Object> json) throws IOException {
+        log.info("========================= 准备发起POST-FORM请求：{} =========================", url);
         FormBody.Builder formEncodingBuilder = new FormBody.Builder(Charset.forName("UTF-8"));
         json.forEach((key, value) -> formEncodingBuilder.add(key, String.valueOf(value)));
         RequestBody formBody = formEncodingBuilder.build();
@@ -103,12 +106,20 @@ public enum OkHttp3Utils {
      * @throws IOException IOException
      */
     public String doPostSync(String url, JSONObject json) throws IOException {
+        log.info("========================= 准备POST-JSON同步请求：{} =========================", url);
         RequestBody requestBody = RequestBody.create(ContentType.CONTENT_TYPE_JSON_UTF8.getType(), json.toString());
         Request request = new Request.Builder().url(url).post(requestBody).build();
         return this.sendRequest(request);
     }
 
+    /**
+     * 发送异步的Post请求，以JSONObject 的形式传递数据
+     *
+     * @param url  请求Url链接
+     * @param json JSON 对象
+     */
     public void doPostAsync(String url, JSONObject json) {
+        log.info("========================= 准备POST-JSON异步请求：{} =========================", url);
         RequestBody requestBody = RequestBody.create(ContentType.CONTENT_TYPE_JSON_UTF8.getType(), json.toString());
         Request request = new Request.Builder().url(url).post(requestBody).build();
         client.newCall(request).enqueue(new Callback() {
@@ -121,7 +132,7 @@ public enum OkHttp3Utils {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String url = call.request().url().url().toString();
-                log.info(INSTANCE.parseResponse(response));
+                log.info("------> 某次请求 {} 成功！,返回结果为 {}", url, INSTANCE.parseResponse(response));
             }
         });
         log.info("------> 请求发送成功！");
@@ -152,13 +163,13 @@ public enum OkHttp3Utils {
             throw new IOException("------> 出现未知错误！response = " + response);
         }
         ResponseBody body = response.body();
+        String result = "";
         if (body == null) {
             log.info("------> 请求返回的数据体body为null！");
         } else {
-            String result = body.string();
-            log.info("------> 返回数据：{}", result);
-            return result;
+            result = body.string();
         }
-        return null;
+        log.info("========================= 请求完毕！result = {} =========================", StringUtils.isBlank(result) ? "null" : result);
+        return result;
     }
 }
