@@ -1,9 +1,12 @@
 package com.zereao.wechat.commom.constant;
 
+import lombok.Data;
+
 /**
  * @author Zereao
  * @version 2018/11/03  18:15
  */
+@Data
 public class ResultModel<T> {
     private String code;
     private String message;
