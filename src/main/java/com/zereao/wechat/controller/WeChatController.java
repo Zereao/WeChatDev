@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
+// 小伦超正经
 @RequestMapping("xlczj")
 public class WeChatController {
 

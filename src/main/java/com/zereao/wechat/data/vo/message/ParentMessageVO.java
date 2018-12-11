@@ -1,11 +1,15 @@
 package com.zereao.wechat.data.vo.message;
 
+import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
 import lombok.Data;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Date;
 
 /**
  * 父级MessageVO，可以接收到所有消息类型的参数
@@ -22,12 +26,12 @@ public class ParentMessageVO {
     @XmlElement(name = "FromUserName")
     private String fromUserName;
     @XmlElement(name = "CreateTime")
-    private String createTime;
+    @XmlJavaTypeAdapter(JaxbDateAdapter.class)
+    private Date createTime;
     @XmlElement(name = "MsgId")
-    private String msgId;
+    private Long msgId;
     @XmlElement(name = "MsgType")
-    private String msgType;
-
+    private MsgType msgType;
     @XmlElement(name = "Content")
     private String content;
     @XmlElement(name = "MediaId")
@@ -35,11 +39,11 @@ public class ParentMessageVO {
     @XmlElement(name = "PicUrl")
     private String picUrl;
     @XmlElement(name = "Location_X")
-    private String locationX;
+    private Double locationX;
     @XmlElement(name = "Location_Y")
-    private String locationY;
+    private Double locationY;
     @XmlElement(name = "Scale")
-    private String scale;
+    private Double scale;
     @XmlElement(name = "Label")
     private String label;
     @XmlElement(name = "ThumbMediaId")
@@ -48,5 +52,4 @@ public class ParentMessageVO {
     private String format;
     @XmlElement(name = "Recognition")
     private String recognition;
-
 }
