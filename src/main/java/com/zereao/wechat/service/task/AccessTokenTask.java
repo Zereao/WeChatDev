@@ -31,7 +31,7 @@ public class AccessTokenTask {
     public AccessTokenTask(RedisService redisService) {this.redisService = redisService;}
 
     // 设置为每 1.5 小时获取一次。 1.5 * 60 * 60 * 1000 = 5400000
-    @Scheduled(fixedRate = 5400000)
+//    @Scheduled(fixedRate = 5400000)
     public void accessTokenTask() throws IOException {
         log.info("------>  准备获取Token");
         String result = OkHttp3Utils.INSTANCE.doGet(accessTokenUrl);

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Zereao
@@ -99,11 +100,12 @@ public class RedisService {
     /**
      * 删除缓存
      *
-     * @param key 可以传一个值 或多个
+     * @param keys 可以传一个值 或多个
      * @return 已删除的密钥数。在管道/事务中使用时为空。
      */
-    public Long del(String... key) {
-        return redisTemplate.delete(Arrays.asList(key));
+    public Long del(String... keys) {
+        List<Object> keyList = Arrays.stream(keys).map(key -> (Object) key).collect(Collectors.toList());
+        return redisTemplate.delete(keyList);
     }
 
 

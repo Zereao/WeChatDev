@@ -1,4 +1,4 @@
-package com.zereao.wechat.data.vo;
+package com.zereao.wechat.data.vo.test;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @version 2018/11/03  19:15
  */
 @Data
-public class ApiTestVo {
+public class ApiTestVO {
     /**
      * 微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。
      */
