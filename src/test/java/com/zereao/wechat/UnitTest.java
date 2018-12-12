@@ -1,11 +1,16 @@
 package com.zereao.wechat;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.CaseFormat;
+import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +19,27 @@ import java.util.stream.Stream;
  * @version 2018/12/10  20:04
  */
 public class UnitTest {
+    @Test
+    public void test05() {
+        MsgType a = MsgType.of("shortvideo");
+        System.out.println(a);
+    }
+
+    @Test
+    public void test04() throws ParseException {
+        long a = 1348831860L;
+        final String STANDARD_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+        Date s = new SimpleDateFormat(STANDARD_DATE_FORMAT).parse(String.valueOf(a));
+        System.out.println(s);
+    }
+
+    @Test
+    public void test03() {
+        MsgType a = MsgType.SHORT_VIDEO;
+        String res = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, a.name());
+        System.out.println(res);
+    }
+
     @Test
     public void test02() {
         String token = "lovebluesky";

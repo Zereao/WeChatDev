@@ -1,5 +1,6 @@
 package com.zereao.wechat.service.message;
 
+import com.google.common.base.CaseFormat;
 import com.zereao.wechat.commom.constant.MsgType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,8 @@ public class MessageFactory {
     @Autowired
     public MessageFactory(Map<String, AbstractMessageService> messageServiceMap) {this.messageServiceMap = messageServiceMap;}
 
-    public static AbstractMessageService getInstance(MsgType msgType) {
-        String messageType = msgType.value();
-        return null;
+    public AbstractMessageService getInstance(MsgType msgType) {
+        String beanName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, msgType.name()).concat("MessageService");
+        return messageServiceMap.get(beanName);
     }
 }

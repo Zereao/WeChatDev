@@ -1,20 +1,20 @@
 package com.zereao.wechat.commom.constant;
 
 /**
- * 消息类型枚举
+ * 事件类型枚举
  *
  * @author Zereao
- * @version 2018/12/11  19:01
+ * @version 2018/12/12  11:20
  */
-public enum MsgType {
+public enum Event {
     /**
      * 文本消息
      */
-    TEXT("text"),
+    SUBSCRIBE("subscribe"),
     /**
      * 图片消息
      */
-    IMAGE("image"),
+    UNSUBSCRIBE("unsubscribe"),
     /**
      * 语音消息
      */
@@ -42,15 +42,11 @@ public enum MsgType {
 
     private String type;
 
-    MsgType(String type) {
+    Event(String type) {
         this.type = type;
     }
 
     public String value() {
         return this.type;
-    }
-
-    public static MsgType of(String type) {
-
     }
 }

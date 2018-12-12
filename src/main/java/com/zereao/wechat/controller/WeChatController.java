@@ -2,6 +2,8 @@ package com.zereao.wechat.controller;
 
 import com.zereao.wechat.data.vo.message.ParentMessageVO;
 import com.zereao.wechat.data.vo.test.ApiTestVO;
+import com.zereao.wechat.service.message.AbstractMessageService;
+import com.zereao.wechat.service.message.MessageFactory;
 import com.zereao.wechat.service.test.ApiTestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class WeChatController {
 
     private final ApiTestService apiTestService;
+    private final MessageFactory messageFactory;
 
     @Autowired
-    public WeChatController(ApiTestService apiTestService) {
+    public WeChatController(ApiTestService apiTestService, MessageFactory messageFactory) {
         this.apiTestService = apiTestService;
+        this.messageFactory = messageFactory;
     }
 
     @GetMapping(value = "wechat")
@@ -31,7 +35,9 @@ public class WeChatController {
 
     @PostMapping(value = "wechat")
     public String parseMsg(@RequestBody ParentMessageVO messageVO) {
-        log.info(messageVO.toString());
+        AbstractMessageService messageService = messageFactory.getInstance(messageVO.getMsgType());
+        String result = messageService.handleMsg(messageVO);
+        log.info("============>  result = {}", result);
         return null;
     }
 }

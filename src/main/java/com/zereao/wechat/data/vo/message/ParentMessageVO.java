@@ -3,6 +3,7 @@ package com.zereao.wechat.data.vo.message;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,8 +20,9 @@ import java.util.Date;
  */
 @Data
 @XmlRootElement(name = "xml")
+@EqualsAndHashCode(callSuper = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ParentMessageVO {
+public class ParentMessageVO extends AbstractMessageVO {
     @XmlElement(name = "ToUserName")
     private String toUserName;
     @XmlElement(name = "FromUserName")
