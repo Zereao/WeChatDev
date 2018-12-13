@@ -11,10 +11,10 @@ public abstract class AbstractEventService extends AbstractMsgService {
     /**
      * 处理 事件消息，假如服务器无法保证在五秒内处理并回复，可以直接回复空串，微信服务器不会对此作任何处理，并且不会发起重试。
      *
-     * @param eventVO 事件消息实体
-     * @return 返回
+     * @param absEventVO 事件消息实体
+     * @return 返回值
      */
-    public abstract String handleEvent(AbstractMsg eventVO);
+    public abstract String handleEvent(AbstractMsg absEventVO);
 
     @Override
     public String handleMsg(AbstractMsg msg) {
