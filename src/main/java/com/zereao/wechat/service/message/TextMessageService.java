@@ -1,8 +1,9 @@
 package com.zereao.wechat.service.message;
 
-import com.zereao.wechat.data.vo.AbstractMsg;
+import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.data.vo.message.TextMessageVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,10 +15,10 @@ import org.springframework.stereotype.Service;
 public class TextMessageService extends AbstractMessageService {
 
     @Override
-    public String handleMessage(AbstractMsg absMessageVO) {
-        log.info("AbstractMsg = {}", absMessageVO);
-        TextMessageVO messageVO = (TextMessageVO) absMessageVO;
-        log.info("SubscribeEventVO = {}", messageVO);
+    public String handleMessage(ParentMsgVO parentVO) {
+        TextMessageVO messageVO = new TextMessageVO();
+        BeanUtils.copyProperties(parentVO, messageVO);
+        log.info("TextMessageVO = {}", messageVO);
         return "SUCCESS";
     }
 }

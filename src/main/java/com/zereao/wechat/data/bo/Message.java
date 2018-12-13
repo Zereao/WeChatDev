@@ -1,5 +1,6 @@
 package com.zereao.wechat.data.bo;
 
+import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
 import lombok.Data;
 
@@ -73,4 +74,28 @@ public class Message {
      * 语音识别结果，UTF8编码
      */
     private String recognition;
+    /**
+     * 事件类型
+     */
+    private Event event;
+    /**
+     * 事件KEY值
+     */
+    private String eventKey;
+    /**
+     * 二维码的ticket，可用来换取二维码图片
+     */
+    private String ticket;
+    /**
+     * 地理位置纬度
+     */
+    private Double latitude;
+    /**
+     * 地理位置经度
+     */
+    private Double longitude;
+    /**
+     * 地理位置精度
+     */
+    private Double precision;
 }

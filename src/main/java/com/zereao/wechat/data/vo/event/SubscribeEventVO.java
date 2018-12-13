@@ -2,9 +2,7 @@ package com.zereao.wechat.data.vo.event;
 
 import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.data.vo.AbstractMsg;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
@@ -15,8 +13,7 @@ import java.util.Date;
  * @version 2018/12/11  15:16
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class SubscribeEventVO extends AbstractMsg {
+public class SubscribeEventVO {
     /**
      * 接收方微信号
      */

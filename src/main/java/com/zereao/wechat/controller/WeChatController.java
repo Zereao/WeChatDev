@@ -1,7 +1,7 @@
 package com.zereao.wechat.controller;
 
 import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.data.vo.ParentMessageVO;
+import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.data.vo.test.ApiTestVO;
 import com.zereao.wechat.service.factory.AbstractMsgService;
 import com.zereao.wechat.service.factory.EventFactory;
@@ -38,7 +38,7 @@ public class WeChatController {
     }
 
     @PostMapping(value = "wechat")
-    public String parseMsg(@RequestBody ParentMessageVO messageVO) {
+    public String parseMsg(@RequestBody ParentMsgVO messageVO) {
         AbstractMsgService msgService = null;
         if (MsgType.EVENT.equals(messageVO.getMsgType())) {
             msgService = eventFactory.getInstance(messageVO);
