@@ -2,8 +2,11 @@ package com.zereao.wechat.data.bo;
 
 import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
+import lombok.Builder;
 import lombok.Data;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -13,7 +16,14 @@ import java.util.Date;
  * @version 2018/11/03  21:18
  */
 @Data
+@Builder
+@Table(name = "message")
 public class Message {
+    /**
+     * ID，主键
+     */
+    @GeneratedValue(generator = "JDBC")
+    private Integer id;
     /**
      * 开发者微信号
      */

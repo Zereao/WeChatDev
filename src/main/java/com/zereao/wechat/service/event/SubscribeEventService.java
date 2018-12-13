@@ -19,7 +19,7 @@ public class SubscribeEventService extends AbstractEventService {
     public String handleEvent(ParentMsgVO parentVO) {
         SubscribeEventVO eventVO = new SubscribeEventVO();
         BeanUtils.copyProperties(parentVO, eventVO);
-        log.info("SubscribeEventVO = {}", eventVO);
+        
         return "SUCCESS";
     }
 }
