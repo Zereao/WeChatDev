@@ -1,6 +1,7 @@
 package com.zereao.wechat.service.factory;
 
 import com.google.common.base.CaseFormat;
+import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.service.event.AbstractEventService;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,16 @@ public class EventFactory {
     public EventFactory(Map<String, AbstractEventService> eventServiceMap) {this.eventServiceMap = eventServiceMap;}
 
     public AbstractMsgService getInstance(ParentMsgVO parentVo) {
-        String beanName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, parentVo.getEvent().name()).concat("EventService");
+        String eventName;
+        switch (parentVo.getEvent()) {
+            case SUBSCRIBE:
+            case UNSUBSCRIBE:
+                eventName = Event.SUBSCRIBE.name();
+                break;
+            default:
+                eventName = parentVo.getEvent().name();
+        }
+        String beanName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, eventName).concat("EventService");
         return eventServiceMap.get(StringUtils.uncapitalize(beanName));
     }
 }
