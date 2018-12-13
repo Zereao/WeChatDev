@@ -1,13 +1,23 @@
 package com.zereao.wechat.service.message;
 
+import com.zereao.wechat.dao.MessageDAO;
+import com.zereao.wechat.data.bo.Message;
 import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.service.factory.AbstractMsgService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Zereao
  * @version 2018/12/11  18:20
  */
+@Service
 public abstract class AbstractMessageService extends AbstractMsgService {
+    @Autowired
+    @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
+    private MessageDAO messageDAO;
+
     /**
      * 处理消息，如果需要自动被动回复，则将返回内容返回
      *
@@ -18,6 +28,9 @@ public abstract class AbstractMessageService extends AbstractMsgService {
 
     @Override
     public String handleMsg(ParentMsgVO msg) {
+        Message message = new Message();
+        BeanUtils.copyProperties(msg, message);
+        messageDAO.save(message);
         return this.handleMessage(msg);
     }
 }
