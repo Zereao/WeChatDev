@@ -1,7 +1,6 @@
 package com.zereao.wechat.service.message;
 
-import com.zereao.wechat.data.vo.message.AbstractMessageVO;
-import com.zereao.wechat.data.vo.message.TextMessageVO;
+import com.zereao.wechat.data.vo.AbstractMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +13,7 @@ import org.springframework.stereotype.Service;
 public class TextMessageService extends AbstractMessageService {
 
     @Override
-    public String handleMsg(AbstractMessageVO messageVO) {
-        
+    public String handleMessage(AbstractMsg messageVO) {
         return null;
     }
 }

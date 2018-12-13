@@ -1,17 +1,23 @@
 package com.zereao.wechat.service.message;
 
-import com.zereao.wechat.data.vo.message.AbstractMessageVO;
+import com.zereao.wechat.data.vo.AbstractMsg;
+import com.zereao.wechat.service.factory.AbstractMsgService;
 
 /**
  * @author Zereao
  * @version 2018/12/11  18:20
  */
-public abstract class AbstractMessageService {
+public abstract class AbstractMessageService extends AbstractMsgService {
     /**
      * 处理消息，如果需要自动被动回复，则将返回内容返回
      *
      * @param messageVO 需要处理的 MessageVO 实体
      * @return 返回消息(如果有)，否则应该返回 "success" 或者 ""(空字符串)
      */
-    public abstract String handleMsg(AbstractMessageVO messageVO);
+    public abstract String handleMessage(AbstractMsg messageVO);
+
+    @Override
+    public String handleMsg(AbstractMsg msg) {
+        return this.handleMessage(msg);
+    }
 }

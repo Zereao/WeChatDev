@@ -1,6 +1,7 @@
 package com.zereao.wechat.data.vo.message;
 
 import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.data.vo.AbstractMsg;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ImageMessageVO extends AbstractMessageVO {
+public class ImageMessageVO extends AbstractMsg {
     /**
      * 接收方微信号
      */

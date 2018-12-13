@@ -1,5 +1,8 @@
 package com.zereao.wechat.commom.constant;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * 消息类型枚举
  *
@@ -51,6 +54,6 @@ public enum MsgType {
     }
 
     public static MsgType of(String type) {
-
+        return Arrays.stream(MsgType.values()).filter(e -> e.value().equalsIgnoreCase(type)).collect(Collectors.toList()).get(0);
     }
 }

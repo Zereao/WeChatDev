@@ -1,7 +1,10 @@
-package com.zereao.wechat.data.vo.message;
+package com.zereao.wechat.data.vo;
 
+import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
+import com.zereao.wechat.commom.utils.jaxbadapter.JaxbEventAdapter;
+import com.zereao.wechat.commom.utils.jaxbadapter.JaxbMsgTypeAdapter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,7 +25,8 @@ import java.util.Date;
 @XmlRootElement(name = "xml")
 @EqualsAndHashCode(callSuper = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ParentMessageVO extends AbstractMessageVO {
+public class ParentMessageVO extends AbstractMsg {
+    // 接收到的消息
     @XmlElement(name = "ToUserName")
     private String toUserName;
     @XmlElement(name = "FromUserName")
@@ -33,6 +37,7 @@ public class ParentMessageVO extends AbstractMessageVO {
     @XmlElement(name = "MsgId")
     private Long msgId;
     @XmlElement(name = "MsgType")
+    @XmlJavaTypeAdapter(JaxbMsgTypeAdapter.class)
     private MsgType msgType;
     @XmlElement(name = "Content")
     private String content;
@@ -54,4 +59,19 @@ public class ParentMessageVO extends AbstractMessageVO {
     private String format;
     @XmlElement(name = "Recognition")
     private String recognition;
+
+    // 事件类型
+    @XmlElement(name = "Event")
+    @XmlJavaTypeAdapter(JaxbEventAdapter.class)
+    private Event event;
+    @XmlElement(name = "EventKey")
+    private String eventKey;
+    @XmlElement(name = "Ticket")
+    private String ticket;
+    @XmlElement(name = "Latitude")
+    private Double latitude;
+    @XmlElement(name = "Longitude")
+    private Double longitude;
+    @XmlElement(name = "Precision")
+    private Double precision;
 }

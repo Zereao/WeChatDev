@@ -1,5 +1,8 @@
 package com.zereao.wechat.commom.constant;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * 事件类型枚举
  *
@@ -8,37 +11,29 @@ package com.zereao.wechat.commom.constant;
  */
 public enum Event {
     /**
-     * 文本消息
+     * 订阅
      */
     SUBSCRIBE("subscribe"),
     /**
-     * 图片消息
+     * 取消订阅
      */
     UNSUBSCRIBE("unsubscribe"),
     /**
-     * 语音消息
+     * 用户已关注时，扫描带参数二维码事件
      */
-    VOICE("voice"),
+    SCAN("SCAN"),
     /**
-     * 视频消息
+     * 上报地理位置事件
      */
-    VIDEO("video"),
+    LOCATION("LOCATION"),
     /**
-     * 小视频消息
+     * 自定义菜单事件，点击菜单拉取消息时的事件推送
      */
-    SHORT_VIDEO("shortvideo"),
+    CLICK("CLICK"),
     /**
-     * 地理位置消息
+     * 自定义菜单事件，点击菜单跳转链接时的事件推送
      */
-    LOCATION("location"),
-    /**
-     * 链接消息
-     */
-    LINK("link"),
-    /**
-     * 事件
-     */
-    EVENT("event");
+    VIEW("VIEW");
 
     private String type;
 
@@ -48,5 +43,9 @@ public enum Event {
 
     public String value() {
         return this.type;
+    }
+
+    public static Event of(String type) {
+        return Arrays.stream(Event.values()).filter(e -> e.value().equalsIgnoreCase(type)).collect(Collectors.toList()).get(0);
     }
 }

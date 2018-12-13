@@ -1,5 +1,6 @@
-package com.zereao.wechat.data.vo.message;
+package com.zereao.wechat.data.vo.event;
 
+import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.data.vo.AbstractMsg;
 import lombok.Data;
@@ -8,14 +9,14 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 
 /**
- * 语音消息
+ * 扫描带参数二维码事件
  *
  * @author Zereao
  * @version 2018/12/11  15:20
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class VoiceMessageVO extends AbstractMsg {
+public class QRCodeScanEventVO extends AbstractMsg {
     /**
      * 接收方微信号
      */
@@ -25,27 +26,23 @@ public class VoiceMessageVO extends AbstractMsg {
      */
     private String fromUserName;
     /**
-     * 消息创建时间 （整型）
+     * 消息创建时间
      */
     private Date createTime;
     /**
-     * 消息类型，语音为voice
+     * 消息类型，event
      */
     private MsgType msgType;
     /**
-     * 视频消息媒体id，可以调用多媒体文件下载接口拉取数据。
+     * 事件类型，subscribe 或者 SCAN
      */
-    private String mediaId;
+    private Event event;
     /**
-     * 语音格式，如amr，speex等
+     * 事件KEY值，qrscene_为前缀，后面为二维码的参数值 / 事件KEY值，是一个32位无符号整数，即创建二维码时的二维码scene_id
      */
-    private String format;
+    private String eventKey;
     /**
-     * 语音识别结果，UTF8编码
+     * 二维码的ticket，可用来换取二维码图片
      */
-    private String recognition;
-    /**
-     * 消息id，64位整型
-     */
-    private Long msgId;
+    private String ticket;
 }

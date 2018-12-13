@@ -1,9 +1,11 @@
 package com.zereao.wechat.controller;
 
-import com.zereao.wechat.data.vo.message.ParentMessageVO;
+import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.data.vo.ParentMessageVO;
 import com.zereao.wechat.data.vo.test.ApiTestVO;
-import com.zereao.wechat.service.message.AbstractMessageService;
-import com.zereao.wechat.service.message.MessageFactory;
+import com.zereao.wechat.service.factory.AbstractMsgService;
+import com.zereao.wechat.service.factory.EventFactory;
+import com.zereao.wechat.service.factory.MessageFactory;
 import com.zereao.wechat.service.test.ApiTestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,13 @@ public class WeChatController {
 
     private final ApiTestService apiTestService;
     private final MessageFactory messageFactory;
+    private final EventFactory eventFactory;
 
     @Autowired
-    public WeChatController(ApiTestService apiTestService, MessageFactory messageFactory) {
+    public WeChatController(ApiTestService apiTestService, MessageFactory messageFactory, EventFactory eventFactory) {
         this.apiTestService = apiTestService;
         this.messageFactory = messageFactory;
+        this.eventFactory = eventFactory;
     }
 
     @GetMapping(value = "wechat")
@@ -35,9 +39,12 @@ public class WeChatController {
 
     @PostMapping(value = "wechat")
     public String parseMsg(@RequestBody ParentMessageVO messageVO) {
-        AbstractMessageService messageService = messageFactory.getInstance(messageVO.getMsgType());
-        String result = messageService.handleMsg(messageVO);
-        log.info("============>  result = {}", result);
-        return null;
+        AbstractMsgService msgService = null;
+        if (MsgType.EVENT.equals(messageVO.getMsgType())) {
+            msgService = eventFactory.getInstance(messageVO);
+        } else {
+            msgService = messageFactory.getInstance(messageVO);
+        }
+        return msgService.handleMsg(messageVO);
     }
 }

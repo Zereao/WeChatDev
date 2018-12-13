@@ -1,5 +1,6 @@
-package com.zereao.wechat.data.vo.message;
+package com.zereao.wechat.data.vo.event;
 
+import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.data.vo.AbstractMsg;
 import lombok.Data;
@@ -8,20 +9,20 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 
 /**
- * 文本消息
+ * 关注/取消关注事件
  *
  * @author Zereao
  * @version 2018/12/11  15:16
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TextMessageVO extends AbstractMsg {
+public class SubscribeEventVO extends AbstractMsg {
     /**
      * 接收方微信号
      */
     private String toUserName;
     /**
-     * 发送方微信号，若为普通用户，则是一个OpenID
+     * 发送方帐号（一个OpenID）
      */
     private String fromUserName;
     /**
@@ -29,15 +30,11 @@ public class TextMessageVO extends AbstractMsg {
      */
     private Date createTime;
     /**
-     * 消息类型，text
+     * 消息类型，event
      */
     private MsgType msgType;
     /**
-     * 文本消息内容
+     * 事件类型，subscribe(订阅)、unsubscribe(取消订阅)
      */
-    private String content;
-    /**
-     * 消息id，64位整型
-     */
-    private Long msgId;
+    private Event event;
 }

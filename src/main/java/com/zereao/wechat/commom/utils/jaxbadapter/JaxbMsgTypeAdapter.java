@@ -11,14 +11,14 @@ import java.util.Date;
  * @author Zereao
  * @version 2018/12/12  15:05
  */
-public class JaxbMsgTypeAdapter extends XmlAdapter<MsgType, String> {
+public class JaxbMsgTypeAdapter extends XmlAdapter<String, MsgType> {
     @Override
-    public String unmarshal(MsgType v) throws Exception {
-        return v.value();
+    public MsgType unmarshal(String v) throws Exception {
+        return MsgType.of(v);
     }
 
     @Override
-    public MsgType marshal(String v) throws Exception {
-        return MsgType.valueOf(v);
+    public String marshal(MsgType v) throws Exception {
+        return v.value();
     }
 }
