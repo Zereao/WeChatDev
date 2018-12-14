@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version 2018/12/14  19:02
  */
 @Controller
-@RequestMapping("/wel")
 public class WelcomeController {
-    @RequestMapping("/a")
+    @RequestMapping("/welcome")
     public String welcome() {
-        return "welcome/index";
+        return "welcome/welcome";
     }
 }
