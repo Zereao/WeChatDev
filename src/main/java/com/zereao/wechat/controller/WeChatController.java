@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.JAXB;
+import java.io.StringWriter;
+
 /**
  * @author Zereao
  * @version 2018/11/03  18:13
@@ -37,14 +40,17 @@ public class WeChatController {
         return apiTestService.checkParams(apiTestVo);
     }
 
-    @PostMapping(value = "wechat", produces = "application/text")
-    public Object parseMsg(@RequestBody ParentMsgVO messageVO) {
+    @PostMapping(value = "wechat")
+    public String parseMsg(@RequestBody ParentMsgVO messageVO) {
         AbstractMsgService msgService = null;
         if (MsgType.EVENT.equals(messageVO.getMsgType())) {
             msgService = eventFactory.getInstance(messageVO);
         } else {
             msgService = messageFactory.getInstance(messageVO);
         }
-        return msgService.handleMsg(messageVO);
+        Object result = msgService.handleMsg(messageVO);
+        StringWriter stringBuilder = new StringWriter();
+        JAXB.marshal(result, stringBuilder);
+        return stringBuilder.toString();
     }
 }

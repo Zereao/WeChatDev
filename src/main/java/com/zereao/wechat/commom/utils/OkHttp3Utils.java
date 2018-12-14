@@ -42,7 +42,7 @@ public enum OkHttp3Utils {
         }
     }
 
-    private OkHttpClient client = null;
+    private OkHttpClient client;
 
     OkHttp3Utils() {
         client = new OkHttpClient.Builder()

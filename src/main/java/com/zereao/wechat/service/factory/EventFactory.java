@@ -2,7 +2,6 @@ package com.zereao.wechat.service.factory;
 
 import com.google.common.base.CaseFormat;
 import com.zereao.wechat.commom.constant.Event;
-import com.zereao.wechat.data.dto.VoiceMessageDTO;
 import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.service.event.AbstractEventService;
 import org.apache.commons.lang3.StringUtils;

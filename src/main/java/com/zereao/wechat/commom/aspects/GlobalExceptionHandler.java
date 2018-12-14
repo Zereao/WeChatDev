@@ -1,7 +1,6 @@
 package com.zereao.wechat.commom.aspects;
 
-import com.zereao.wechat.commom.constant.ResultCode;
-import com.zereao.wechat.commom.constant.ResultModel;
+import com.zereao.wechat.commom.constant.ReturnCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,22 +18,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ResultModel handleException(Exception e) {
+    public String handleException(Exception e) {
         log.error("出现未知异常！错误信息：", e);
-        return new ResultModel(ResultCode.ERROR);
+        return ReturnCode.ERROR.value();
     }
 
     @ExceptionHandler(ReflectiveOperationException.class)
     @ResponseBody
-    public ResultModel handleReflectiveOperationException(ReflectiveOperationException e) {
+    public String handleReflectiveOperationException(ReflectiveOperationException e) {
         log.error("Bean的转换出现异常！", e);
-        return new ResultModel(ResultCode.ERROR);
+        return ReturnCode.ERROR.value();
     }
 
     @ExceptionHandler(ParseException.class)
     @ResponseBody
-    public ResultModel handleParseException(ParseException e) {
+    public String handleParseException(ParseException e) {
         log.error("时间处理异常！", e);
-        return new ResultModel(ResultCode.ERROR);
+        return ReturnCode.ERROR.value();
     }
 }

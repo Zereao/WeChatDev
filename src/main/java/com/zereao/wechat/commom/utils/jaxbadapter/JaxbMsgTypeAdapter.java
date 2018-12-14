@@ -3,7 +3,6 @@ package com.zereao.wechat.commom.utils.jaxbadapter;
 import com.zereao.wechat.commom.constant.MsgType;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.util.Date;
 
 /**
  * Jaxb MsgType 适配器

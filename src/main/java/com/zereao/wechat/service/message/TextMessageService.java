@@ -1,11 +1,9 @@
 package com.zereao.wechat.service.message;
 
-import com.zereao.wechat.dao.MessageDAO;
 import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.data.vo.message.TextMessageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
