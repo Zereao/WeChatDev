@@ -3,8 +3,8 @@
 <head>
     <title>欢迎关注小伦的公众号</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" th:href="@{res/sun.ico}"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="keywords" content=""/>
     <script type="application/x-javascript">
         addEventListener("load", function () {
             setTimeout(hideURLbar, 0);
@@ -14,21 +14,21 @@
             window.scrollTo(0, 1);
         }
     </script>
-    <link th:href="@{welcome/css/bootstrap.css}" rel='stylesheet' type='text/css'/>
-    <link href='https://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'>
+    <link th:href="@{/welcome/css/bootstrap.css}" rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:700,700italic,800,300,300italic,400italic,400,600,600italic'
-          rel='stylesheet' type='text/css'>
+          rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,400italic' rel='stylesheet'
-          type='text/css'>
+          type='text/css'/>
     <!--Custom-Theme-files-->
-    <link th:href="@{welcome/css/style.css}" rel='stylesheet' type='text/css'/>
-    <link th:href="@{welcome/css/component.css}" rel='stylesheet' type='text/css'/>
-    <link th:href="@{welcome/css/nav.css}" rel='stylesheet' type='text/css'/>
+    <link th:href="@{/welcome/css/style.css}" rel='stylesheet' type='text/css'/>
+    <link th:href="@{/welcome/css/component.css}" rel='stylesheet' type='text/css'/>
+    <link th:href="@{/welcome/css/nav.css}" rel='stylesheet' type='text/css'/>
 
-    <script type="text/javascript" th:src="@{welcome/js/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{welcome/js/modernizr.custom.js}"></script>
-    <script type="text/javascript" th:src="@{welcome/js/move-top.js}"></script>
-    <script type="text/javascript" th:src="@{welcome/js/easing.js}"></script>
+    <script type="text/javascript" th:src="@{/welcome/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/welcome/js/modernizr.custom.js}"></script>
+    <script type="text/javascript" th:src="@{/welcome/js/move-top.js}"></script>
+    <script type="text/javascript" th:src="@{/welcome/js/easing.js}"></script>
     <script type="text/javascript">
         jQuery(document).ready(function ($) {
             $(".scroll").click(function (event) {
@@ -38,8 +38,8 @@
         });
     </script>
     <!-- Add fancyBox main JS and CSS files -->
-    <script th:src="@{welcome/js/jquery.magnific-popup.js}" type="text/javascript"></script>
-    <link th:href="@{welcome/css/magnific-popup.css}" rel="stylesheet" type="text/css">
+    <script th:src="@{/welcome/js/jquery.magnific-popup.js}" type="text/javascript"></script>
+    <link th:href="@{/welcome/css/magnific-popup.css}" rel="stylesheet" type="text/css"/>
     <script>
         $(document).ready(function () {
             $('.popup-with-zoom-anim').magnificPopup({
@@ -57,31 +57,25 @@
     </script>
     <!---->
     <!--animate-->
-    <link th:href="@{welcome/css/animate.css}" rel="stylesheet" type="text/css" media="all">
-    <script th:src="@{welcome/js/wow.min.js}"></script>
+    <link th:href="@{/welcome/css/animate.css}" rel="stylesheet" type="text/css" media="all"/>
+    <script th:src="@{/welcome/js/wow.min.js}"></script>
     <script>
         new WOW().init();
     </script>
     <!--//end-animate-->
-
 </head>
 <body>
 <div class="container demo-2" id="home">
     <header>
         <nav class="cd-stretchy-nav">
-            <a class="cd-nav-trigger" href="#0">
-                <h6>Menu</h6>
-                <span aria-hidden="true"></span>
-            </a>
-
+            <a class="cd-nav-trigger" href="#"> <span aria-hidden="true"></span> </a>
             <ul class="side_nav">
-                <li><a href="index.html" class="active"><span>Home</span></a></li>
+                <li><a href="welcome.html" class="active"><span>Home</span></a></li>
                 <li><a href="typography.html"><span>Services</span></a></li>
                 <li><a href="blog.html"><span>Blog</span></a></li>
                 <li><a href="gallery.html"><span>Gallery</span></a></li>
                 <li><a href="contact.html"><span>Contact</span></a></li>
             </ul>
-
             <span aria-hidden="true" class="stretchy-nav-bg"></span>
         </nav>
     </header>
@@ -89,11 +83,10 @@
     <div class="content">
         <div id="large-header" class="large-header">
             <canvas id="demo-canvas"></canvas>
-            <h1 class="main-title"><a class="link link--takiri" href="index.html">Go Easy On<span
-                    class="wow fadeInUp animated animated" data-wow-delay=".5s">Where do you want to be?</span></a></h1>
-
+            <h1 class="main-title">
+                <a class="link link--takiri" href="javascript:void(0)">Hello, World! </a>
+            </h1>
         </div>
-
     </div>
 </div>
 <!--start-inner-content-->
@@ -104,9 +97,9 @@
         <div class="top_section">
             <div class="bnr-btm-left grid">
                 <figure class="effect-ming wow fadeInLeft animated animated" data-wow-delay=".5s">
-                    <img src="images/1.jpg" alt="img09"/>
+                    <img th:src="@{/welcome/images/1.jpg}" alt="img09"/>
                     <figcaption>
-                        <h3>Bo<span>at</span></h3>
+                        <h3>Boat</h3>
                         <p>Ming sits in the corner the whole day. She's into crochet.</p>
                         <a href="#">View more</a>
                     </figcaption>
@@ -133,7 +126,7 @@
             </div>
             <div class="bnr-btm-left two grid">
                 <figure class="effect-ming wow fadeInRight animated animated" data-wow-delay=".5s">
-                    <img src="images/2.jpg" alt="img09"/>
+                    <img th:src="@{welcome/images/2.jpg}" alt="img09"/>
                     <figcaption>
                         <h3>Bo<span>at</span></h3>
                         <p>Ming sits in the corner the whole day. She's into crochet.</p>
@@ -161,7 +154,7 @@
                     <h2 class="tittle wow fadeInUp animated animated" data-wow-delay=".5s">About</h2>
                     <div class="about-inner">
 
-                        <img src="images/about.jpg" alt="about"/>
+                        <img th:src="@{/welcome/images/about.jpg}" alt="about"/>
                         <h4 class="tittle">A Fews words about us</h4>
                         <p>Lorem ipsum dolor sit amet Integer gravida,Lorem ipsum dolor sit amet Integer gravida
                             velit,Ming sits in the corner the whole day. She's into crochet. quis dolor
@@ -186,14 +179,16 @@
         <div class="team">
             <div class="col-md-3 staff2">
                 <div class="view view-fifth wow fadeInLeft animated animated" data-wow-delay=".5s">
-                    <div class="mask1"><img src="images/t2.jpg" alt="image" class="img-responsive zoom-img"/></div>
+                    <div class="mask1">
+                        <img th:src="@{/welcome/images/t2.jpg}" alt="image" class="img-responsive zoom-img"/>
+                    </div>
                     <div class="mask">
                         <a class="popup-with-zoom-anim" href="#small-dialog2">
                             <div class="info"><i class="glyphicon glyphicon-zoom-in"></i></div>
                         </a>
                         <div id="small-dialog2" class="mfp-hide">
                             <div class="pop_up2">
-                                <img src="images/t2.jpg" class="img-responsive" alt=""/>
+                                <img th:src="@{/welcome/images/t2.jpg}" class="img-responsive" alt=""/>
                                 <h3>About</h3>
                                 <p class="popup_desc">Mirum est notare quam littera gothica, quam nunc putamus parum
                                     claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et
@@ -214,14 +209,15 @@
             </div>
             <div class="col-md-3 staff2">
                 <div class="view view-fifth wow fadeInUp animated animated" data-wow-delay=".5s">
-                    <div class="mask1"><img src="images/t1.jpg" alt="image" class="img-responsive zoom-img"/></div>
+                    <div class="mask1"><img th:src="@{/welcome/images/t1.jpg}" alt="image"
+                                            class="img-responsive zoom-img"/></div>
                     <div class="mask">
                         <a class="popup-with-zoom-anim" href="#small-dialog1">
                             <div class="info"><i class="glyphicon glyphicon-zoom-in"></i></div>
                         </a>
                         <div id="small-dialog1" class="mfp-hide">
                             <div class="pop_up2">
-                                <img src="images/t1.jpg" class="img-responsive" alt=""/>
+                                <img th:src="@{/welcome/images/t1.jpg}" class="img-responsive" alt=""/>
                                 <h3>About</h3>
                                 <p class="popup_desc">Mirum est notare quam littera gothica, quam nunc putamus parum
                                     claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et
@@ -242,14 +238,15 @@
             </div>
             <div class="col-md-3 staff2">
                 <div class="view view-fifth wow fadeInRight animated animated" data-wow-delay=".5s">
-                    <div class="mask1"><img src="images/t3.jpg" alt="image" class="img-responsive zoom-img"/></div>
+                    <div class="mask1"><img th:src="@{/welcome/images/t3.jpg}" alt="image"
+                                            class="img-responsive zoom-img"/></div>
                     <div class="mask">
                         <a class="popup-with-zoom-anim" href="#small-dialog3">
                             <div class="info"><i class="glyphicon glyphicon-zoom-in"></i></div>
                         </a>
                         <div id="small-dialog3" class="mfp-hide">
                             <div class="pop_up2">
-                                <img src="images/t3.jpg" class="img-responsive" alt=""/>
+                                <img th:src="@{/welcome/images/t3.jpg}" class="img-responsive" alt=""/>
                                 <h3>About</h3>
                                 <p class="popup_desc">Mirum est notare quam littera gothica, quam nunc putamus parum
                                     claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et
@@ -271,14 +268,15 @@
 
             <div class="col-md-3 staff2">
                 <div class="view view-fifth wow fadeInRight animated animated" data-wow-delay=".5s">
-                    <div class="mask1"><img src="images/t4.jpg" alt="image" class="img-responsive zoom-img"/></div>
+                    <div class="mask1"><img th:src="@{/welcome/images/t4.jpg}" alt="image"
+                                            class="img-responsive zoom-img"/></div>
                     <div class="mask">
                         <a class="popup-with-zoom-anim" href="#small-dialog3">
                             <div class="info"><i class="glyphicon glyphicon-zoom-in"></i></div>
                         </a>
                         <div id="small-dialog23" class="mfp-hide">
                             <div class="pop_up2">
-                                <img src="images/t4.jpg" class="img-responsive" alt=""/>
+                                <img th:src="@{/welcome/images/t4.jpg}" class="img-responsive" alt=""/>
                                 <h3>About</h3>
                                 <p class="popup_desc">Mirum est notare quam littera gothica, quam nunc putamus parum
                                     claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et
@@ -311,7 +309,7 @@
                 <figure class="effect-jazz">
                     <a href="#portfolioModal1" data-toggle="modal">
 
-                        <img src="images/p1.jpg" alt="img25" class="img-responsive"/>
+                        <img th:src="@{/welcome/images/p1.jpg}" alt="img25" class="img-responsive"/>
                         <figcaption>
                             <h4>Go Easy On</h4>
                             <p> There are many variations of passages of Lorem Ipsum .</p>
@@ -323,7 +321,7 @@
                 <figure class="effect-jazz">
                     <a href="#portfolioModal2" data-toggle="modal">
 
-                        <img src="images/p2.jpg" alt="img25" class="img-responsive"/>
+                        <img th:src="@{/welcome/images/p2.jpg}" alt="img25" class="img-responsive"/>
                         <figcaption>
                             <h4>Go Easy On</h4>
                             <p> There are many variations of passages of Lorem Ipsum .</p>
@@ -335,7 +333,7 @@
                 <figure class="effect-jazz">
                     <a href="#portfolioModal3" data-toggle="modal">
 
-                        <img src="images/p3.jpg" alt="img25" class="img-responsive"/>
+                        <img th:src="@{/welcome/images/p3.jpg}" alt="img25" class="img-responsive"/>
                         <figcaption>
                             <h4>Go Easy On</h4>
                             <p> There are many variations of passages of Lorem Ipsum .</p>
@@ -351,7 +349,7 @@
                 <figure class="effect-jazz">
                     <a href="#portfolioModal4" data-toggle="modal">
 
-                        <img src="images/p4.jpg" alt="img25" class="img-responsive"/>
+                        <img th:src="@{/welcome/images/p4.jpg}" alt="img25" class="img-responsive"/>
                         <figcaption>
                             <h4 class="effcet-text">Go Easy On</h4>
                             <p> There are many variations of passages .</p>
@@ -363,7 +361,7 @@
                 <figure class="effect-jazz">
                     <a href="#portfolioModal5" data-toggle="modal">
 
-                        <img src="images/p5.jpg" alt="img25" class="img-responsive"/>
+                        <img th:src="@{/welcome/images/p5.jpg}" alt="img25" class="img-responsive"/>
                         <figcaption>
                             <h4 class="effcet-text">Go Easy On</h4>
                             <p> There are many variations of passages.</p>
@@ -375,7 +373,7 @@
                 <figure class="effect-jazz">
                     <a href="#portfolioModal6" data-toggle="modal">
 
-                        <img src="images/p6.jpg" alt="img25" class="img-responsive"/>
+                        <img th:src="@{/welcome/images/p6.jpg}" alt="img25" class="img-responsive"/>
                         <figcaption>
                             <h4 class="effcet-text">Go Easy On</h4>
                             <p> There are many variations of passages.</p>
@@ -402,7 +400,7 @@
                 <div class="modal-body">
                     <h3>Go Easy On</h3>
 
-                    <img src="images/p1.jpg" class="img-responsive" alt="">
+                    <img th:src="@{/welcome/images/p1.jpg}" class="img-responsive" alt="">
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
                         the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
                         of type and scrambled it to make a type specimen book.</p>
@@ -425,7 +423,7 @@
                 <div class="modal-body">
                     <h3>Go Easy On</h3>
 
-                    <img src="images/p2.jpg" class="img-responsive" alt="">
+                    <img th:src="@{/welcome/images/p2.jpg}" class="img-responsive" alt="">
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
                         the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
                         of type and scrambled it to make a type specimen book.</p>
@@ -448,7 +446,7 @@
                 <div class="modal-body">
                     <h3>Go Easy On</h3>
 
-                    <img src="images/p3.jpg" class="img-responsive" alt="">
+                    <img th:src="@{/welcome/images/p3.jpg}" class="img-responsive" alt="">
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
                         the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
                         of type and scrambled it to make a type specimen book.</p>
@@ -471,7 +469,7 @@
                 <div class="modal-body">
                     <h3>Go Easy On</h3>
 
-                    <img src="images/p4.jpg" class="img-responsive" alt="">
+                    <img th:src="@{/welcome/images/p4.jpg}" class="img-responsive" alt="">
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
                         the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
                         of type and scrambled it to make a type specimen book.</p>
@@ -494,7 +492,7 @@
                 <div class="modal-body">
                     <h3>Go Easy On</h3>
 
-                    <img src="images/p5.jpg" class="img-responsive" alt="">
+                    <img th:src="@{/welcome/images/p5.jpg}" class="img-responsive" alt="">
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
                         the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
                         of type and scrambled it to make a type specimen book.</p>
@@ -631,7 +629,7 @@
                         <label>Email</label>
                         <span></span></div>
                     <div class="styled-input wow slideInUp animated animated" data-wow-delay=".5s">
-                        <input type="tel" required/>
+                        <input type="tel" required title=""/>
                         <label>Phone</label>
                         <span></span></div>
                     <div class="styled-input wide wow slideInUp animated animated" data-wow-delay=".5s">
@@ -694,13 +692,13 @@
 <!--//map-->
 <!--//contact-->
 
-<!--copy-right-->
 <div class="copy">
-    <p class="wow fadeInUp animated animated" data-wow-delay=".5s">Copyright &copy; 2016.Company name All rights
-        reserved.More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from
-        <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
+    <p class="wow fadeInUp animated animated" data-wow-delay=".5s">Copyright &copy; 2018.小伦超正经 · All rights
+        reserved.
+        <!--More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from-->
+        <!--<a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a>-->
+    </p>
 </div>
-<!--//copy-right-->
 <!--//footer-->
 <!--start-smooth-scrolling-->
 <script type="text/javascript">
@@ -718,16 +716,15 @@
 
     });
 </script>
-<a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover"
-                                                                         style="opacity: 1;"> </span></a>
-<script src="js/rAF.js"></script>
-<script src="js/demo-2.js"></script>
-<script src="js/main.js"></script> <!-- Resource jQuery -->
+<a href="#home" id="toTop" class="scroll" style="display: block;">
+    <span id="toTopHover" style="opacity: 1;"> </span>
+</a>
+<script type="text/javascript" th:src="@{/welcome/js/rAF.js}"></script>
+<script type="text/javascript" th:src="@{/welcome/js/demo-2.js}"></script>
+<script type="text/javascript" th:src="@{/welcome/js/main.js}"></script> <!-- Resource jQuery -->
 
 <!-- for bootstrap working -->
-<script src="js/bootstrap.js"></script>
+<script type="text/javascript" th:src="@{/welcome/js/bootstrap.js}"></script>
 <!-- //for bootstrap working -->
-
-
 </body>
 </html>
