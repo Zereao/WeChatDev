@@ -59,7 +59,7 @@ public class MusicMessageDTO {
     @Builder
     @XmlRootElement(name = "Music")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Music {
+    public static class Music {
         /**
          * 音乐标题，非 必需
          */

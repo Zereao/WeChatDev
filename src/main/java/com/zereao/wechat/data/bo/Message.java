@@ -4,8 +4,7 @@ import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;
 import lombok.Data;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -15,12 +14,14 @@ import java.util.Date;
  * @version 2018/11/03  21:18
  */
 @Data
+@Entity
 @Table(name = "message")
 public class Message {
     /**
      * ID，主键
      */
-    @GeneratedValue(generator = "JDBC")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     /**
      * 开发者微信号
@@ -57,10 +58,12 @@ public class Message {
     /**
      * 地理位置纬度
      */
+    @Column(name = "location_x")
     private Double locationX;
     /**
      * 地理位置经度
      */
+    @Column(name = "location_y")
     private Double locationY;
     /**
      * 地图缩放大小
@@ -105,5 +108,6 @@ public class Message {
     /**
      * 地理位置精度
      */
+    @Column(name = "[precision]")
     private Double precision;
 }
