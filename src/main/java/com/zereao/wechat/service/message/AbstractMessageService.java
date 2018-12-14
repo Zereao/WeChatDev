@@ -24,10 +24,10 @@ public abstract class AbstractMessageService extends AbstractMsgService {
      * @param parentVO 需要处理的 MessageVO 实体
      * @return 返回消息(如果有)，否则应该返回 "success" 或者 ""(空字符串)
      */
-    public abstract String handleMessage(ParentMsgVO parentVO);
+    public abstract Object handleMessage(ParentMsgVO parentVO);
 
     @Override
-    public String handleMsg(ParentMsgVO msg) {
+    public Object handleMsg(ParentMsgVO msg) {
         Message message = new Message();
         BeanUtils.copyProperties(msg, message);
         messageDAO.save(message);

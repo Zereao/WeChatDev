@@ -37,8 +37,8 @@ public class WeChatController {
         return apiTestService.checkParams(apiTestVo);
     }
 
-    @PostMapping(value = "wechat")
-    public String parseMsg(@RequestBody ParentMsgVO messageVO) {
+    @PostMapping(value = "wechat", produces = "application/text")
+    public Object parseMsg(@RequestBody ParentMsgVO messageVO) {
         AbstractMsgService msgService = null;
         if (MsgType.EVENT.equals(messageVO.getMsgType())) {
             msgService = eventFactory.getInstance(messageVO);

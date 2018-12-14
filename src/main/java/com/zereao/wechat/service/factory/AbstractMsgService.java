@@ -10,5 +10,5 @@ import com.zereao.wechat.data.vo.ParentMsgVO;
  * @version 2018/12/13  14:52
  */
 public abstract class AbstractMsgService {
-    public abstract String handleMsg(ParentMsgVO parentMsgVO);
+    public abstract Object handleMsg(ParentMsgVO parentMsgVO);
 }

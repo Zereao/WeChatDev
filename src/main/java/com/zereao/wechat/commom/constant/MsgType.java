@@ -41,7 +41,11 @@ public enum MsgType {
     /**
      * 事件
      */
-    EVENT("event");
+    EVENT("event"),
+    /**
+     * 图文消息
+     */
+    NEWS("news");
 
     private String type;
 

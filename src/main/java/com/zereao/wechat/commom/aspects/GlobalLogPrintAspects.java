@@ -19,8 +19,8 @@ public class GlobalLogPrintAspects {
     @Before("execution(* com.zereao.wechat.controller..*.*(..))")
     public void beforeLogPrinter(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        String method = joinPoint.getSignature().getName();
-        log.info("--------> method = {}(), parameters = {}", method, JSONObject.toJSON(args));
+        String method = joinPoint.getSignature().toString().substring(7);
+        log.info("--------> method = {}, parameters = {}", method, JSONObject.toJSON(args));
     }
 
     @AfterReturning(returning = "result", pointcut = "execution(* com.zereao.wechat.controller..*.*(..))")
