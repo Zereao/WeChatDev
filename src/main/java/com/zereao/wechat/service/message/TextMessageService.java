@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 public class TextMessageService extends AbstractMessageService {
 
     @Override
-    public String handleMessage(ParentMsgVO parentVO) {
+    public Object handleMessage(ParentMsgVO parentVO) {
         TextMessageVO messageVO = new TextMessageVO();
         BeanUtils.copyProperties(parentVO, messageVO);
-        log.info("TextMessageVO = {}", messageVO);
+
+
+
         return "SUCCESS";
     }
 }

@@ -29,12 +29,12 @@ public abstract class AbstractEventService extends AbstractMsgService {
     public Object handleMsg(ParentMsgVO msg) {
         switch (msg.getEvent()) {
             case SUBSCRIBE:
-                User user = User.builder().delete_flag(0).openid(msg.getFromUserName()).build();
+                User user = User.builder().deleteFlag(0).openid(msg.getFromUserName()).build();
                 userDAO.save(user);
                 break;
             default:
                 break;
         }
-        return handleEvent(msg);
+        return this.handleEvent(msg);
     }
 }

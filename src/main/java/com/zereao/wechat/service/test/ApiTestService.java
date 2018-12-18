@@ -25,6 +25,6 @@ public class ApiTestService {
         if (encryptedStr.equals(apiTestVo.getSignature())) {
             return apiTestVo.getEchostr();
         }
-        return "false";
+        return "FAILED";
     }
 }

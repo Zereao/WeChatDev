@@ -1,6 +1,7 @@
 package com.zereao.wechat.data.bo;
 
 import lombok.Builder;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Date;
  * @author Zereao
  * @version 2018/12/14  14:43
  */
+@Data
 @Entity
 @Builder
 @Table(name = "user")
@@ -30,13 +32,13 @@ public class User {
     /**
      * 删除标识，1 - 已删除；0 - 未删除
      */
-    private Integer delete_flag;
+    private Integer deleteFlag;
     /**
      * 创建时间
      */
-    private Date create_time;
+    private Date createTime;
     /**
      * 更新时间
      */
-    private Date update_time;
+    private Date updateTime;
 }
