@@ -7,7 +7,6 @@ import com.zereao.wechat.data.vo.event.SubscribeEventVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,15 +18,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class UnsubscribeEventService extends AbstractEventService {
-    @Value("${welcom.msg.title}")
-    private String title;
-    @Value("${welcom.msg.banner}")
-    private String bannerUrl;
-    @Value("${welcom.msg.description}")
-    private String description;
-    @Value("${welcom.msg.url}")
-    private String detail;
-
     private final UserDAO userDAO;
 
     @Autowired

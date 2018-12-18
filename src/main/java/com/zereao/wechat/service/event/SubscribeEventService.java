@@ -20,13 +20,13 @@ import java.util.Date;
 @Slf4j
 @Service
 public class SubscribeEventService extends AbstractEventService {
-    @Value("${response_msg.title}")
+    @Value("${welcom.msg.title}")
     private String title;
-    @Value("${response_msg.banner}")
+    @Value("${welcom.msg.banner}")
     private String bannerUrl;
-    @Value("${response_msg.description}")
+    @Value("${welcom.msg.description}")
     private String description;
-    @Value("${response_msg.url}")
+    @Value("${welcom.msg.url}")
     private String detail;
 
     @Override
