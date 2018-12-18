@@ -1,7 +1,6 @@
 package com.zereao.wechat;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.CaseFormat;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,8 +35,6 @@ public class UnitTest {
     @Test
     public void test03() {
         MsgType a = MsgType.SHORT_VIDEO;
-        String res = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, a.name());
-        System.out.println(res);
     }
 
     @Test
