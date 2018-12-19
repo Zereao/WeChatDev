@@ -36,9 +36,8 @@ public class SubscribeEventService extends AbstractEventService {
         NewsMessageDTO.Articles.Item item = NewsMessageDTO.Articles.Item.builder()
                 .title(title).picUrl(bannerUrl).description(description).url(detail).build();
         NewsMessageDTO.Articles articles = NewsMessageDTO.Articles.builder().item(item).build();
-        NewsMessageDTO response = NewsMessageDTO.builder().articleCount(1).articles(articles)
+        return NewsMessageDTO.builder().articleCount(1).articles(articles)
                 .toUserName(eventVO.getFromUserName()).msgType(MsgType.NEWS)
                 .fromUserName(eventVO.getToUserName()).createTime(new Date()).build();
-        return response;
     }
 }
