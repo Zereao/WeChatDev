@@ -2,6 +2,7 @@ package com.zereao.wechat.data.bo;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
 @Table(name = "user")
 public class User {
     /**
