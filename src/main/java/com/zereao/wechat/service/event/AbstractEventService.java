@@ -1,5 +1,6 @@
 package com.zereao.wechat.service.event;
 
+import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.data.bo.User;
 import com.zereao.wechat.data.vo.ParentMsgVO;
@@ -27,13 +28,9 @@ public abstract class AbstractEventService extends AbstractMsgService {
 
     @Override
     public Object handleMsg(ParentMsgVO msg) {
-        switch (msg.getEvent()) {
-            case SUBSCRIBE:
-                User user = User.builder().deleteFlag(0).openid(msg.getFromUserName()).build();
-                userDAO.save(user);
-                break;
-            default:
-                break;
+        if (msg.getEvent() == Event.SUBSCRIBE) {
+            User user = User.builder().deleteFlag(0).openid(msg.getFromUserName()).build();
+            userDAO.save(user);
         }
         return this.handleEvent(msg);
     }

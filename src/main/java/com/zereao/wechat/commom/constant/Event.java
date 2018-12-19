@@ -46,6 +46,6 @@ public enum Event {
     }
 
     public static Event of(String type) {
-        return Arrays.stream(Event.values()).filter(e -> e.value().equalsIgnoreCase(type)).collect(Collectors.toList()).get(0);
+        return Arrays.stream(Event.values()).filter(e -> e.value().equalsIgnoreCase(type)).findFirst().orElse(null);
     }
 }

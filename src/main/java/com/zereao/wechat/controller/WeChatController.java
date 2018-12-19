@@ -42,7 +42,7 @@ public class WeChatController {
 
     @PostMapping(value = "wechat")
     public String parseMsg(@RequestBody ParentMsgVO messageVO) {
-        AbstractMsgService msgService = null;
+        AbstractMsgService msgService;
         if (MsgType.EVENT.equals(messageVO.getMsgType())) {
             msgService = eventFactory.getInstance(messageVO);
         } else {

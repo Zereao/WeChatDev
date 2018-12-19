@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 关注/取消关注事件
+ * 取消关注事件
  *
  * @author Zereao
  * @version 2018/12/13  15:12

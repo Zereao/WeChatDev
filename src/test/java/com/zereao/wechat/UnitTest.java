@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +19,12 @@ import java.util.stream.Stream;
  * @version 2018/12/10  20:04
  */
 public class UnitTest {
+    @Test
+    public void test06() {
+        Integer a = Stream.of(1, 2, 3, 4, 5).filter(i -> i > 2).findFirst().orElse(null);
+        System.out.println(a);
+    }
+
     @Test
     public void test05() {
         MsgType a = MsgType.of("shortvideo");
