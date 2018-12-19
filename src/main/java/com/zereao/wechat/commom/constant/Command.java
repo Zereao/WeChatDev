@@ -5,7 +5,6 @@ import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @author Zereao
@@ -15,32 +14,40 @@ public enum Command {
     /**
      * 获取所有文章列表的命令
      */
-    GET_ALL_ARTICLE_LIST("1") {
-        @Override
-        public Object exec(AbstractCommandService commandService, ParentMsgVO msgVO) {
-            return commandService.exec(this, msgVO);
-        }
-    },
-    GET_ARTICLE("1-1") {
-        @Override
-        public Object exec(AbstractCommandService commandService, ParentMsgVO msgVO) {
-            return commandService.exec(this, msgVO);
-        }
-    };
+    GET_ALL_ARTICLE_LIST("1"),
+    GET_ARTICLE("1-1"),
 
-    private String commandCode;
+    COMMAND_NOT_EXISTS("");
 
-    Command(String commandCode) {
-        this.commandCode = commandCode;
+    /**
+     * 命令码
+     */
+    private String code;
+
+    Command(String code) {
+        this.code = code;
     }
 
+    /**
+     * 获取当前命令的命令码
+     *
+     * @return 当前命令的命令码
+     */
     public String code() {
-        return this.commandCode;
+        return this.code;
     }
 
+    /**
+     * 根据code查找命令，如果命令不存在，则返回 COMMAND_NOT_EXISTS 命令
+     *
+     * @param code 命令码
+     * @return 命令
+     */
     public Command of(String code) {
-        return Arrays.stream(Command.values()).filter(c -> c.code().equals(code)).findFirst().orElse(null);
+        return Arrays.stream(Command.values()).filter(c -> c.code().equals(code)).findFirst().orElse(COMMAND_NOT_EXISTS);
     }
 
-    public abstract Object exec(AbstractCommandService commandService, ParentMsgVO msgVO);
+    public Object exec(AbstractCommandService commandService, ParentMsgVO msgVO) {
+        return commandService.exec(this, msgVO);
+    }
 }
