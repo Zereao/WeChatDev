@@ -41,7 +41,7 @@ public class TextMessageDTO {
      */
     @XmlElement(name = "CreateTime")
     @XmlJavaTypeAdapter(JaxbDateAdapter.class)
-    private Date createTime = new Date();
+    private Date createTime;
     /**
      * 回复消息类型，text
      */

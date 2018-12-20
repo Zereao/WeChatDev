@@ -3,6 +3,7 @@ package com.zereao.wechat.commom.utils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import okhttp3.internal.annotations.EverythingIsNonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -16,6 +17,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public enum OkHttp3Utils {
+    /**
+     * 单元素枚举实体
+     */
     INSTANCE;
 
     /**
@@ -124,12 +128,14 @@ public enum OkHttp3Utils {
         Request request = new Request.Builder().url(url).post(requestBody).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
+            @EverythingIsNonNull
             public void onFailure(Call call, IOException e) {
                 String url = call.request().url().scheme();
                 log.warn("------> 某次请求 {} 失败了！, {}", url, e);
             }
 
             @Override
+            @EverythingIsNonNull
             public void onResponse(Call call, Response response) throws IOException {
                 String url = call.request().url().url().toString();
                 log.info("------> 某次请求 {} 成功！,返回结果为 {}", url, INSTANCE.parseResponse(response));

@@ -7,7 +7,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication(scanBasePackages = {"com.zereao.wechat"})
-@PropertySource(value = {"classpath:config/wechat.properties", "classpath:config/welcome_msg.properties"}, encoding = "utf-8")
+@PropertySource(value = {
+        "classpath:config/wechat.properties",
+        "classpath:config/constant-msg.properties",
+        "classpath:config/youdao.properties"}, encoding = "utf-8")
 public class WechatApplication {
     public static void main(String[] args) {
         SpringApplication.run(WechatApplication.class, args);

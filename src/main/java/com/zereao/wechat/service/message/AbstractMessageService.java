@@ -21,10 +21,10 @@ public abstract class AbstractMessageService extends AbstractMsgService {
     /**
      * 处理消息，如果需要自动被动回复，则将返回内容返回
      *
-     * @param parentVO 需要处理的 MessageVO 实体
+     * @param msgVO 需要处理的 MessageVO 实体
      * @return 返回消息(如果有)，否则应该返回 "success" 或者 ""(空字符串)
      */
-    public abstract Object handleMessage(ParentMsgVO parentVO);
+    public abstract Object handleMessage(ParentMsgVO msgVO);
 
     @Override
     public Object handleMsg(ParentMsgVO msg) {

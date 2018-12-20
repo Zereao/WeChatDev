@@ -49,8 +49,8 @@ public class WeChatController {
             msgService = messageFactory.getInstance(messageVO);
         }
         Object result = msgService.handleMsg(messageVO);
-        StringWriter stringBuilder = new StringWriter();
-        JAXB.marshal(result, stringBuilder);
-        return stringBuilder.toString();
+        StringWriter sw = new StringWriter();
+        JAXB.marshal(result, sw);
+        return sw.toString();
     }
 }

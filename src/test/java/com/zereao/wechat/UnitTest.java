@@ -9,8 +9,11 @@ import org.junit.Test;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,6 +22,43 @@ import java.util.stream.Stream;
  * @version 2018/12/10  20:04
  */
 public class UnitTest {
+    private static Pattern articleIdPattern = Pattern.compile("id=(.*?)&");
+
+    @Test
+    public void test10() throws IOException {
+        String share = "http://note.youdao.com/noteshare?id=3df33d89adae7e91dbdf697eb88d3075&sub=E889E1B585C84DF08D25D4B1CE654823";
+//        https://note.youdao.com/yws/public/note/3df33d89adae7e91dbdf697eb88d3075?editorType=0
+        String url = "https://note.youdao.com/yws/public/note/3df33d89adae7e91dbdf697eb88d3075?editorType=0";
+//        String result = OkHttp3Utils.INSTANCE.doGet(url);
+
+        Matcher matcher = articleIdPattern.matcher(share);
+        String a = matcher.find() ? matcher.group() : "";
+        System.out.println(a);
+    }
+
+    @Test
+    public void test09() {
+        String a = "";
+        System.out.println(a.startsWith("1"));
+    }
+
+    @Test
+    public void test8() {
+        String code = "1-23-dasa";
+        String result = code.replaceAll("-\\d+$", "-");
+        System.out.println(result);
+    }
+
+    @Test
+    public void test07() {
+        List<Integer> a = new ArrayList<>();
+        a.forEach(i -> {
+            int b = 1;
+            System.out.println(b);
+            System.out.println(i);
+        });
+    }
+
     @Test
     public void test06() {
         Integer a = Stream.of(1, 2, 3, 4, 5).filter(i -> i > 2).findFirst().orElse(null);
