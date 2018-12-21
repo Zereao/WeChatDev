@@ -86,7 +86,7 @@ public class ArticleCommandService extends AbstractCommandService {
                 // 将 文章ID信息放入 redis，5分钟内有效
                 Articles articles = articlesList.get(i - 1);
                 redisService.set(redisKey, articles.getId(), 5 * 60);
-                content.append("\n").append("1-1-").append(i).append("：").append(articles.getTitle());
+                content.append("\n").append("1-").append(i).append("：").append(articles.getTitle());
             }
         }
         return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
