@@ -38,7 +38,7 @@ public class HelpCommandService extends AbstractCommandService {
         try {
             JSONObject commandsJson = JSONObject.parseObject(resource.getInputStream(), Charset.forName("utf-8"), JSONObject.class);
             StringBuilder content = new StringBuilder(commandsJson.getString("title"));
-            commandsJson.getJSONObject("command").forEach((key, value) -> content.append("\n").append(key).append(":").append(value));
+            commandsJson.getJSONObject("command").forEach((key, value) -> content.append("\n").append(key).append("：").append(value));
             content.append("\n").append(commandsJson.getString("ps"));
             return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
                     .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();

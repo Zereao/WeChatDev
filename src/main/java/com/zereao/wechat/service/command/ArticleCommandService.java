@@ -83,15 +83,20 @@ public class ArticleCommandService extends AbstractCommandService {
      * @param msgVO 包含所需参数的消息体
      */
     public TextMessageVO getAllArticles(MessageVO msgVO) {
-        StringBuilder content = new StringBuilder("您可以回复文章标题前面的代码查看文章~\n");
         List<Articles> articlesList = articlesDAO.findAll();
-        for (int i = 1, size = articlesList.size(); i < size + 1; i++) {
-            // redis key 的格式， openid|index
-            String redisKey = msgVO.getFromUserName() + "|" + i;
-            // 将 文章ID信息放入 redis，5分钟内有效
-            Articles articles = articlesList.get(i - 1);
-            redisService.set(redisKey, articles.getId(), 5 * 60);
-            content.append("1-").append(i).append(":").append(articles.getTitle()).append("\n");
+        StringBuilder content;
+        if (articlesList.size() <= 0) {
+            content = new StringBuilder("当前还有文章~快去撩撩伦哥让他添加吧~");
+        } else {
+            content = new StringBuilder("您可以回复文章标题前面的代码查看文章~\n");
+            for (int i = 1, size = articlesList.size(); i < size + 1; i++) {
+                // redis key 的格式， openid|index
+                String redisKey = msgVO.getFromUserName() + "|" + i;
+                // 将 文章ID信息放入 redis，5分钟内有效
+                Articles articles = articlesList.get(i - 1);
+                redisService.set(redisKey, articles.getId(), 5 * 60);
+                content.append("1-").append(i).append(":").append(articles.getTitle()).append("\n");
+            }
         }
         return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();

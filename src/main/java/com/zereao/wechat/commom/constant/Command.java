@@ -3,6 +3,7 @@ package com.zereao.wechat.commom.constant;
 
 import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -63,7 +64,9 @@ public enum Command {
          * $ 匹配输入字符串的结束位置
          * 整个正则的意思是，在结束位置前，匹配一个 -数字 这个格式的数据一次或多次，这个数据后面必须是结束位置
          */
-        return Arrays.stream(Command.values()).filter(command -> command.code().startsWith(code.replaceAll("-\\d+$", "-"))).findFirst().orElse(COMMAND_NOT_EXISTS);
+        return Arrays.stream(Command.values()).filter(command ->
+                command.code().startsWith(code.replaceAll("-\\d+$", "-")) && code.startsWith(command.code().replace("*", "")))
+                .findFirst().orElse(COMMAND_NOT_EXISTS);
     }
 
     public Object exec(Map<String, AbstractCommandService> commandServiceMap, MessageVO msgVO) {
