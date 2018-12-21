@@ -40,15 +40,6 @@ public class ArticleCommandService extends AbstractCommandService {
     private String imgUrl;
     @Value("${wechat.from.openid}")
     private String fromUser;
-    @Value("${welcome.msg.title}")
-    private String title;
-    @Value("${welcome.msg.banner}")
-    private String bannerUrl;
-    @Value("${welcome.msg.description}")
-    private String description;
-    @Value("${welcome.msg.url}")
-    private String detail;
-
 
     @Autowired
     public ArticleCommandService(ArticlesDAO articlesDAO, RedisService redisService) {
@@ -95,7 +86,7 @@ public class ArticleCommandService extends AbstractCommandService {
                 // 将 文章ID信息放入 redis，5分钟内有效
                 Articles articles = articlesList.get(i - 1);
                 redisService.set(redisKey, articles.getId(), 5 * 60);
-                content.append("1-").append(i).append(":").append(articles.getTitle()).append("\n");
+                content.append("\n").append("1-1-").append(i).append("：").append(articles.getTitle());
             }
         }
         return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
@@ -119,18 +110,4 @@ public class ArticleCommandService extends AbstractCommandService {
                 .articleCount(1).createTime(new Date()).build();
     }
 
-    /**
-     * 获取首次登陆时的欢迎信息
-     *
-     * @param msgVO 包含所需参数的消息体
-     * @return 欢迎信息
-     */
-    public NewsMessageVO getWelcomeArticle(MessageVO msgVO) {
-        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder()
-                .title(title).picUrl(bannerUrl).description(description).url(detail).build();
-        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
-        return NewsMessageVO.builder().articleCount(1).articles(articles)
-                .toUserName(msgVO.getFromUserName()).msgType(MsgType.NEWS)
-                .fromUserName(fromUser).createTime(new Date()).build();
-    }
 }

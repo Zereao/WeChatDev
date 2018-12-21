@@ -13,17 +13,17 @@ import java.util.Map;
  */
 public enum Command {
     /**
+     * 获取欢迎信息
+     */
+    GET_WELCOME_ARTICLE("0"),
+    /**
      * 获取所有文章列表的命令
      */
     GET_ALL_ARTICLES("1"),
     /**
      * 获取某一条文章信息
      */
-    GET_ARTICLE("1-1-*"),
-    /**
-     * 获取欢迎信息
-     */
-    GET_WELCOME_ARTICLE("1-2"),
+    GET_ARTICLE("1-*"),
     /**
      * 获取某一条文章信息
      */
@@ -67,8 +67,7 @@ public enum Command {
          * $ 匹配输入字符串的结束位置
          * 整个正则的意思是，在结束位置前，匹配一个 -数字 这个格式的数据一次或多次，这个数据后面必须是结束位置
          */
-        return Arrays.stream(Command.values()).filter(command ->
-                command.code().startsWith(code.replaceAll("-\\d+$", "-")) && code.startsWith(command.code().replace("*", "")))
+        return Arrays.stream(Command.values()).filter(command -> command.code().startsWith(code.replaceAll("-\\d+$", "-")))
                 .findFirst().orElse(COMMAND_NOT_EXISTS);
     }
 
@@ -77,7 +76,9 @@ public enum Command {
     }
 
     public AbstractCommandService getBean(Map<String, AbstractCommandService> commandServiceMap) {
-        if (this.code.startsWith("1")) {
+        if (this.code.startsWith("0")) {
+            return commandServiceMap.get("helpCommandService");
+        } else if (this.code.startsWith("1")) {
             return commandServiceMap.get("articleCommandService");
         } else if (this.code.startsWith("root")) {
             return commandServiceMap.get("rootCommandService");

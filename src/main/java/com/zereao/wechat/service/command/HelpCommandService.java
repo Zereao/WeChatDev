@@ -2,6 +2,8 @@ package com.zereao.wechat.service.command;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.data.vo.NewsMessageVO;
 import com.zereao.wechat.data.vo.TextMessageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,30 @@ public class HelpCommandService extends AbstractCommandService {
     private String errorMsg;
     @Value("classpath:data/commands.json")
     private Resource resource;
+    @Value("${welcome.msg.title}")
+    private String title;
+    @Value("${welcome.msg.banner}")
+    private String bannerUrl;
+    @Value("${welcome.msg.description}")
+    private String description;
+    @Value("${welcome.msg.url}")
+    private String detail;
+
+
+    /**
+     * 获取首次登陆时的欢迎信息
+     *
+     * @param msgVO 包含所需参数的消息体
+     * @return 欢迎信息
+     */
+    public NewsMessageVO getWelcomeArticle(MessageVO msgVO) {
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder()
+                .title(title).picUrl(bannerUrl).description(description).url(detail).build();
+        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
+        return NewsMessageVO.builder().articleCount(1).articles(articles)
+                .toUserName(msgVO.getFromUserName()).msgType(MsgType.NEWS)
+                .fromUserName(fromUser).createTime(new Date()).build();
+    }
 
     /**
      * 获取帮助信息
