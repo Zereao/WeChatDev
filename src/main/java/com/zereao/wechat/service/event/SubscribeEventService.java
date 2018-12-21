@@ -3,7 +3,7 @@ package com.zereao.wechat.service.event;
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.data.bo.User;
 import com.zereao.wechat.data.vo.MessageVO;
-import com.zereao.wechat.service.message.ConstantMessageService;
+import com.zereao.wechat.service.command.ArticleCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ import java.util.Date;
 @Service
 public class SubscribeEventService extends AbstractEventService {
     private final UserDAO userDAO;
-    private final ConstantMessageService constantMessageService;
+    @Autowired
+    private ArticleCommandService articleCommandService;
 
 
     @Autowired
-    public SubscribeEventService(UserDAO userDAO, ConstantMessageService constantMessageService) {
+    public SubscribeEventService(UserDAO userDAO) {
         this.userDAO = userDAO;
-        this.constantMessageService = constantMessageService;
     }
 
     @Override
@@ -34,6 +34,6 @@ public class SubscribeEventService extends AbstractEventService {
         String fromUser = eventVO.getFromUserName();
         User user = User.builder().createTime(new Date()).deleteFlag(0).openid(fromUser).build();
         userDAO.save(user);
-        return constantMessageService.getWelcomeArticle(fromUser);
+        return articleCommandService.getWelcomeArticle(fromUser);
     }
 }
