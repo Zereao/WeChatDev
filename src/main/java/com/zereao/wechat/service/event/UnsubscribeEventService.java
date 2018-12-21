@@ -25,7 +25,7 @@ public class UnsubscribeEventService extends AbstractEventService {
     public Object handleEvent(ParentMsgVO eventVO) {
         // 订阅和取消订阅时，数据体一样，只是Event属性的值不一样 unsubscribe / subscribe
         String openId = eventVO.getFromUserName();
-        User user = userDAO.findUserByOpenid(openId);
+        User user = userDAO.findUserByOpenidAndDeleteFlag(openId, 0);
         user.setDeleteFlag(1);
         userDAO.save(user);
         return "SUCCESS";

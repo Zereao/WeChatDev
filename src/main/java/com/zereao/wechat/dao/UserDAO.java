@@ -13,8 +13,9 @@ public interface UserDAO extends JpaRepository<User, Integer> {
     /**
      * 根据 openId 查询唯一的用户
      *
-     * @param openId 用户的OpenID
+     * @param deleteFlag 用户的OpenID
+     * @param deleteFlag 删除标识
      * @return 查到的用户
      */
-    User findUserByOpenid(String openId);
+    User findUserByOpenidAndDeleteFlag(String openId, Integer deleteFlag);
 }
