@@ -36,9 +36,10 @@ public class ArticleCommandService extends AbstractCommandService {
 
     @Value("${youdao.getinfo.url}")
     private String infoBaseUrl;
-
     @Value("${article.img.baseurl}")
     private String imgUrl;
+    @Value("${wechat.from.openid}")
+    private String fromUser;
 
 
     @Autowired
@@ -64,7 +65,7 @@ public class ArticleCommandService extends AbstractCommandService {
         } catch (IOException e) {
             log.warn("-----> 获取有道云笔记信息失败！", e);
         }
-        return TextMessageDTO.builder().toUserName(msgVO.getFromUserName()).fromUserName(msgVO.getToUserName())
+        return TextMessageDTO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content).build();
     }
 
@@ -84,7 +85,7 @@ public class ArticleCommandService extends AbstractCommandService {
             redisService.set(redisKey, articles.getId(), 5 * 60);
             content.append("1-").append(i).append(":").append(articles.getTitle()).append("\n");
         }
-        return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(msgVO.getToUserName())
+        return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
     }
 
@@ -92,7 +93,6 @@ public class ArticleCommandService extends AbstractCommandService {
         String redisKey = msgVO.getFromUserName().concat("|").concat(msgVO.getContent().split("-")[1]);
         String articleId = String.valueOf(redisService.get(redisKey));
         Articles article = articlesDAO.findById(articleId).orElse(null);
-        String fromUser = msgVO.getToUserName();
         String toUser = msgVO.getFromUserName();
         if (article == null) {
             return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
