@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * @version 2018/12/20  13:41
  */
 @Repository
-public interface ArticlesDAO extends MongoRepository<Articles, Integer> {
+public interface ArticlesDAO extends MongoRepository<Articles, String> {
 
 }

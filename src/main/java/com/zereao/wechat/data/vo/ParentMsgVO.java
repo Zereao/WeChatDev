@@ -72,4 +72,8 @@ public class ParentMsgVO {
     private Double longitude;
     @XmlElement(name = "Precision")
     private Double precision;
+
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
+    }
 }

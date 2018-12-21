@@ -70,7 +70,7 @@ public enum Command {
         if (this.code.startsWith("1")) {
             return commandServiceMap.get("articleCommandService");
         } else {
-            return commandServiceMap.get("articleCommandService");
+            return commandServiceMap.get("abstractCommandService");
         }
     }
 }

@@ -5,10 +5,12 @@ import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.dao.ArticlesDAO;
 import com.zereao.wechat.data.bo.Articles;
+import com.zereao.wechat.data.dto.NewsMessageDTO;
 import com.zereao.wechat.data.dto.TextMessageDTO;
 import com.zereao.wechat.data.vo.ParentMsgVO;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,9 @@ public class ArticleCommandService extends AbstractCommandService {
 
     @Value("${youdao.getinfo.url}")
     private String infoBaseUrl;
+
+    @Value("${article.img.baseurl}")
+    private String imgUrl;
 
 
     @Autowired
@@ -72,17 +77,32 @@ public class ArticleCommandService extends AbstractCommandService {
         StringBuilder content = new StringBuilder("您可以回复文章标题前面的代码(例如：1-2)查看文章内容~\n");
         List<Articles> articlesList = articlesDAO.findAll();
         for (int i = 1, size = articlesList.size(); i < size + 1; i++) {
-            redisService.set();
+            // redis key 的格式， openid|index
+            String redisKey = msgVO.getFromUserName() + "|" + i;
+            // 将 文章ID信息放入 redis，5分钟内有效
+            Articles articles = articlesList.get(i - 1);
+            redisService.set(redisKey, articles.getId(), 5 * 60);
+            content.append("1-").append(i).append(":").append(articles.getTitle()).append("\n");
         }
-
-
-                .
-        forEach(articles -> content.append("1-").append(articles.getId()).append(":").append(articles.getTitle()).append("\n"));
         return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(msgVO.getToUserName())
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
     }
 
-    public void getArticle(ParentMsgVO msgVO) {
-
+    public Object getArticle(ParentMsgVO msgVO) {
+        String redisKey = msgVO.getFromUserName().concat("|").concat(msgVO.getContent().split("-")[1]);
+        String articleId = String.valueOf(redisService.get(redisKey));
+        Articles article = articlesDAO.findById(articleId).orElse(null);
+        String fromUser = msgVO.getToUserName();
+        String toUser = msgVO.getFromUserName();
+        if (article == null) {
+            return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                    .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~").build();
+        }
+        String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
+        NewsMessageDTO.Articles.Item item = NewsMessageDTO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
+                .url(article.getUrl()).description(article.getContent().substring(0, 27).concat("....\n\n查看全文")).build();
+        NewsMessageDTO.Articles articles = NewsMessageDTO.Articles.builder().item(item).build();
+        return NewsMessageDTO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
+                .articleCount(1).createTime(new Date()).build();
     }
 }
