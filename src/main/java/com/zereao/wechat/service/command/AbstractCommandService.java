@@ -31,6 +31,7 @@ public abstract class AbstractCommandService {
      * @return 返回值
      */
     public Object exec(Command command, ParentMsgVO msgVO) {
+        log.info("------->  准备执行 command = {}", command);
         /* 方法名，必须和命令的名称 格式转换后相同 */
         String methodName = StringUtils.uncapitalize(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, command.name()));
         Class<?> curClass = this.getClass();
