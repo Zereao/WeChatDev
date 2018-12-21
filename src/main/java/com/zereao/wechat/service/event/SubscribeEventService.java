@@ -34,6 +34,6 @@ public class SubscribeEventService extends AbstractEventService {
         String fromUser = eventVO.getFromUserName();
         User user = User.builder().createTime(new Date()).deleteFlag(0).openid(fromUser).build();
         userDAO.save(user);
-        return articleCommandService.getWelcomeArticle(fromUser);
+        return articleCommandService.getWelcomeArticle(eventVO);
     }
 }

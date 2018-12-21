@@ -122,15 +122,15 @@ public class ArticleCommandService extends AbstractCommandService {
     /**
      * 获取首次登陆时的欢迎信息
      *
-     * @param toUserName 接收人的opnenId
+     * @param msgVO 包含所需参数的消息体
      * @return 欢迎信息
      */
-    public NewsMessageVO getWelcomeArticle(String toUserName) {
+    public NewsMessageVO getWelcomeArticle(MessageVO msgVO) {
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder()
                 .title(title).picUrl(bannerUrl).description(description).url(detail).build();
         NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
         return NewsMessageVO.builder().articleCount(1).articles(articles)
-                .toUserName(toUserName).msgType(MsgType.NEWS)
+                .toUserName(msgVO.getFromUserName()).msgType(MsgType.NEWS)
                 .fromUserName(fromUser).createTime(new Date()).build();
     }
 }
