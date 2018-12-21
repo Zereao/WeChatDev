@@ -1,6 +1,6 @@
 package com.zereao.wechat.service.test;
 
-import com.zereao.wechat.data.vo.test.ApiTestVO;
+import com.zereao.wechat.data.vo.ApiTestVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +21,6 @@ public class ApiTestService {
 
     public String checkParams(ApiTestVO apiTestVo) {
         String resultStr = Stream.of(token, apiTestVo.getTimestamp(), apiTestVo.getNonce()).sorted().collect(Collectors.joining());
-        String encryptedStr = DigestUtils.sha1Hex(resultStr);
-        if (encryptedStr.equals(apiTestVo.getSignature())) {
-            return apiTestVo.getEchostr();
-        }
-        return "FAILED";
+        return DigestUtils.sha1Hex(resultStr).equals(apiTestVo.getSignature()) ? apiTestVo.getEchostr() : "FALIED";
     }
 }

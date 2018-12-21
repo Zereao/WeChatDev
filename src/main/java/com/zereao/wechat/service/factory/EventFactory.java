@@ -1,6 +1,6 @@
 package com.zereao.wechat.service.factory;
 
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.event.AbstractEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class EventFactory {
     @Autowired
     public EventFactory(Map<String, AbstractEventService> eventServiceMap) {this.eventServiceMap = eventServiceMap;}
 
-    public AbstractMsgService getInstance(ParentMsgVO parentVo) {
-        return eventServiceMap.get(parentVo.getEvent().value().concat("EventService"));
+    public AbstractMsgService getInstance(MessageVO msgVO) {
+        return eventServiceMap.get(msgVO.getEvent().value().concat("EventService"));
     }
 }

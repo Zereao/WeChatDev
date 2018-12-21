@@ -1,4 +1,4 @@
-package com.zereao.wechat.data.dto;
+package com.zereao.wechat.data.vo;
 
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
@@ -27,7 +27,7 @@ import java.util.Date;
 @AllArgsConstructor
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ImageMessageDTO {
+public class VideoMessageVO {
     /**
      * 接收方帐号（收到的OpenID）
      */
@@ -45,26 +45,36 @@ public class ImageMessageDTO {
     @XmlJavaTypeAdapter(JaxbDateAdapter.class)
     private Date createTime;
     /**
-     * 回复消息类型，image
+     * 回复消息类型，video
      */
     @XmlElement(name = "MsgType")
     @XmlJavaTypeAdapter(JaxbMsgTypeAdapter.class)
     private MsgType msgType;
 
-    @XmlElement(name = "Image")
-    private Image image;
+    @XmlElement(name = "Video")
+    private Video video;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @XmlRootElement(name = "Image")
+    @XmlRootElement(name = "Video")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Image {
+    public static class Video {
         /**
          * 通过素材管理中的接口上传多媒体文件，得到的id。
          */
         @XmlElement(name = "MediaId")
         private String mediaId;
+        /**
+         * 视频消息的标题，非 必需
+         */
+        @XmlElement(name = "Title")
+        private String title;
+        /**
+         * 视频消息的描述，非 必需
+         */
+        @XmlElement(name = "Description")
+        private String description;
     }
 }

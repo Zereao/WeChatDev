@@ -2,7 +2,7 @@ package com.zereao.wechat.service.event;
 
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.data.bo.User;
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.message.ConstantMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class SubscribeEventService extends AbstractEventService {
     }
 
     @Override
-    public Object handleEvent(ParentMsgVO eventVO) {
+    public Object handleEvent(MessageVO eventVO) {
         String fromUser = eventVO.getFromUserName();
         User user = User.builder().createTime(new Date()).deleteFlag(0).openid(fromUser).build();
         userDAO.save(user);

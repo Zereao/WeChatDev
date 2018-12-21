@@ -1,7 +1,7 @@
 package com.zereao.wechat.commom.constant;
 
 
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 
 import java.util.Arrays;
@@ -19,7 +19,11 @@ public enum Command {
     /**
      * 获取某一条文章信息
      */
-    GET_ARTICLE("1-*"),
+    GET_ARTICLE("1-1-*"),
+    /**
+     * 获取欢迎信息
+     */
+    GET_WELCOME_ARTICLE("1-2"),
     /**
      * 获取某一条文章信息
      */
@@ -62,7 +66,7 @@ public enum Command {
         return Arrays.stream(Command.values()).filter(command -> command.code().startsWith(code.replaceAll("-\\d+$", "-"))).findFirst().orElse(COMMAND_NOT_EXISTS);
     }
 
-    public Object exec(Map<String, AbstractCommandService> commandServiceMap, ParentMsgVO msgVO) {
+    public Object exec(Map<String, AbstractCommandService> commandServiceMap, MessageVO msgVO) {
         return this.getBean(commandServiceMap).exec(this, msgVO);
     }
 
@@ -70,7 +74,7 @@ public enum Command {
         if (this.code.startsWith("1")) {
             return commandServiceMap.get("articleCommandService");
         } else {
-            return commandServiceMap.get("abstractCommandService");
+            return commandServiceMap.get("helpCommandService");
         }
     }
 }

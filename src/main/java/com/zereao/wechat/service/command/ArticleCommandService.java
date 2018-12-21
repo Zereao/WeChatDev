@@ -5,9 +5,9 @@ import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.dao.ArticlesDAO;
 import com.zereao.wechat.data.bo.Articles;
-import com.zereao.wechat.data.dto.NewsMessageDTO;
-import com.zereao.wechat.data.dto.TextMessageDTO;
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.NewsMessageVO;
+import com.zereao.wechat.data.vo.TextMessageVO;
+import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -40,6 +40,14 @@ public class ArticleCommandService extends AbstractCommandService {
     private String imgUrl;
     @Value("${wechat.from.openid}")
     private String fromUser;
+    @Value("${welcome.msg.title}")
+    private String title;
+    @Value("${welcome.msg.banner}")
+    private String bannerUrl;
+    @Value("${welcome.msg.description}")
+    private String description;
+    @Value("${welcome.msg.url}")
+    private String detail;
 
 
     @Autowired
@@ -48,7 +56,7 @@ public class ArticleCommandService extends AbstractCommandService {
         this.redisService = redisService;
     }
 
-    public TextMessageDTO addArticle(ParentMsgVO msgVO) {
+    public TextMessageVO addArticle(MessageVO msgVO) {
         String url = msgVO.getContent().split("\\[wdxpn]|\\[WDXPN]")[1];
         Matcher matcher = articleIdPattern.matcher(url);
         String articleId = matcher.find() ? matcher.group(1) : "";
@@ -65,7 +73,7 @@ public class ArticleCommandService extends AbstractCommandService {
         } catch (IOException e) {
             log.warn("-----> 获取有道云笔记信息失败！", e);
         }
-        return TextMessageDTO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
+        return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content).build();
     }
 
@@ -74,8 +82,8 @@ public class ArticleCommandService extends AbstractCommandService {
      *
      * @param msgVO 包含所需参数的消息体
      */
-    public TextMessageDTO getAllArticles(ParentMsgVO msgVO) {
-        StringBuilder content = new StringBuilder("您可以回复文章标题前面的代码(例如：1-2)查看文章内容~\n");
+    public TextMessageVO getAllArticles(MessageVO msgVO) {
+        StringBuilder content = new StringBuilder("您可以回复文章标题前面的代码查看文章~\n");
         List<Articles> articlesList = articlesDAO.findAll();
         for (int i = 1, size = articlesList.size(); i < size + 1; i++) {
             // redis key 的格式， openid|index
@@ -85,24 +93,39 @@ public class ArticleCommandService extends AbstractCommandService {
             redisService.set(redisKey, articles.getId(), 5 * 60);
             content.append("1-").append(i).append(":").append(articles.getTitle()).append("\n");
         }
-        return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
     }
 
-    public Object getArticle(ParentMsgVO msgVO) {
+    public Object getArticle(MessageVO msgVO) {
         String redisKey = msgVO.getFromUserName().concat("|").concat(msgVO.getContent().split("-")[1]);
         String articleId = String.valueOf(redisService.get(redisKey));
         Articles article = articlesDAO.findById(articleId).orElse(null);
         String toUser = msgVO.getFromUserName();
         if (article == null) {
-            return TextMessageDTO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
                     .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~").build();
         }
         String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
-        NewsMessageDTO.Articles.Item item = NewsMessageDTO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
                 .url(article.getUrl()).description(article.getContent().substring(0, 27).concat("....\n\n查看全文")).build();
-        NewsMessageDTO.Articles articles = NewsMessageDTO.Articles.builder().item(item).build();
-        return NewsMessageDTO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
+        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
+        return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
                 .articleCount(1).createTime(new Date()).build();
+    }
+
+    /**
+     * 获取首次登陆时的欢迎信息
+     *
+     * @param toUserName 接收人的opnenId
+     * @return 欢迎信息
+     */
+    public NewsMessageVO getWelcomeArticle(String toUserName) {
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder()
+                .title(title).picUrl(bannerUrl).description(description).url(detail).build();
+        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
+        return NewsMessageVO.builder().articleCount(1).articles(articles)
+                .toUserName(toUserName).msgType(MsgType.NEWS)
+                .fromUserName(fromUser).createTime(new Date()).build();
     }
 }

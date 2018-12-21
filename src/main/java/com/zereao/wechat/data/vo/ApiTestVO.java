@@ -1,4 +1,4 @@
-package com.zereao.wechat.data.vo.test;
+package com.zereao.wechat.data.vo;
 
 import lombok.Data;
 

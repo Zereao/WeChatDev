@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.commom.constant.Command;
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class TextMessageService extends AbstractMessageService {
     public TextMessageService(Map<String, AbstractCommandService> commandServiceMap) {this.commandServiceMap = commandServiceMap;}
 
     @Override
-    public Object handleMessage(ParentMsgVO msgVO) {
+    public Object handleMessage(MessageVO msgVO) {
         /* 胖砸，想不到吧！*/
         return Command.of(msgVO.getContent().split("\\[wdxpn]|\\[WDXPN]")[0]).exec(commandServiceMap, msgVO);
     }

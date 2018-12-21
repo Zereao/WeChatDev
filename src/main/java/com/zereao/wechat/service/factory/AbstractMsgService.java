@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.factory;
 
 
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.MessageVO;
 
 /**
  * 抽象顶级消息处理类
@@ -13,8 +13,8 @@ public abstract class AbstractMsgService {
     /**
      * 处理消息，并按需做出返回
      *
-     * @param parentMsgVO 包含所有的参数的 MsgVO
+     * @param msgVO 包含所有的参数的 MsgVO
      * @return 返回体
      */
-    public abstract Object handleMsg(ParentMsgVO parentMsgVO);
+    public abstract Object handleMsg(MessageVO msgVO);
 }

@@ -23,7 +23,7 @@ import java.util.Date;
 @Data
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ParentMsgVO {
+public class MessageVO {
     // 接收到的消息
     @XmlElement(name = "ToUserName")
     private String toUserName;

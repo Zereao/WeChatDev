@@ -2,7 +2,7 @@ package com.zereao.wechat.service.event;
 
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.data.bo.User;
-import com.zereao.wechat.data.vo.ParentMsgVO;
+import com.zereao.wechat.data.vo.MessageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class UnsubscribeEventService extends AbstractEventService {
     public UnsubscribeEventService(UserDAO userDAO) {this.userDAO = userDAO;}
 
     @Override
-    public Object handleEvent(ParentMsgVO eventVO) {
+    public Object handleEvent(MessageVO eventVO) {
         // 订阅和取消订阅时，数据体一样，只是Event属性的值不一样 unsubscribe / subscribe
         String openId = eventVO.getFromUserName();
         User user = userDAO.findUserByOpenidAndDeleteFlag(openId, 0);

@@ -1,4 +1,4 @@
-package com.zereao.wechat.data.dto;
+package com.zereao.wechat.data.vo;
 
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
@@ -27,7 +27,7 @@ import java.util.Date;
 @AllArgsConstructor
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NewsMessageDTO {
+public class NewsMessageVO {
     /**
      * 接收方帐号（收到的OpenID）
      */
