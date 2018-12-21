@@ -20,13 +20,12 @@ import java.util.Date;
 @Service
 public class SubscribeEventService extends AbstractEventService {
     private final UserDAO userDAO;
-    @Autowired
-    private ArticleCommandService articleCommandService;
-
+    private final ArticleCommandService articleCommandService;
 
     @Autowired
-    public SubscribeEventService(UserDAO userDAO) {
+    public SubscribeEventService(UserDAO userDAO, ArticleCommandService articleCommandService) {
         this.userDAO = userDAO;
+        this.articleCommandService = articleCommandService;
     }
 
     @Override

@@ -30,6 +30,10 @@ public enum Command {
      */
     ADD_ARTICLE("1-root.add"),
     /**
+     * 显示Root命令
+     */
+    SHOW_ROOT_COMMANDS("root-1"),
+    /**
      * 用户发送的消息非定义了的命令
      */
     COMMAND_NOT_EXISTS("");
@@ -76,6 +80,8 @@ public enum Command {
     public AbstractCommandService getBean(Map<String, AbstractCommandService> commandServiceMap) {
         if (this.code.startsWith("1")) {
             return commandServiceMap.get("articleCommandService");
+        } else if (this.code.startsWith("root")) {
+            return commandServiceMap.get("rootCommandService");
         } else {
             return commandServiceMap.get("helpCommandService");
         }
