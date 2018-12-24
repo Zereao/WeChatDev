@@ -10,7 +10,6 @@ import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.data.vo.NewsMessageVO;
 import com.zereao.wechat.data.vo.TextMessageVO;
 import com.zereao.wechat.service.redis.RedisService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.jsoup.Jsoup;
@@ -72,7 +71,9 @@ public class ArticleCommandService extends AbstractCommandService {
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
     }
 
-    @Data
+    /**
+     * 使用多线程处理文章的添加以及入库
+     */
     private class AddArticleThread implements Callable<String> {
         private String url;
         private CountDownLatch latch;
