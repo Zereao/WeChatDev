@@ -142,7 +142,7 @@ public class ArticleCommandService extends AbstractCommandService {
         }
         String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
-                .url(article.getUrl()).description(article.getContent().substring(0, 27).concat("....\n\n查看全文")).build();
+                .url(article.getUrl()).description(article.getContent().substring(0, 67).concat("....\n\n查看全文")).build();
         NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
         return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
                 .articleCount(1).createTime(new Date()).build();
