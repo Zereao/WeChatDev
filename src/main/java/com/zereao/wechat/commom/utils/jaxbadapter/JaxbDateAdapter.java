@@ -12,11 +12,11 @@ import java.util.Date;
 public class JaxbDateAdapter extends XmlAdapter<Long, Date> {
     @Override
     public Date unmarshal(Long v) throws Exception {
-        return new Date(v);
+        return new Date(v * 1000L);
     }
 
     @Override
     public Long marshal(Date v) throws Exception {
-        return v.getTime();
+        return v.getTime() / 1000;
     }
 }

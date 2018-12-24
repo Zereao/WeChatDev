@@ -2,7 +2,7 @@ package com.zereao.wechat.service.redis;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -10,22 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author Zereao
  * @version 2018/11/05  17:16
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings("WeakerAccess")
 @Slf4j
 @Service
 public class RedisService {
 
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     @Autowired
-    public RedisService(RedisTemplate<Object, Object> redisTemplate) {this.redisTemplate = redisTemplate;}
-
+    public RedisService(StringRedisTemplate redisTemplate) {this.redisTemplate = redisTemplate;}
     // ================================String=================================
 
     /**
@@ -34,7 +32,7 @@ public class RedisService {
      * @param key   键
      * @param value 值
      */
-    public void set(String key, Object value) {
+    public void set(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
     }
 
@@ -45,7 +43,7 @@ public class RedisService {
      * @param value 值
      * @param time  时间(秒) time要大于0 如果time小于等于0 将设置无限期
      */
-    public void set(String key, Object value, long time) {
+    public void set(String key, String value, long time) {
         if (time > 0) {
             redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
         } else {
@@ -59,7 +57,7 @@ public class RedisService {
      * @param key 键
      * @return 值
      */
-    public Object get(String key) {
+    public String get(String key) {
         return key == null ? null : redisTemplate.opsForValue().get(key);
     }
 
@@ -70,6 +68,7 @@ public class RedisService {
      * @param time 时间(秒)
      * @return true / false
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Boolean expire(String key, long time) {
         if (time > 0) {
             return redisTemplate.expire(key, time, TimeUnit.SECONDS);
@@ -104,8 +103,7 @@ public class RedisService {
      * @return 已删除的密钥数。在管道/事务中使用时为空。
      */
     public Long del(String... keys) {
-        List<Object> keyList = Arrays.stream(keys).map(key -> (Object) key).collect(Collectors.toList());
-        return redisTemplate.delete(keyList);
+        return redisTemplate.delete(Arrays.asList(keys));
     }
 
 
@@ -264,7 +262,7 @@ public class RedisService {
      * @param key 键
      * @return
      */
-    public Set<Object> sGet(String key) {
+    public Set<String> sGet(String key) {
         return redisTemplate.opsForSet().members(key);
     }
 
@@ -286,7 +284,7 @@ public class RedisService {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    public Long sSet(String key, Object... values) {
+    public Long sSet(String key, String... values) {
         return redisTemplate.opsForSet().add(key, values);
     }
 
@@ -298,7 +296,7 @@ public class RedisService {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    public Long sSetAndTime(String key, long time, Object... values) {
+    public Long sSetAndTime(String key, long time, String... values) {
         Long count = redisTemplate.opsForSet().add(key, values);
         if (time > 0) {
             expire(key, time);
@@ -336,7 +334,7 @@ public class RedisService {
      * @param end   结束 0 到 -1代表所有值
      * @return
      */
-    public List<Object> lGet(String key, long start, long end) {
+    public List<String> lGet(String key, long start, long end) {
         return redisTemplate.opsForList().range(key, start, end);
     }
 
@@ -357,7 +355,7 @@ public class RedisService {
      * @param index 索引 index>=0时， 0 表头，1 第二个元素，依次类推；index<0时，-1，表尾，-2倒数第二个元素，依次类推
      * @return
      */
-    public Object lGetIndex(String key, long index) {
+    public String lGetIndex(String key, long index) {
         return redisTemplate.opsForList().index(key, index);
     }
 
@@ -368,7 +366,7 @@ public class RedisService {
      * @param value 值
      * @return
      */
-    public Long lSet(String key, Object value) {
+    public Long lSet(String key, String value) {
         return redisTemplate.opsForList().rightPush(key, value);
     }
 
@@ -380,10 +378,10 @@ public class RedisService {
      * @param time  时间(秒)
      * @return
      */
-    public Long lSet(String key, Object value, long time) {
+    public Long lSet(String key, String value, long time) {
         Long count = redisTemplate.opsForList().rightPush(key, value);
         if (time > 0) {
-            expire(key, time);
+            this.expire(key, time);
         }
         return count;
     }
@@ -395,7 +393,7 @@ public class RedisService {
      * @param value 值
      * @return
      */
-    public Long lSet(String key, List<Object> value) {
+    public Long lSet(String key, List<String> value) {
         return redisTemplate.opsForList().rightPushAll(key, value);
     }
 
@@ -407,10 +405,10 @@ public class RedisService {
      * @param time  时间(秒)
      * @return
      */
-    public Long lSet(String key, List<Object> value, long time) {
+    public Long lSet(String key, List<String> value, long time) {
         Long count = redisTemplate.opsForList().rightPushAll(key, value);
         if (time > 0) {
-            expire(key, time);
+            this.expire(key, time);
         }
         return count;
     }
@@ -423,7 +421,7 @@ public class RedisService {
      * @param value 值
      * @return
      */
-    public void lUpdateIndex(String key, long index, Object value) {
+    public void lUpdateIndex(String key, long index, String value) {
         redisTemplate.opsForList().set(key, index, value);
     }
 
@@ -435,7 +433,7 @@ public class RedisService {
      * @param value 值
      * @return 移除的个数
      */
-    public Long lRemove(String key, long count, Object value) {
+    public Long lRemove(String key, long count, String value) {
         return redisTemplate.opsForList().remove(key, count, value);
     }
 
