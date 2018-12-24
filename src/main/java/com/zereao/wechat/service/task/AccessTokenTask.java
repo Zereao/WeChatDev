@@ -39,7 +39,7 @@ public class AccessTokenTask {
         if (resultJson.containsKey("access_token")) {
             log.info(resultJson.toString());
             // 将拿到的access_token放入redis，并设置两小时过期
-            redisService.set(GLOBAL_TOKEN, resultJson.get("access_token"), 2 * 60 * 60);
+            redisService.set(GLOBAL_TOKEN, resultJson.getString("access_token"), 2 * 60 * 60);
         } else {
             log.info("-----> 获取 access_token 出现异常：{}", result);
         }

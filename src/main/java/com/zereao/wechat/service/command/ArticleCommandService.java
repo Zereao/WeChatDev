@@ -3,12 +3,14 @@ package com.zereao.wechat.service.command;
 import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
+import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import com.zereao.wechat.dao.ArticlesDAO;
 import com.zereao.wechat.data.bo.Articles;
+import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.data.vo.NewsMessageVO;
 import com.zereao.wechat.data.vo.TextMessageVO;
-import com.zereao.wechat.data.vo.MessageVO;
 import com.zereao.wechat.service.redis.RedisService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.jsoup.Jsoup;
@@ -19,6 +21,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,24 +53,56 @@ public class ArticleCommandService extends AbstractCommandService {
     }
 
     public TextMessageVO addArticle(MessageVO msgVO) {
-        String url = msgVO.getContent().split("\\[wdxpn]|\\[WDXPN]")[1];
-        Matcher matcher = articleIdPattern.matcher(url);
-        String articleId = matcher.find() ? matcher.group(1) : "";
-        String content = "文章添加失败！";
+        String[] urls = msgVO.getContent().replaceAll("1-root\\.add\\[wdxpn]|1-root\\.add\\[WDXPN]", "").split("\\[wdxpn]|\\[WDXPN]");
+        CountDownLatch latch = new CountDownLatch(urls.length);
+        StringBuilder content;
         try {
-            String result = OkHttp3Utils.INSTANCE.doGet(infoBaseUrl.replace("{}", articleId));
-            JSONObject response = JSONObject.parseObject(result);
-            String title = response.getString("tl");
-            String text = Jsoup.parse(response.getString("content")).text();
-            Articles article = Articles.builder().createTime(new Date()).title(title)
-                    .content(text).url(url).articleId(articleId).build();
-            articlesDAO.save(article);
-            content = "文章【" + title + "】添加成功！";
-        } catch (IOException e) {
-            log.warn("-----> 获取有道云笔记信息失败！", e);
+            content = new StringBuilder("文章");
+            for (String url : urls) {
+                String title = ThreadPoolUtils.submit(new AddArticleThread(url, latch));
+                content.append("【").append(title).append("】、");
+            }
+            latch.await();
+            content.append("添加成功！").deleteCharAt(content.lastIndexOf("、"));
+        } catch (ExecutionException | InterruptedException e) {
+            content = new StringBuilder("文章添加失败！");
+            log.error("-----> 获取有道云笔记信息失败！", e);
         }
         return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(content).build();
+                .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
+    }
+
+    @Data
+    private class AddArticleThread implements Callable<String> {
+        private String url;
+        private CountDownLatch latch;
+
+        AddArticleThread(String url, CountDownLatch latch) {
+            this.url = url;
+            this.latch = latch;
+        }
+
+        @Override
+        public String call() throws Exception {
+            Matcher matcher = articleIdPattern.matcher(url);
+            String articleId = matcher.find() ? matcher.group(1) : "";
+            try {
+                String result = OkHttp3Utils.INSTANCE.doGet(infoBaseUrl.replace("{}", articleId));
+                JSONObject response = JSONObject.parseObject(result);
+                String title = response.getString("tl");
+                String text = Jsoup.parse(response.getString("content")).text();
+                Articles article = Articles.builder().createTime(new Date()).title(title)
+                        .content(text).url(url).articleId(articleId).build();
+                articlesDAO.save(article);
+                return title;
+            } catch (IOException e) {
+                log.warn("-----> 获取有道云笔记信息失败！url = {}", url);
+                log.error("URL请求错误!", e);
+            } finally {
+                latch.countDown();
+            }
+            return null;
+        }
     }
 
     /**
@@ -109,5 +146,6 @@ public class ArticleCommandService extends AbstractCommandService {
         return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
                 .articleCount(1).createTime(new Date()).build();
     }
+
 
 }

@@ -23,4 +23,9 @@ public class ThreadPoolUtils {
     public static void execute(Runnable task) {
         executor.execute(task);
     }
+
+    public static <T> T submit(Callable<T> task) throws ExecutionException, InterruptedException {
+        Future<T> future = executor.submit(task);
+        return future.get();
+    }
 }
