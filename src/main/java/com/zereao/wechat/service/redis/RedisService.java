@@ -24,6 +24,19 @@ public class RedisService {
 
     @Autowired
     public RedisService(StringRedisTemplate redisTemplate) {this.redisTemplate = redisTemplate;}
+
+    /**
+     * 查找所有符合给定 pattern 的 key
+     * Redis 官方不推荐使用该方法！因为会造成Redis 锁住，很耗性能
+     *
+     * @param regex 正则字符串
+     * @return 符合条件的Key Set
+     */
+    @Deprecated
+    public Set<String> keys(String regex) {
+        return redisTemplate.keys(regex);
+    }
+
     // ================================String=================================
 
     /**
@@ -132,7 +145,7 @@ public class RedisService {
         if (delta < 0) {
             throw new RuntimeException("递减因子必须大于0");
         }
-        return redisTemplate.opsForValue().increment(key, -delta);
+        return redisTemplate.opsForValue().decrement(key, delta);
     }
 
     // ================================Map=================================
@@ -164,7 +177,7 @@ public class RedisService {
      * @param key 键
      * @param map 对应多个键值
      */
-    public void hmset(String key, Map<String, Object> map) {
+    public void hmset(String key, Map<String, String> map) {
         redisTemplate.opsForHash().putAll(key, map);
     }
 
@@ -175,7 +188,7 @@ public class RedisService {
      * @param map  对应多个键值
      * @param time 时间(秒)
      */
-    public void hmset(String key, Map<String, Object> map, long time) {
+    public void hmset(String key, Map<String, String> map, long time) {
         redisTemplate.opsForHash().putAll(key, map);
         if (time > 0) {
             this.expire(key, time);
@@ -189,7 +202,7 @@ public class RedisService {
      * @param item  项
      * @param value 值
      */
-    public void hset(String key, String item, Object value) {
+    public void hset(String key, String item, String value) {
         redisTemplate.opsForHash().put(key, item, value);
     }
 
@@ -200,9 +213,8 @@ public class RedisService {
      * @param item  项
      * @param value 值
      * @param time  时间(秒) 注意:如果已存在的hash表有时间,这里将会替换原有的时间
-     * @return true 成功 false失败
      */
-    public void hset(String key, String item, Object value, long time) {
+    public void hset(String key, String item, String value, long time) {
         redisTemplate.opsForHash().put(key, item, value);
         if (time > 0) {
             expire(key, time);
