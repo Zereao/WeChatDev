@@ -12,11 +12,11 @@ import java.util.concurrent.*;
  */
 public class ThreadPoolUtils {
     private static ExecutorService executor = new ThreadPoolExecutor(
-            5,
             10,
+            20,
             60L,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(1024),
+            new ArrayBlockingQueue<>(10),
             new ThreadFactoryBuilder().setNameFormat("wechat-pool-%d").build(),
             new ThreadPoolExecutor.AbortPolicy());
 
