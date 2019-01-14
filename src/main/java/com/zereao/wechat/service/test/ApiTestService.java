@@ -1,6 +1,6 @@
 package com.zereao.wechat.service.test;
 
-import com.zereao.wechat.data.vo.ApiTestVO;
+import com.zereao.wechat.pojo.vo.ApiTestVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;

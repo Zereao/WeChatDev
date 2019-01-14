@@ -1,4 +1,4 @@
-package com.zereao.wechat.data.vo;
+package com.zereao.wechat.pojo.vo;
 
 import com.zereao.wechat.commom.constant.Event;
 import com.zereao.wechat.commom.constant.MsgType;

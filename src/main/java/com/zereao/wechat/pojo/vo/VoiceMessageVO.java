@@ -1,4 +1,4 @@
-package com.zereao.wechat.data.vo;
+package com.zereao.wechat.pojo.vo;
 
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 
 /**
+ * 回复文本消息
+ *
  * @author Zereao
  * @version 2018/12/13  18:44
  */
@@ -25,7 +27,7 @@ import java.util.Date;
 @AllArgsConstructor
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TextMessageVO {
+public class VoiceMessageVO {
     /**
      * 接收方帐号（收到的OpenID）
      */
@@ -37,7 +39,7 @@ public class TextMessageVO {
     @XmlElement(name = "FromUserName")
     private String fromUserName;
     /**
-     * 消息创建时间，默认为当前时间
+     * 消息创建时间 （整型）
      */
     @XmlElement(name = "CreateTime")
     @XmlJavaTypeAdapter(JaxbDateAdapter.class)
@@ -48,9 +50,21 @@ public class TextMessageVO {
     @XmlElement(name = "MsgType")
     @XmlJavaTypeAdapter(JaxbMsgTypeAdapter.class)
     private MsgType msgType;
-    /**
-     * 通过素材管理中的接口上传多媒体文件，得到的id。
-     */
-    @XmlElement(name = "Content")
-    private String content;
+
+    @XmlElement(name = "Voice")
+    private Voice voice;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @XmlRootElement(name = "Voice")
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Voice {
+        /**
+         * 通过素材管理中的接口上传多媒体文件，得到的id。
+         */
+        @XmlElement(name = "MediaId")
+        private String mediaId;
+    }
 }

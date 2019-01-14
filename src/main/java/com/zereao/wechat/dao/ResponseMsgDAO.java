@@ -1,6 +1,6 @@
 package com.zereao.wechat.dao;
 
-import com.zereao.wechat.data.bo.ResponseMsg;
+import com.zereao.wechat.pojo.po.ResponseMsg;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

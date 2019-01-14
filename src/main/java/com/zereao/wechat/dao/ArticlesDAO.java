@@ -1,6 +1,6 @@
 package com.zereao.wechat.dao;
 
-import com.zereao.wechat.data.bo.Articles;
+import com.zereao.wechat.pojo.po.Articles;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

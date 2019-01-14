@@ -2,9 +2,9 @@ package com.zereao.wechat.service.command;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.data.vo.MessageVO;
-import com.zereao.wechat.data.vo.NewsMessageVO;
-import com.zereao.wechat.data.vo.TextMessageVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.NewsMessageVO;
+import com.zereao.wechat.pojo.vo.TextMessageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;

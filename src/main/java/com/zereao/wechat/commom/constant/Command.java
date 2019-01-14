@@ -1,7 +1,7 @@
 package com.zereao.wechat.commom.constant;
 
 
-import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 
 import java.util.Arrays;

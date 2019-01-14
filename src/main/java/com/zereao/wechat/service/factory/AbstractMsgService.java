@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.factory;
 
 
-import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
 
 /**
  * 抽象顶级消息处理类

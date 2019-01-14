@@ -1,6 +1,6 @@
 package com.zereao.wechat.dao;
 
-import com.zereao.wechat.data.bo.User;
+import com.zereao.wechat.pojo.po.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

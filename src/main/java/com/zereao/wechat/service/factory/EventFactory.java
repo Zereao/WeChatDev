@@ -1,6 +1,6 @@
 package com.zereao.wechat.service.factory;
 
-import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.event.AbstractEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

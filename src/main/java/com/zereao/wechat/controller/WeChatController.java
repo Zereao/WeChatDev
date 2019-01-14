@@ -1,8 +1,8 @@
 package com.zereao.wechat.controller;
 
 import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.data.vo.MessageVO;
-import com.zereao.wechat.data.vo.ApiTestVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.ApiTestVO;
 import com.zereao.wechat.service.command.HelpCommandService;
 import com.zereao.wechat.service.factory.AbstractMsgService;
 import com.zereao.wechat.service.factory.EventFactory;

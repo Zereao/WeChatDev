@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.commom.constant.Command;
-import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,7 @@ package com.zereao.wechat.service.command;
 
 import com.google.common.base.CaseFormat;
 import com.zereao.wechat.commom.constant.Command;
-import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

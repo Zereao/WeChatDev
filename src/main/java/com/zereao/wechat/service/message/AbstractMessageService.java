@@ -1,8 +1,8 @@
 package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.dao.MessageDAO;
-import com.zereao.wechat.data.bo.Message;
-import com.zereao.wechat.data.vo.MessageVO;
+import com.zereao.wechat.pojo.po.Message;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.factory.AbstractMsgService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

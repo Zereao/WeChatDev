@@ -1,9 +1,8 @@
 package com.zereao.wechat.service.event;
 
 import com.zereao.wechat.dao.UserDAO;
-import com.zereao.wechat.data.bo.User;
-import com.zereao.wechat.data.vo.MessageVO;
-import com.zereao.wechat.service.command.ArticleCommandService;
+import com.zereao.wechat.pojo.po.User;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.HelpCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
