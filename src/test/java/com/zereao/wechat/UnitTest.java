@@ -8,6 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +27,24 @@ import java.util.stream.Stream;
  * @version 2018/12/10  20:04
  */
 public class UnitTest {
+
+    @Test
+    public void test() {
+        String packageName = "com.zereao.wechat";
+        Package pkg = Package.getPackage(packageName);
+        Annotation[] annotations = pkg.getAnnotations();
+        for (Annotation annotation : annotations) {
+            System.out.println(annotation.toString());
+        }
+
+    }
+
+    @Test
+    public void test14() {
+        String a = "/a//gv///c/////d////f";
+        System.out.println(a.replaceAll("//+", "/"));
+    }
+
     @Test
     public void test13() {
         StringBuilder sb = new StringBuilder("亲爱的、张安、三、萨达瓦打我、反而、");

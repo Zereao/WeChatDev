@@ -1,20 +1,27 @@
 package com.zereao.wechat.commom.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @author Darion Mograine H
  * @version 2019/01/14  11:54
  */
-@Target(ElementType.METHOD)
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Command {
+    /**
+     * 命令名称
+     */
     String name() default "";
 
-    String[] value() default {};
+    /**
+     * 菜单映射
+     */
+    String mapping();
 
-    String[] path() default {};
+    /**
+     * 菜单等级，一级菜单/二级菜单  1/2
+     */
+    int level() default 0;
 }

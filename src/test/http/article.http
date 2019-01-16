@@ -1,0 +1,13 @@
+POST http://localhost:8080/xlczj/wechat
+Content-Type: application/xml
+
+<xml>
+    <ToUserName>10010</ToUserName>
+    <FromUserName>10086</FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>text</MsgType>
+    <Content>1</Content>
+    <MsgId>1234567890123456</MsgId>
+</xml>
+
+###

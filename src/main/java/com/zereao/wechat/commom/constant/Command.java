@@ -11,6 +11,7 @@ import java.util.Map;
  * @author Zereao
  * @version 2018/12/19  20:07
  */
+@Deprecated
 public enum Command {
     /**
      * 获取欢迎信息

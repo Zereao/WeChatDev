@@ -1,6 +1,7 @@
 package com.zereao.wechat.service.command;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Service
+@Command(mapping = "1")
 public class ArticleCommandService extends AbstractCommandService {
     private final ArticlesDAO articlesDAO;
     private final RedisService redisService;
@@ -56,6 +58,7 @@ public class ArticleCommandService extends AbstractCommandService {
         this.redisService = redisService;
     }
 
+    @Command(name = "新增文章", mapping = "1")
     public TextMessageVO addArticle(MessageVO msgVO) {
         String[] urls = msgVO.getContent().replaceAll("1-root\\.add\\[wdxpn]|1-root\\.add\\[WDXPN]", "").split("\\[wdxpn]|\\[WDXPN]");
         CountDownLatch latch = new CountDownLatch(urls.length);

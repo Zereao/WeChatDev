@@ -1,6 +1,7 @@
 package com.zereao.wechat.service.command;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
@@ -27,8 +28,6 @@ public class HelpCommandService extends AbstractCommandService {
     private String fromUser;
     @Value("${help.error.msg}")
     private String errorMsg;
-    @Value("classpath:data/commands.json")
-    private Resource resource;
     @Value("${welcome.msg.title}")
     private String title;
     @Value("${welcome.msg.banner}")
@@ -61,17 +60,10 @@ public class HelpCommandService extends AbstractCommandService {
      * @return 帮助信息
      */
     public TextMessageVO getHelp(String toUserName) {
-        try {
-            JSONObject commandsJson = JSONObject.parseObject(resource.getInputStream(), Charset.forName("utf-8"), JSONObject.class);
-            StringBuilder content = new StringBuilder(commandsJson.getString("title"));
-            commandsJson.getJSONObject("command").forEach((key, value) -> content.append("\n").append(key).append("：").append(value));
-            content.append("\n").append(commandsJson.getString("ps"));
-            return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
-                    .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
-        } catch (IOException e) {
-            log.error("读取commands.json 文件失败！", e);
-        }
-        return this.getErrorMsg(toUserName);
+        StringBuilder content = new StringBuilder("Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~\n");
+        CommandsHolder.list(0).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
+                .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
     }
 
     public TextMessageVO getErrorMsg(String toUserName) {

@@ -1,5 +1,6 @@
 package com.zereao.wechat.service.message;
 
+import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.commom.constant.Command;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
@@ -25,7 +26,8 @@ public class TextMessageService extends AbstractMessageService {
 
     @Override
     public Object handleMessage(MessageVO msgVO) {
-        /* 胖砸，想不到吧！*/
-        return Command.of(msgVO.getContent().split("\\[wdxpn]|\\[WDXPN]")[0]).exec(commandServiceMap, msgVO);
+//        CommandsHolder.get
+        String openid = msgVO.getFromUserName();
+        return null;
     }
 }

@@ -1,7 +1,0 @@
-{
-  "command": {
-    "1-root.add[wdxpn]{url}": "添加文章",
-    "root-1": "获取Root菜单"
-  },
-  "ps": "PS：命令分隔符使用 [wdxpn] 或者 [WDXPN]"
-}

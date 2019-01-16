@@ -1,12 +1,9 @@
 package com.zereao.wechat.controller;
 
-import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.ApiTestVO;
+import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.HelpCommandService;
-import com.zereao.wechat.service.factory.AbstractMsgService;
-import com.zereao.wechat.service.factory.EventFactory;
-import com.zereao.wechat.service.factory.MessageFactory;
+import com.zereao.wechat.service.factory.MsgFactory;
 import com.zereao.wechat.service.test.ApiTestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +23,14 @@ import java.io.StringWriter;
 public class WeChatController {
 
     private final ApiTestService apiTestService;
-    private final MessageFactory messageFactory;
-    private final EventFactory eventFactory;
+    private final MsgFactory msgFactory;
     private final HelpCommandService helpCommandService;
 
     @Autowired
-    public WeChatController(ApiTestService apiTestService, MessageFactory messageFactory, EventFactory eventFactory, HelpCommandService helpCommandService) {
+    public WeChatController(ApiTestService apiTestService, HelpCommandService helpCommandService, MsgFactory msgFactory) {
         this.apiTestService = apiTestService;
-        this.messageFactory = messageFactory;
-        this.eventFactory = eventFactory;
         this.helpCommandService = helpCommandService;
+        this.msgFactory = msgFactory;
     }
 
     @GetMapping(value = "wechat")
@@ -45,11 +40,9 @@ public class WeChatController {
 
     @PostMapping(value = "wechat")
     public String parseMsg(@RequestBody MessageVO msgVO) {
-        AbstractMsgService msgService = MsgType.EVENT.equals(msgVO.getMsgType()) ?
-                eventFactory.getInstance(msgVO) : messageFactory.getInstance(msgVO);
         Object result;
         try {
-            result = msgService.handleMsg(msgVO);
+            result = msgFactory.getInstance(msgVO).handleMsg(msgVO);
         } catch (Exception e) {
             result = helpCommandService.getErrorMsg(msgVO.getFromUserName());
         }
