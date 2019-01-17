@@ -16,12 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @version 2018/12/10  17:26
  */
 @Slf4j
-public enum OkHttp3Utils {
-    /**
-     * 单元素枚举实体
-     */
-    INSTANCE;
-
+public class OkHttp3Utils {
     /**
      * ContentType 内部枚举
      */
@@ -46,22 +41,30 @@ public enum OkHttp3Utils {
         }
     }
 
-    private OkHttpClient client;
+    private enum Instance {
+        /**
+         * 单元素枚举实体
+         */
+        INSTANCE;
 
-    OkHttp3Utils() {
-        client = new OkHttpClient.Builder()
-                // 设置连接超时
-                .callTimeout(5, TimeUnit.SECONDS)
-                // 设置读超时
-                .readTimeout(5, TimeUnit.SECONDS)
-                // 设置写超时
-                .writeTimeout(5, TimeUnit.SECONDS)
-                // 是否自动重连
-                .retryOnConnectionFailure(true)
-                // 设置连接池
-                .connectionPool(new ConnectionPool(100, 30, TimeUnit.MINUTES))
-                .build();
+        private OkHttpClient client;
+
+        Instance() {
+            client = new OkHttpClient.Builder()
+                    // 设置连接超时
+                    .callTimeout(5, TimeUnit.SECONDS)
+                    // 设置读超时
+                    .readTimeout(5, TimeUnit.SECONDS)
+                    // 设置写超时
+                    .writeTimeout(5, TimeUnit.SECONDS)
+                    // 是否自动重连
+                    .retryOnConnectionFailure(true)
+                    // 设置连接池
+                    .connectionPool(new ConnectionPool(100, 30, TimeUnit.MINUTES))
+                    .build();
+        }
     }
+
 
     /**
      * 获取单例的OkHttpClient实例，方便自定义方法
@@ -69,7 +72,7 @@ public enum OkHttp3Utils {
      * @return 单例的OkHttpClient实例
      */
     public static OkHttpClient getClient() {
-        return INSTANCE.client;
+        return Instance.INSTANCE.client;
     }
 
     /**
@@ -79,10 +82,11 @@ public enum OkHttp3Utils {
      * @return 请求结果
      * @throws IOException IOException
      */
-    public String doGet(String url) throws IOException {
+    public static String doGet(String url) throws IOException {
         log.info("========================= 准备发起GET请求：{} =========================", url);
         Request request = new Request.Builder().url(url).build();
-        return this.sendRequest(request);
+        ResponseBody body = sendRequest(request);
+        return body == null ? null : body.string();
     }
 
     /**
@@ -92,13 +96,11 @@ public enum OkHttp3Utils {
      * @param json 请求参数，可以传JSONObjct or Map
      * @return 请求结果
      */
-    public String doPost(String url, Map<String, Object> json) throws IOException {
-        log.info("========================= 准备发起POST-FORM请求：{} =========================", url);
+    public static String doPost(String url, Map<String, Object> json) throws IOException {
+        log.info("========================= 准备发起POST-FORM同步请求：{} =========================", url);
         FormBody.Builder formEncodingBuilder = new FormBody.Builder(Charset.forName("UTF-8"));
         json.forEach((key, value) -> formEncodingBuilder.add(key, String.valueOf(value)));
-        RequestBody formBody = formEncodingBuilder.build();
-        Request request = new Request.Builder().url(url).post(formBody).build();
-        return this.sendRequest(request);
+        return post(url, formEncodingBuilder.build());
     }
 
     /**
@@ -109,11 +111,23 @@ public enum OkHttp3Utils {
      * @return 请求结果
      * @throws IOException IOException
      */
-    public String doPostSync(String url, JSONObject json) throws IOException {
+    public static String doPost(String url, JSONObject json) throws IOException {
         log.info("========================= 准备POST-JSON同步请求：{} =========================", url);
         RequestBody requestBody = RequestBody.create(ContentType.CONTENT_TYPE_JSON_UTF8.getType(), json.toString());
-        Request request = new Request.Builder().url(url).post(requestBody).build();
-        return this.sendRequest(request);
+        return post(url, requestBody);
+    }
+
+    /**
+     * 剥离出的发送post请求的公共方法
+     *
+     * @param url  URL
+     * @param body requestBody
+     * @return String or null
+     */
+    private static String post(String url, RequestBody body) throws IOException {
+        Request request = new Request.Builder().url(url).post(body).build();
+        ResponseBody resp = sendRequest(request);
+        return resp == null ? null : resp.string();
     }
 
     /**
@@ -122,11 +136,11 @@ public enum OkHttp3Utils {
      * @param url  请求Url链接
      * @param json JSON 对象
      */
-    public void doPostAsync(String url, JSONObject json) {
+    public static void doPostAsync(String url, JSONObject json) {
         log.info("========================= 准备POST-JSON异步请求：{} =========================", url);
         RequestBody requestBody = RequestBody.create(ContentType.CONTENT_TYPE_JSON_UTF8.getType(), json.toString());
         Request request = new Request.Builder().url(url).post(requestBody).build();
-        client.newCall(request).enqueue(new Callback() {
+        Instance.INSTANCE.client.newCall(request).enqueue(new Callback() {
             @Override
             @EverythingIsNonNull
             public void onFailure(Call call, IOException e) {
@@ -138,7 +152,7 @@ public enum OkHttp3Utils {
             @EverythingIsNonNull
             public void onResponse(Call call, Response response) throws IOException {
                 String url = call.request().url().url().toString();
-                log.info("------> 某次请求 {} 成功！,返回结果为 {}", url, INSTANCE.parseResponse(response));
+                log.info("------> 某次请求 {} 成功！,返回结果为 {}", url, parseResponse(response).string());
             }
         });
         log.info("------> 请求发送成功！");
@@ -152,9 +166,9 @@ public enum OkHttp3Utils {
      * @return 解析出的结果字符串
      * @throws IOException IOException
      */
-    private String sendRequest(Request request) throws IOException {
-        Response response = client.newCall(request).execute();
-        return this.parseResponse(response);
+    private static ResponseBody sendRequest(Request request) throws IOException {
+        Response response = Instance.INSTANCE.client.newCall(request).execute();
+        return parseResponse(response);
     }
 
     /**
@@ -164,18 +178,16 @@ public enum OkHttp3Utils {
      * @return 解析出的结果字符串
      * @throws IOException IOException
      */
-    private String parseResponse(Response response) throws IOException {
+    private static ResponseBody parseResponse(Response response) throws IOException {
         if (!response.isSuccessful()) {
             throw new IOException("------> 出现未知错误！response = " + response);
         }
         ResponseBody body = response.body();
-        String result = "";
         if (body == null) {
-            log.info("------> 请求返回的数据体body为null！");
+            log.info("========================= 请求完毕！请求返回的数据体body为null！ =========================");
         } else {
-            result = body.string();
+            log.info("========================= 请求完毕！result = {} =========================", body.string());
         }
-        log.info("========================= 请求完毕！result = {} =========================", StringUtils.isBlank(result) ? "null" : result);
-        return result;
+        return body;
     }
 }

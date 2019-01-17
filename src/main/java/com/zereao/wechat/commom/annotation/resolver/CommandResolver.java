@@ -27,22 +27,16 @@ public class CommandResolver implements Runnable {
 
     @Override
     public void run() {
-        SpringBootApplication annotation = (SpringBootApplication) cls.getAnnotation(SpringBootApplication.class);
+        SpringBootApplication annotation = (SpringBootApplication) this.cls.getAnnotation(SpringBootApplication.class);
         String[] scanBasePackages = annotation.scanBasePackages();
         for (String basePackage : scanBasePackages) {
             PackageUtils.getClass(basePackage, true).forEach(clz -> {
-                if (clz.isAnnotationPresent(Command.class)) {
-                    Command classCommand = (Command) clz.getAnnotation(Command.class);
-                    String classCommandName = classCommand.mapping();
-                    CommandsHolder.add(classCommandName, classCommand.name(), classCommand.level(), clz);
-                    log.debug("Put the command into the CommandHolder ------->  command = {}, name = {}", classCommandName, clz.getName());
-                    for (Method method : clz.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(Command.class)) {
-                            Command command = method.getAnnotation(Command.class);
-                            String childCommand = classCommandName.concat("-").concat(command.mapping());
-                            CommandsHolder.add(childCommand, command.name(), command.level(), null);
-                            log.debug("Put the command into the CommandHolder ------->  command = {}, name = {}", childCommand, method.getName());
-                        }
+                for (Method method : clz.getDeclaredMethods()) {
+                    if (method.isAnnotationPresent(Command.class)) {
+                        Command command = method.getAnnotation(Command.class);
+                        CommandsHolder.add(command, clz, method);
+                        log.debug("Put the command into the CommandHolder ------->  mapping = {}, name = {}, menu = {}, class = {}, method = {}",
+                                command.mapping(), command.name(), command.menu(), clz.getName(), method.getName());
                     }
                 }
             });

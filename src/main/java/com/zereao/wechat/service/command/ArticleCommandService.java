@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Service
-@Command(mapping = "1")
 public class ArticleCommandService extends AbstractCommandService {
     private final ArticlesDAO articlesDAO;
     private final RedisService redisService;
@@ -100,7 +99,7 @@ public class ArticleCommandService extends AbstractCommandService {
             Matcher matcher = articleIdPattern.matcher(url);
             String articleId = matcher.find() ? matcher.group(1) : "";
             try {
-                String result = OkHttp3Utils.INSTANCE.doGet(infoBaseUrl.replace("{}", articleId));
+                String result = OkHttp3Utils.doGet(infoBaseUrl.replace("{}", articleId));
                 JSONObject response = JSONObject.parseObject(result);
                 String title = response.getString("tl");
                 String text = Jsoup.parse(response.getString("content")).text();

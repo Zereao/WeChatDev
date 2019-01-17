@@ -8,20 +8,20 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.METHOD})
 public @interface Command {
-    /**
-     * 命令名称
-     */
-    String name() default "";
-
     /**
      * 菜单映射
      */
     String mapping();
 
     /**
-     * 菜单等级，一级菜单/二级菜单  1/2
+     * 命令名称
      */
-    int level() default 0;
+    String name() default "";
+
+    /**
+     * 是否 一级菜单
+     */
+    boolean menu() default false;
 }
