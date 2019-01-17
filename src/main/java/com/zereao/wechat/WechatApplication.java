@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableScheduling
+//@EnableScheduling
 @SpringBootApplication(scanBasePackages = {"com.zereao.wechat"})
 @PropertySource(value = {
         "classpath:config/wechat.properties",

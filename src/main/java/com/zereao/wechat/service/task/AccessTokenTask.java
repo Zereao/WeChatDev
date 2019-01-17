@@ -34,7 +34,7 @@ public class AccessTokenTask {
 //    @Scheduled(fixedRate = 5400000)
     public void accessTokenTask() throws IOException {
         log.info("------>  准备获取Token");
-        String result = OkHttp3Utils.INSTANCE.doGet(accessTokenUrl);
+        String result = OkHttp3Utils.doGet(accessTokenUrl);
         JSONObject resultJson = JSONObject.parseObject(result);
         if (resultJson.containsKey("access_token")) {
             log.info(resultJson.toString());

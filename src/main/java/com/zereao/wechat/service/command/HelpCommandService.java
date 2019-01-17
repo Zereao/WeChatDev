@@ -1,6 +1,6 @@
 package com.zereao.wechat.service.command;
 
-import com.alibaba.fastjson.JSONObject;
+import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
@@ -8,11 +8,8 @@ import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Date;
 
 /**
@@ -61,7 +58,7 @@ public class HelpCommandService extends AbstractCommandService {
      */
     public TextMessageVO getHelp(String toUserName) {
         StringBuilder content = new StringBuilder("Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~\n");
-        CommandsHolder.list(0).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        CommandsHolder.list(Command.MenuType.USER).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
         return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
     }

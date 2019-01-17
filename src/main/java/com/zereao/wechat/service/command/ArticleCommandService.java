@@ -57,7 +57,7 @@ public class ArticleCommandService extends AbstractCommandService {
         this.redisService = redisService;
     }
 
-    @Command(name = "新增文章", mapping = "1")
+    @Command(name = "新增文章", mapping = "r-1", menu = Command.MenuType.ROOT)
     public TextMessageVO addArticle(MessageVO msgVO) {
         String[] urls = msgVO.getContent().replaceAll("1-root\\.add\\[wdxpn]|1-root\\.add\\[WDXPN]", "").split("\\[wdxpn]|\\[WDXPN]");
         CountDownLatch latch = new CountDownLatch(urls.length);
@@ -122,6 +122,7 @@ public class ArticleCommandService extends AbstractCommandService {
      *
      * @param msgVO 包含所需参数的消息体
      */
+    @Command(mapping = "1", name = "获取文章列表", menu = Command.MenuType.USER)
     public TextMessageVO getAllArticles(MessageVO msgVO) {
         List<Articles> articlesList = articlesDAO.findAll();
         StringBuilder content;

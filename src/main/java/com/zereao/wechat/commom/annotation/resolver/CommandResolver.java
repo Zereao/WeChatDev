@@ -36,7 +36,7 @@ public class CommandResolver implements Runnable {
                         Command command = method.getAnnotation(Command.class);
                         CommandsHolder.add(command, clz, method);
                         log.debug("Put the command into the CommandHolder ------->  mapping = {}, name = {}, menu = {}, class = {}, method = {}",
-                                command.mapping(), command.name(), command.menu(), clz.getName(), method.getName());
+                                command.mapping(), command.name(), command.menu().name(), clz.getName(), method.getName());
                     }
                 }
             });

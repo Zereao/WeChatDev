@@ -1,5 +1,6 @@
 package com.zereao.wechat.commom.annotation.resolver;
 
+import com.zereao.wechat.commom.annotation.Command;
 import lombok.Builder;
 
 import java.lang.reflect.Method;
@@ -55,9 +56,9 @@ public class CommandsHolder {
      *
      * @return result LinkedHashMap
      */
-    public static Map<String, String> list() {
+    public static Map<String, String> list(com.zereao.wechat.commom.annotation.Command.MenuType menu) {
         Map<String, String> resultMap = new LinkedHashMap<>();
-        holder.entrySet().stream().filter(entry -> entry.getValue().menu).sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
+        holder.entrySet().stream().filter(entry -> entry.getValue().menu.equals(menu)).sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
         return resultMap;
     }
 
@@ -80,7 +81,7 @@ public class CommandsHolder {
     @Builder
     public static class Command {
         private String mapping, name;
-        private boolean menu;
+        private com.zereao.wechat.commom.annotation.Command.MenuType menu;
         private Class cls;
         private Method method;
     }
