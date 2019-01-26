@@ -45,7 +45,7 @@ public class MsgFactory {
      * @param msgType 消息类型
      * @return ? extends AbstractMessageService
      */
-    protected AbstractMessageService getMessageService(MsgType msgType) {
+    private AbstractMessageService getMessageService(MsgType msgType) {
         return messageServiceMap.get((msgType.equals(MsgType.SHORT_VIDEO) ? MsgType.VIDEO : msgType).value() + "MessageService");
     }
 
@@ -55,7 +55,7 @@ public class MsgFactory {
      * @param event 事件类型
      * @return ? extends AbstractEventService
      */
-    protected AbstractEventService getEventService(Event event) {
+    private AbstractEventService getEventService(Event event) {
         return eventServiceMap.get((event.equals(Event.UNSUBSCRIBE) ? Event.SUBSCRIBE : event).value() + "EventService");
     }
 }

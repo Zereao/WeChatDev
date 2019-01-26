@@ -1,12 +1,9 @@
 package com.zereao.wechat.service.command;
 
-import com.google.common.base.CaseFormat;
-import com.zereao.wechat.commom.constant.Command;
+import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,26 +20,19 @@ public abstract class AbstractCommandService {
     /**
      * 执行命令
      *
-     * @param command 命令
-     * @param msgVO   封装了参数的消息实体
+     * @param msgVO 封装了参数的消息实体
      * @return 返回值
      */
-    public Object exec(Command command, MessageVO msgVO) {
-        log.info("------->  准备执行命令 command = {}", command);
-        /* 方法名，必须和命令的名称 格式转换后相同 */
-        String methodName = StringUtils.uncapitalize(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, command.name()));
+    public Object exec(MessageVO msgVO, CommandsHolder.Command command) {
         Class<?> curClass = this.getClass();
-        String methodFullName = curClass.getName().concat(".").concat(methodName);
-        String toUserName = msgVO.getFromUserName();
+        String className = curClass.getName();
+        log.info("------->  {}准备执行命令 {}", className, command.toString());
         try {
-            Method targetMethod = curClass.getMethod(methodName, MessageVO.class);
-            return targetMethod.invoke(this, msgVO);
-        } catch (NoSuchMethodException e) {
-            log.warn("方法 {} 不存在，将返回帮助信息", methodFullName);
-            return helpCommandService.getHelp(toUserName);
+            Method method = command.method;
+            return method.invoke(this, msgVO);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("执行方法 {} 失败！\n{}", methodFullName, e);
-            return helpCommandService.getErrorMsg(toUserName);
+            log.error("执行方法 {} 失败！\n{}", command.method.getName(), e);
+            return helpCommandService.getErrorMsg(msgVO.getFromUserName());
         }
     }
 }

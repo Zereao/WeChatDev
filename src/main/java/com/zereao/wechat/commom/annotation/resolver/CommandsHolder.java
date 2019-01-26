@@ -1,13 +1,15 @@
 package com.zereao.wechat.commom.annotation.resolver;
 
-import com.zereao.wechat.commom.annotation.Command;
 import lombok.Builder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Darion Mograine H
@@ -23,7 +25,7 @@ public class CommandsHolder {
      */
     static void add(com.zereao.wechat.commom.annotation.Command command, Class cls, Method method) {
         String mapping = command.mapping();
-        holder.put(mapping, Command.builder().mapping(mapping).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
+        holder.put(mapping, Command.builder().mapping(mapping).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
     }
 
     /**
@@ -32,7 +34,7 @@ public class CommandsHolder {
      * @param mapping 命令映射
      * @return 命令
      */
-    public static Command getCommand(String mapping) {
+    public static Command get(String mapping) {
         return holder.get(mapping);
     }
 
@@ -50,7 +52,7 @@ public class CommandsHolder {
     }
 
     /**
-     * 获取所有 一级菜单命令，按照 命令映射(mapping) 排序
+     * 根据菜单类型获取所有 菜单命令，按照 命令映射(mapping) 排序
      * <p>
      * key = 命令名称，value = 命令映射mapping
      *
@@ -58,7 +60,10 @@ public class CommandsHolder {
      */
     public static Map<String, String> list(com.zereao.wechat.commom.annotation.Command.MenuType menu) {
         Map<String, String> resultMap = new LinkedHashMap<>();
-        holder.entrySet().stream().filter(entry -> entry.getValue().menu.equals(menu)).sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
+        holder.entrySet().stream().filter(entry -> {
+            return menu.equals(com.zereao.wechat.commom.annotation.Command.MenuType.ROOT) ||
+                    entry.getValue().menu.equals(menu);
+        }).sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
         return resultMap;
     }
 
@@ -67,22 +72,27 @@ public class CommandsHolder {
      */
     static String values() {
         StringBuilder sb = new StringBuilder("[ ClassHolder.size() = ").append(holder.size());
-        sb.append(", Content =");
-        holder.forEach((k, command) -> sb
-                .append(" {name=").append(command.name)
-                .append(", mapping=").append(command.mapping)
-                .append(", menu=").append(command.menu)
-                .append(", class=").append(command.cls == null ? null : command.cls.getName())
-                .append(", method=").append(command.method == null ? null : command.method.getName()).append("},"));
-        sb.append("]");
+        sb.append(", Content =[").append(holder).append("]");
         return sb.toString();
     }
 
     @Builder
     public static class Command {
-        private String mapping, name;
-        private com.zereao.wechat.commom.annotation.Command.MenuType menu;
-        private Class cls;
-        private Method method;
+        public String mapping, name, bean;
+        public com.zereao.wechat.commom.annotation.Command.MenuType menu;
+        public Class cls;
+        public Method method;
+
+        @Override
+        public String toString() {
+            return "Command{" +
+                    "mapping='" + mapping + '\'' +
+                    ", name='" + name + '\'' +
+                    ", bean='" + bean + '\'' +
+                    ", menu=" + menu.name() +
+                    ", cls=" + (cls == null ? null : StringUtils.uncapitalize(cls.getSimpleName())) +
+                    ", method=" + (method == null ? null : method.getName()) +
+                    "}";
+        }
     }
 }

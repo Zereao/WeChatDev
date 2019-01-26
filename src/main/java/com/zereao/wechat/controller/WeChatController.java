@@ -44,6 +44,7 @@ public class WeChatController {
         try {
             result = msgFactory.getInstance(msgVO).handleMsg(msgVO);
         } catch (Exception e) {
+            log.error("消息处理发生了错误！", e);
             result = helpCommandService.getErrorMsg(msgVO.getFromUserName());
         }
         StringWriter sw = new StringWriter();

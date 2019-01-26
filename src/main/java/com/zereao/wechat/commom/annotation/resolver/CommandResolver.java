@@ -4,6 +4,7 @@ import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.utils.PackageUtils;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.lang.reflect.Method;
@@ -35,8 +36,8 @@ public class CommandResolver implements Runnable {
                     if (method.isAnnotationPresent(Command.class)) {
                         Command command = method.getAnnotation(Command.class);
                         CommandsHolder.add(command, clz, method);
-                        log.debug("Put the command into the CommandHolder ------->  mapping = {}, name = {}, menu = {}, class = {}, method = {}",
-                                command.mapping(), command.name(), command.menu().name(), clz.getName(), method.getName());
+                        log.debug("Put the command into the CommandHolder ------->  mapping = {}, name = {}, menu = {},bean = {}, class = {}, method = {}",
+                                command.mapping(), command.name(), command.menu().name(), StringUtils.uncapitalize(clz.getSimpleName()), clz.getName(), method.getName());
                     }
                 }
             });

@@ -83,6 +83,56 @@ public class ArticleCommandService extends AbstractCommandService {
     }
 
     /**
+     * 获取所有的文章(标题)
+     *
+     * @param msgVO 包含所需参数的消息体
+     */
+    @Command(mapping = "1", name = "获取文章列表", menu = Command.MenuType.USER)
+    public TextMessageVO getAllArticles(MessageVO msgVO) {
+        List<Articles> articlesList = articlesDAO.findAll();
+        StringBuilder content;
+        if (articlesList.size() <= 0) {
+            content = new StringBuilder("当前还有文章~快去撩撩伦哥让他添加吧~");
+        } else {
+            content = new StringBuilder("您可以回复文章标题前面的代码查看文章~\n");
+            Map<String, String> articleMap = new HashMap<>();
+            for (int i = 0, size = articlesList.size(); i < size; i++) {
+                Articles articles = articlesList.get(i);
+                articleMap.put(String.valueOf(i), articles.getId());
+                content.append("\n").append("1-").append(i).append("：").append(articles.getTitle());
+            }
+            // redis key 的格式， openid|article-list，5分钟内有效
+            redisService.hmset(msgVO.getFromUserName() + redisKeySuffix, articleMap, 5 * 60);
+            content.append("\n\n为了缓解服务器压力，文章代码5分钟内有效哦~");
+        }
+        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
+    }
+
+    @Command(mapping = "1-(\\d.)", name = "获取文章", menu = Command.MenuType.USER)
+    public Object getArticle(MessageVO msgVO) {
+        String toUser = msgVO.getFromUserName();
+        Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
+        if (articleMap == null || articleMap.size() <= 0) {
+            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                    .toUserName(toUser).content("请先回复【1】获取文章列表哦~").build();
+        }
+        String articleId = String.valueOf(articleMap.get(msgVO.getContent().split("-")[1]));
+        Articles article;
+        if (StringUtils.isEmpty(articleId) || (article = articlesDAO.findById(articleId).orElse(null)) == null) {
+            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                    .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~").build();
+        }
+        String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
+                .url(article.getUrl()).description(article.getContent().substring(0, 27).concat("....\n\n查看全文")).build();
+        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
+        return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
+                .articleCount(1).createTime(new Date()).build();
+    }
+
+
+    /**
      * 使用多线程处理文章的添加以及入库
      */
     private class AddArticleThread implements Callable<String> {
@@ -116,54 +166,4 @@ public class ArticleCommandService extends AbstractCommandService {
             return null;
         }
     }
-
-    /**
-     * 获取所有的文章(标题)
-     *
-     * @param msgVO 包含所需参数的消息体
-     */
-    @Command(mapping = "1", name = "获取文章列表", menu = Command.MenuType.USER)
-    public TextMessageVO getAllArticles(MessageVO msgVO) {
-        List<Articles> articlesList = articlesDAO.findAll();
-        StringBuilder content;
-        if (articlesList.size() <= 0) {
-            content = new StringBuilder("当前还有文章~快去撩撩伦哥让他添加吧~");
-        } else {
-            content = new StringBuilder("您可以回复文章标题前面的代码查看文章~\n");
-            Map<String, String> articleMap = new HashMap<>();
-            for (int i = 0, size = articlesList.size(); i < size; i++) {
-                Articles articles = articlesList.get(i);
-                articleMap.put(String.valueOf(i), articles.getId());
-                content.append("\n").append("1-").append(i).append("：").append(articles.getTitle());
-            }
-            // redis key 的格式， openid|article-list，5分钟内有效
-            redisService.hmset(msgVO.getFromUserName() + redisKeySuffix, articleMap, 5 * 60);
-            content.append("\n\n为了缓解服务器压力，文章代码5分钟内有效哦~");
-        }
-        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
-    }
-
-    public Object getArticle(MessageVO msgVO) {
-        String toUser = msgVO.getFromUserName();
-        Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
-        if (articleMap == null || articleMap.size() <= 0) {
-            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(toUser).content("请先回复【1】获取文章列表哦~").build();
-        }
-        String articleId = String.valueOf(articleMap.get(msgVO.getContent().split("-")[1]));
-        Articles article;
-        if (StringUtils.isEmpty(articleId) || (article = articlesDAO.findById(articleId).orElse(null)) == null) {
-            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~").build();
-        }
-        String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
-        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
-                .url(article.getUrl()).description(article.getContent().substring(0, 27).concat("....\n\n查看全文")).build();
-        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
-        return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
-                .articleCount(1).createTime(new Date()).build();
-    }
-
-
 }

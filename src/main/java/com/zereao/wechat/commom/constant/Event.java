@@ -1,7 +1,6 @@
 package com.zereao.wechat.commom.constant;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * 事件类型枚举
