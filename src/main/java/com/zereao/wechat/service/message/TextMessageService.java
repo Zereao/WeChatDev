@@ -64,7 +64,7 @@ public class TextMessageService extends AbstractMessageService {
             } else {
                 command = CommandsHolder.get(content);
             }
-            if (Command.MenuType.USER.equals(command.menu) && StringUtils.equals(redisService.get(ROOT_ENABLED), "true")) {
+            if (Command.MenuType.ROOT.equals(command.menu) && !StringUtils.equals(redisService.get(ROOT_ENABLED), "true")) {
                 return helpMessageService.getPermissionErrorMsg(msgVO.getFromUserName());
             }
             return commandServiceMap.get(command.bean).exec(msgVO, command);
