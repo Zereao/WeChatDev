@@ -4,7 +4,6 @@ import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
-import com.zereao.wechat.service.command.HelpCommandService;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +23,7 @@ import java.util.Map;
 @Service
 public class TextMessageService extends AbstractMessageService {
     private final Map<String, AbstractCommandService> commandServiceMap;
-    private final HelpCommandService helpCommandService;
+    private final HelpMessageService helpMessageService;
     private final RedisService redisService;
 
     private final UserDAO userDAO;
@@ -38,9 +37,9 @@ public class TextMessageService extends AbstractMessageService {
 
 
     @Autowired
-    public TextMessageService(Map<String, AbstractCommandService> commandServiceMap, HelpCommandService helpCommandService, RedisService redisService, UserDAO userDAO) {
+    public TextMessageService(Map<String, AbstractCommandService> commandServiceMap, HelpMessageService helpMessageService, RedisService redisService, UserDAO userDAO) {
         this.commandServiceMap = commandServiceMap;
-        this.helpCommandService = helpCommandService;
+        this.helpMessageService = helpMessageService;
         this.redisService = redisService;
         this.userDAO = userDAO;
     }
@@ -71,7 +70,6 @@ public class TextMessageService extends AbstractMessageService {
 
     /**
      * 非常核心的方法，用来处理 命令组装与匹配
-     * 检查命令是否在Redis中存在
      *
      * @param msgVO 包含相关参数的MessageVO
      * @return null or TextMessageVO-Help Message
@@ -81,47 +79,59 @@ public class TextMessageService extends AbstractMessageService {
         String userCommand = msgVO.getContent();
         String redisKey = REDIS_KEY_PREFIX + openid;
         String existedCommand = redisService.get(redisKey);
-        if (COMMAND_ROOT.equalsIgnoreCase(userCommand)) {
-            // 开启root权限命令
-            redisService.set(ROOT_ENABLED, "true", 5 * 60);
-            return helpCommandService.getRootMsg(openid);
-        } else if (COMMAND_FIRST_PAGE.equals(userCommand)) {
+
+        switch (userCommand) {
+            // 开启ROOT权限命令
+            case COMMAND_ROOT:
+                redisService.set(ROOT_ENABLED, "true", 5 * 60);
+                redisService.del(redisKey);
+                return helpMessageService.getRootMsg(openid);
             // 返回首页命令
-            redisService.del(redisKey);
-        } else if (COMMAND_PRE_PAGE.equals(userCommand)) {
+            case COMMAND_FIRST_PAGE:
+                redisService.del(redisKey);
+                return helpMessageService.getHelp(openid);
             // 返回上一页 命令
-            if (StringUtils.isNotBlank(existedCommand)) {
-                existedCommand = existedCommand.substring(0, existedCommand.lastIndexOf("-"));
-            }
-        }
-        String targetCommand = null;
-        boolean updateRedis = true;
-        if (StringUtils.isBlank(existedCommand)) {
-            if (CommandsHolder.contains(userCommand)) {
-                targetCommand = userCommand;
-            }
-        } else {
-            String newCommand = existedCommand + "-" + userCommand;
-            if (CommandsHolder.contains(newCommand)) {
-                targetCommand = newCommand;
-            } else {
-                newCommand = existedCommand + "-" + "*";
-                if (CommandsHolder.contains(newCommand)) {
-                    updateRedis = false;
-                    targetCommand = newCommand + userCommand;
+            case COMMAND_PRE_PAGE:
+                if (StringUtils.isNotBlank(existedCommand) && existedCommand.contains("-")) {
+                    existedCommand = existedCommand.substring(0, existedCommand.lastIndexOf("-"));
+                    redisService.set(redisKey, existedCommand, 5 * 60);
+                    msgVO.setContent(existedCommand);
+                } else {
+                    redisService.del(redisKey);
+                    return helpMessageService.getHelp(openid);
                 }
-            }
-        }
-        if (targetCommand == null) {
-            // 命令不存在时，刷新 菜单树
-            redisService.del(redisKey);
-            return helpCommandService.getHelp(openid);
-        } else {
-            msgVO.setContent(targetCommand);
-            if (updateRedis) {
-                redisService.set(redisKey, targetCommand, 5 * 60);
-            }
-            return null;
+                return null;
+            // 常规命令
+            default:
+                String targetCommand = null;
+                boolean updateRedis = true;
+                if (StringUtils.isBlank(existedCommand)) {
+                    if (CommandsHolder.contains(userCommand)) {
+                        targetCommand = userCommand;
+                    }
+                } else {
+                    String newCommand = existedCommand + "-" + userCommand;
+                    if (CommandsHolder.contains(newCommand)) {
+                        targetCommand = newCommand;
+                    } else {
+                        newCommand = existedCommand + "-" + "*";
+                        if (CommandsHolder.contains(newCommand)) {
+                            updateRedis = false;
+                            targetCommand = newCommand + userCommand;
+                        }
+                    }
+                }
+                if (targetCommand == null) {
+                    // 命令不存在时，刷新 菜单树
+                    redisService.del(redisKey);
+                    return helpMessageService.getHelp(openid);
+                } else {
+                    msgVO.setContent(targetCommand);
+                    if (updateRedis) {
+                        redisService.set(redisKey, targetCommand, 5 * 60);
+                    }
+                    return null;
+                }
         }
     }
 }

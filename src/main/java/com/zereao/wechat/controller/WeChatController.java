@@ -2,7 +2,7 @@ package com.zereao.wechat.controller;
 
 import com.zereao.wechat.pojo.vo.ApiTestVO;
 import com.zereao.wechat.pojo.vo.MessageVO;
-import com.zereao.wechat.service.command.HelpCommandService;
+import com.zereao.wechat.service.message.HelpMessageService;
 import com.zereao.wechat.service.factory.MsgFactory;
 import com.zereao.wechat.service.test.ApiTestService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,12 @@ public class WeChatController {
 
     private final ApiTestService apiTestService;
     private final MsgFactory msgFactory;
-    private final HelpCommandService helpCommandService;
+    private final HelpMessageService helpMessageService;
 
     @Autowired
-    public WeChatController(ApiTestService apiTestService, HelpCommandService helpCommandService, MsgFactory msgFactory) {
+    public WeChatController(ApiTestService apiTestService, HelpMessageService helpMessageService, MsgFactory msgFactory) {
         this.apiTestService = apiTestService;
-        this.helpCommandService = helpCommandService;
+        this.helpMessageService = helpMessageService;
         this.msgFactory = msgFactory;
     }
 
@@ -45,7 +45,7 @@ public class WeChatController {
             result = msgFactory.getInstance(msgVO).handleMsg(msgVO);
         } catch (Exception e) {
             log.error("消息处理发生了错误！", e);
-            result = helpCommandService.getErrorMsg(msgVO.getFromUserName());
+            result = helpMessageService.getErrorMsg(msgVO.getFromUserName());
         }
         StringWriter sw = new StringWriter();
         JAXB.marshal(result, sw);

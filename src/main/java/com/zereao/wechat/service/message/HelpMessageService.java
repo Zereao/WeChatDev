@@ -1,4 +1,4 @@
-package com.zereao.wechat.service.command;
+package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
@@ -6,7 +6,6 @@ import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
-import com.zereao.wechat.service.message.TextMessageService;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +15,14 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
- * 帮助命令Service
+ * 帮助信息Service
  *
  * @author Zereao
  * @version 2018/12/21  14:03
  */
 @Slf4j
 @Service
-public class HelpCommandService extends AbstractCommandService {
+public class HelpMessageService {
     @Value("${wechat.from.openid}")
     private String fromUser;
     @Value("${help.error.msg}")
@@ -42,7 +41,7 @@ public class HelpCommandService extends AbstractCommandService {
     private final RedisService redisService;
 
     @Autowired
-    public HelpCommandService(RedisService redisService) {this.redisService = redisService;}
+    public HelpMessageService(RedisService redisService) {this.redisService = redisService;}
 
     /**
      * 获取首次登陆时的欢迎信息
@@ -94,7 +93,10 @@ public class HelpCommandService extends AbstractCommandService {
      * @return 提示信息
      */
     public TextMessageVO getRootMsg(String toUserName) {
+        StringBuilder content = new StringBuilder(rootMsg + "\n");
+        Command.MenuType menu = "true".equals(redisService.get(TextMessageService.ROOT_ENABLED)) ? Command.MenuType.ROOT : Command.MenuType.USER;
+        CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
         return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(rootMsg).build();
+                .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
     }
 }

@@ -2,6 +2,7 @@ package com.zereao.wechat.service.command;
 
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.pojo.vo.MessageVO;
+import com.zereao.wechat.service.message.HelpMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 @Slf4j
 public abstract class AbstractCommandService {
     @Autowired
-    private HelpCommandService helpCommandService;
+    private HelpMessageService helpMessageService;
 
     /**
      * 执行命令
@@ -30,7 +31,7 @@ public abstract class AbstractCommandService {
             return command.method.invoke(this, msgVO);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("执行方法 {} 失败！\n{}", command.method.getName(), e);
-            return helpCommandService.getErrorMsg(msgVO.getFromUserName());
+            return helpMessageService.getErrorMsg(msgVO.getFromUserName());
         }
     }
 }
