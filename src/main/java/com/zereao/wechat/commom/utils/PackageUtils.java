@@ -157,12 +157,12 @@ public class PackageUtils {
         /* 经过以下处理，最终得到jarFilePath =
             E:/CodeTools/repository/org/junit/jupiter/junit-jupiter-api/5.2.0/junit-jupiter-api-5.2.0.jar
            对于SpringBoot项目的Jar，则是：
-            /home/java_code/WeChatDev/target/wechat-0.0.1-SNAPSHOT.jar*/
+            /home/java_code/WeChatDev/target/wechat-0.0.1-SNAPSHOT.jar  */
         Matcher matcher = JAR_FILE_PATTERN.matcher(jarInfo[0]);
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
         /* 经过以下处理，最终得到packagePath =
-            org/junit/jupiter/api         */
-        String packagePath = jarPath.substring(jarPath.indexOf("!") + 2).replace("!", "");
+            com/zereao/wechat  */
+        String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 2).replace("!", "");
         Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
         try (JarFile jarFile = new JarFile(jarFilePath)) {
             List<String> classNameList = new ArrayList<>();
@@ -171,11 +171,10 @@ public class PackageUtils {
             Enumeration<JarEntry> jarEntries = jarFile.entries();
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
-                String entryName = entry.getName();
+                String entryName = entry.getName().replace("BOOT-INF/classes/", "");
                 if (entryName.endsWith(".class")) {
                     if (containChildPackages) {
                         // 筛选出packagePath包路径下的所有类
-                        log.debug("entryName = {}, packagePath = {}, entryName.startsWith(packagePath) = {}", entryName, packagePath, entryName.startsWith(packagePath));
                         if (entryName.startsWith(packagePath)) {
                             // 经过以下处理，得到className = org.junit.jupiter.api.BeforeAll
                             String className = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
