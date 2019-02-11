@@ -162,34 +162,15 @@ public class PackageUtils {
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
         /* 经过以下处理，最终得到packagePath =
             org/junit/jupiter/api         */
-        String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 1);
+        String packagePath = jarPath.substring(jarPath.indexOf("!") + 1).replace("!", "");
         Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
         try (JarFile jarFile = new JarFile(jarFilePath)) {
             List<String> classNameList = new ArrayList<>();
             List<Class> classList = new ArrayList<>();
 
             Enumeration<JarEntry> jarEntries = jarFile.entries();
-            log.debug("======================================================= {}", packagePath);
-            while (jarEntries.hasMoreElements()) {
-                log.debug(jarEntries.nextElement().getName());
-            }
-            log.debug("=======================================================");
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
-                /* String entryRealName = entry.getRealName();
-                    如果JarEntry不表示多版本JarFile的版本化条目，或者未将JarFile配置为处理多版本jar文件，
-                则此方法返回与getName()返回的名称相同的名称。
-
-                经过下面的处理，得到的entryName =
-                    META-INF/
-                    META-INF/MANIFEST.MF
-                    org/
-                    org/junit/
-                    org/junit/jupiter
-                    org/junit/jupiter/api
-                    org/junit/jupiter/api/AssertArrayEquals.class
-                    org/junit/jupiter/api/AssertNotNull.class等。
-                也就是说，得到的jarEntry，包括文件对象、文件夹对象。 */
                 String entryName = entry.getName();
                 if (entryName.endsWith(".class")) {
                     if (containChildPackages) {

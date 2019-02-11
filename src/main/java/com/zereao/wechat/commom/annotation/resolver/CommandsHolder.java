@@ -72,7 +72,7 @@ public class CommandsHolder {
      */
     static String values() {
         StringBuilder sb = new StringBuilder("[ ClassHolder.size() = ").append(holder.size());
-        sb.append(", Content =[").append(holder).append("]");
+        sb.append(", Content =[").append(holder).append("] ]");
         return sb.toString();
     }
 
