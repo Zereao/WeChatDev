@@ -149,31 +149,26 @@ public class PackageUtils {
      * @return resultMap
      */
     private static Map<String, List<?>> getClassInfoByJar(String jarPath, boolean containChildPackages) {
-        log.debug("======================================= jarPath = {}", jarPath);
         /* 例如，走到这里时，jarPath =
-              file:/E:/CodeTools/repository/org/junit/jupiter/junit-jupiter-api/5.2.0/junit-jupiter-api-5.2.0.jar!/org/junit/jupiter/api         */
+              file:/E:/CodeTools/repository/org/junit/jupiter/junit-jupiter-api/5.2.0/junit-jupiter-api-5.2.0.jar!/org/junit/jupiter/api
+           对于SpringBoot项目的Jar，则是：
+              file:/home/java_code/WeChatDev/target/wechat-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/com/zereao/wechat   【多了  /BOOT-INF/classes!】   */
         String[] jarInfo = jarPath.split("!");
         /* 经过以下处理，最终得到jarFilePath =
-            E:/CodeTools/repository/org/junit/jupiter/junit-jupiter-api/5.2.0/junit-jupiter-api-5.2.0.jar         */
+            E:/CodeTools/repository/org/junit/jupiter/junit-jupiter-api/5.2.0/junit-jupiter-api-5.2.0.jar
+           对于SpringBoot项目的Jar，则是：
+            /home/java_code/WeChatDev/target/wechat-0.0.1-SNAPSHOT.jar*/
         Matcher matcher = JAR_FILE_PATTERN.matcher(jarInfo[0]);
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
-        log.debug("======================================= jarFilePath = {}", jarFilePath);
         /* 经过以下处理，最终得到packagePath =
             org/junit/jupiter/api         */
-        String packagePath = jarInfo[1].substring(1);
-        log.debug("======================================= packagePath = {}", packagePath);
+        String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 1);
         Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
         try (JarFile jarFile = new JarFile(jarFilePath)) {
             List<String> classNameList = new ArrayList<>();
             List<Class> classList = new ArrayList<>();
 
             Enumeration<JarEntry> jarEntries = jarFile.entries();
-            while (jarEntries.hasMoreElements()) {
-                String entry = jarEntries.nextElement().getName();
-                log.debug("=======================================");
-                log.debug(entry);
-                log.debug("=======================================");
-            }
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
                 /* String entryRealName = entry.getRealName();
