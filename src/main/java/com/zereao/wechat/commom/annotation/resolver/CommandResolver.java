@@ -34,7 +34,7 @@ public class CommandResolver implements Runnable {
                     if (method.isAnnotationPresent(Command.class)) {
                         Command command = method.getAnnotation(Command.class);
                         CommandsHolder.add(command, clz, method);
-                        log.debug("Put the command into the CommandHolder ------->  mapping = {}, name = {}, first = {}, menu = {}, bean = {}, class = {}, method = {}",
+                        log.info("Put the command into the CommandHolder ------->  mapping = {}, name = {}, first = {}, menu = {}, bean = {}, class = {}, method = {}",
                                 command.mapping(), command.name(), command.menu().name(), command.first(), StringUtils.uncapitalize(clz.getSimpleName()), clz.getName(), method.getName());
                     }
                 }
