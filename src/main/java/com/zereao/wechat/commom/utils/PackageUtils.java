@@ -169,16 +169,13 @@ public class PackageUtils {
             List<Class> classList = new ArrayList<>();
 
             Enumeration<JarEntry> jarEntries = jarFile.entries();
-            log.debug("=============================================={}", packagePath);
-            while (jarEntries.hasMoreElements()) {
-                log.debug(jarEntries.nextElement().getName());
-            }
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
                 String entryName = entry.getName();
                 if (entryName.endsWith(".class")) {
                     if (containChildPackages) {
                         // 筛选出packagePath包路径下的所有类
+                        log.debug("entryName = {}, packagePath = {}, entryName.startsWith(packagePath) = {}", entryName, packagePath, entryName.startsWith(packagePath));
                         if (entryName.startsWith(packagePath)) {
                             // 经过以下处理，得到className = org.junit.jupiter.api.BeforeAll
                             String className = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
