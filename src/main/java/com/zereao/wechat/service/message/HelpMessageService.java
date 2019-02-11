@@ -37,6 +37,8 @@ public class HelpMessageService {
     private String detail;
     @Value("${help.root.msg}")
     private String rootMsg;
+    @Value("${help.permission.error.msg}")
+    private String permissionErrorMsg;
 
     private final RedisService redisService;
 
@@ -71,6 +73,7 @@ public class HelpMessageService {
             menu = Command.MenuType.ROOT;
         }
         CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        content.append("\n\n您还可以使用以下特殊命令：\n-：返回上级菜单\n#：返回首页");
         return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
     }
@@ -99,4 +102,17 @@ public class HelpMessageService {
         return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
     }
+
+    /**
+     * 获取权限不足的提示信息
+     *
+     * @param toUserName 接收人的openID
+     * @return 提示信息
+     */
+    public TextMessageVO getPermissionErrorMsg(String toUserName) {
+        return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
+                .msgType(MsgType.TEXT).createTime(new Date()).content(permissionErrorMsg).build();
+    }
+
+
 }

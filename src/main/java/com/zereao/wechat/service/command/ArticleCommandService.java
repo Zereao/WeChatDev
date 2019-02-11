@@ -45,6 +45,8 @@ public class ArticleCommandService extends AbstractCommandService {
     private String imgUrl;
     @Value("${wechat.from.openid}")
     private String fromUser;
+    @Value("${article.add.info}")
+    private String addInfo;
 
     /**
      * 文章列表 - redisKey - 后缀
@@ -108,7 +110,13 @@ public class ArticleCommandService extends AbstractCommandService {
 
     @Command(name = "新增文章", mapping = "r1", first = true, menu = Command.MenuType.ROOT)
     public TextMessageVO addArticle(MessageVO msgVO) {
-        String[] urls = msgVO.getContent().replaceAll("1-root\\.add\\[wdxpn]|1-root\\.add\\[WDXPN]", "").split("\\[wdxpn]|\\[WDXPN]");
+        return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
+                .msgType(MsgType.TEXT).createTime(new Date()).content(addInfo).build();
+    }
+
+    @Command(name = "文章添加操作", mapping = "r1-*", menu = Command.MenuType.ROOT)
+    public TextMessageVO addArticl(MessageVO msgVO) {
+        String[] urls = msgVO.getContent().split("\\|(wdxpn|WDXPN)\\|");
         CountDownLatch latch = new CountDownLatch(urls.length);
         StringBuilder content;
         try {

@@ -1,5 +1,6 @@
 package com.zereao.wechat.service.message;
 
+import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.pojo.vo.MessageVO;
@@ -62,6 +63,9 @@ public class TextMessageService extends AbstractMessageService {
                 command = CommandsHolder.get(content.substring(0, content.lastIndexOf("*") + 1));
             } else {
                 command = CommandsHolder.get(content);
+            }
+            if (Command.MenuType.USER.equals(command.menu) && StringUtils.equals(redisService.get(ROOT_ENABLED), "true")) {
+                return helpMessageService.getPermissionErrorMsg(msgVO.getFromUserName());
             }
             return commandServiceMap.get(command.bean).exec(msgVO, command);
         }
