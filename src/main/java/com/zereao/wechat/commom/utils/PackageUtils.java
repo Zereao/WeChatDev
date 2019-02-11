@@ -169,6 +169,11 @@ public class PackageUtils {
             List<Class> classList = new ArrayList<>();
 
             Enumeration<JarEntry> jarEntries = jarFile.entries();
+            log.debug("======================================================= {}", packagePath);
+            while (jarEntries.hasMoreElements()) {
+                log.debug(jarEntries.nextElement().getName());
+            }
+            log.debug("=======================================================");
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
                 /* String entryRealName = entry.getRealName();
