@@ -35,6 +35,10 @@ public class TextMessageService extends AbstractMessageService {
     private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
     public static final String ROOT_ENABLED = "REDIS_KEY_OF_ROOT";
 
+    private static final String COMMAND_ROOT = "wdxpn";
+    private static final String COMMAND_FIRST_PAGE = "#";
+    private static final String COMMAND_PRE_PAGE = "-";
+
     @Override
     public Object handleMessage(MessageVO msgVO) {
         Object result = this.checkCommand(msgVO);
@@ -61,12 +65,21 @@ public class TextMessageService extends AbstractMessageService {
     private Object checkCommand(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         String userCommand = msgVO.getContent();
-        if ("wdxpn".equalsIgnoreCase(userCommand)) {
-            redisService.set(ROOT_ENABLED, "true", 5 * 60);
-            return helpCommandService.getRootMsg(openid);
-        }
         String redisKey = REDIS_KEY_PREFIX + openid;
         String existedCommand = redisService.get(redisKey);
+        if (COMMAND_ROOT.equalsIgnoreCase(userCommand)) {
+            // 开启root权限命令
+            redisService.set(ROOT_ENABLED, "true", 5 * 60);
+            return helpCommandService.getRootMsg(openid);
+        } else if (COMMAND_FIRST_PAGE.equals(userCommand)) {
+            // 返回首页命令
+            redisService.del(redisKey);
+        } else if (COMMAND_PRE_PAGE.equals(userCommand)) {
+            // 返回上一页 命令
+            if (StringUtils.isNotBlank(existedCommand)) {
+                existedCommand = existedCommand.substring(0, existedCommand.lastIndexOf("-"));
+            }
+        }
         String targetCommand = null;
         boolean updateRedis = true;
         if (StringUtils.isBlank(existedCommand)) {

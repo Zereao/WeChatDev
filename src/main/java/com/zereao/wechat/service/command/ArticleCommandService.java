@@ -106,7 +106,7 @@ public class ArticleCommandService extends AbstractCommandService {
                 .articleCount(1).createTime(new Date()).build();
     }
 
-    @Command(name = "新增文章", mapping = "r-1", menu = Command.MenuType.ROOT)
+    @Command(name = "新增文章", mapping = "r1", menu = Command.MenuType.ROOT)
     public TextMessageVO addArticle(MessageVO msgVO) {
         String[] urls = msgVO.getContent().replaceAll("1-root\\.add\\[wdxpn]|1-root\\.add\\[WDXPN]", "").split("\\[wdxpn]|\\[WDXPN]");
         CountDownLatch latch = new CountDownLatch(urls.length);
