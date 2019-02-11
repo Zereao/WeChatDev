@@ -2,7 +2,6 @@ package com.zereao.wechat.commom.annotation.resolver;
 
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.utils.PackageUtils;
-import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,13 +20,8 @@ import java.lang.reflect.Method;
 public class CommandResolver implements Runnable {
     private Class cls;
 
-    private CommandResolver(Class cls) {
+    public CommandResolver(Class cls) {
         this.cls = cls;
-    }
-
-    public static void run(Class cls) {
-        log.info("开始扫描 Command ......");
-        ThreadPoolUtils.execute(new CommandResolver(cls));
     }
 
     @Override

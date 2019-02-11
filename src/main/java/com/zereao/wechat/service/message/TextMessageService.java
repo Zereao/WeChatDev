@@ -1,6 +1,7 @@
 package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
+import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 import com.zereao.wechat.service.command.HelpCommandService;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
@@ -25,12 +27,7 @@ public class TextMessageService extends AbstractMessageService {
     private final HelpCommandService helpCommandService;
     private final RedisService redisService;
 
-    @Autowired
-    public TextMessageService(Map<String, AbstractCommandService> commandServiceMap, HelpCommandService helpCommandService, RedisService redisService) {
-        this.commandServiceMap = commandServiceMap;
-        this.helpCommandService = helpCommandService;
-        this.redisService = redisService;
-    }
+    private final UserDAO userDAO;
 
     private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
     public static final String ROOT_ENABLED = "REDIS_KEY_OF_ROOT";
@@ -38,6 +35,23 @@ public class TextMessageService extends AbstractMessageService {
     private static final String COMMAND_ROOT = "wdxpn";
     private static final String COMMAND_FIRST_PAGE = "#";
     private static final String COMMAND_PRE_PAGE = "-";
+
+
+    @Autowired
+    public TextMessageService(Map<String, AbstractCommandService> commandServiceMap, HelpCommandService helpCommandService, RedisService redisService, UserDAO userDAO) {
+        this.commandServiceMap = commandServiceMap;
+        this.helpCommandService = helpCommandService;
+        this.redisService = redisService;
+        this.userDAO = userDAO;
+    }
+
+    @PostConstruct
+    public void cleadMenuTree() {
+        log.info("----->  准备清理菜单树...");
+        this.userDAO.findAll().forEach(user -> this.redisService.del(REDIS_KEY_PREFIX + user.getOpenid()));
+        this.redisService.del(ROOT_ENABLED);
+        log.info("----->  菜单树清理完毕~");
+    }
 
     @Override
     public Object handleMessage(MessageVO msgVO) {
