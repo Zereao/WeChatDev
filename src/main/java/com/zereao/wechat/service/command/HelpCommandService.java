@@ -6,7 +6,10 @@ import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
+import com.zereao.wechat.service.message.TextMessageService;
+import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +36,13 @@ public class HelpCommandService extends AbstractCommandService {
     private String description;
     @Value("${welcome.msg.url}")
     private String detail;
+    @Value("${help.root.msg}")
+    private String rootMsg;
 
+    private final RedisService redisService;
+
+    @Autowired
+    public HelpCommandService(RedisService redisService) {this.redisService = redisService;}
 
     /**
      * 获取首次登陆时的欢迎信息
@@ -58,13 +67,34 @@ public class HelpCommandService extends AbstractCommandService {
      */
     public TextMessageVO getHelp(String toUserName) {
         StringBuilder content = new StringBuilder("Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~\n");
-        CommandsHolder.list(Command.MenuType.USER).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        Command.MenuType menu = Command.MenuType.USER;
+        if ("true".equals(redisService.get(TextMessageService.ROOT_ENABLED))) {
+            menu = Command.MenuType.ROOT;
+        }
+        CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
         return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
     }
 
+    /**
+     * 获取错误信息
+     *
+     * @param toUserName 接收人的openID
+     * @return 错误信息
+     */
     public TextMessageVO getErrorMsg(String toUserName) {
         return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(errorMsg).build();
+    }
+
+    /**
+     * 获取root权限时的提示信息
+     *
+     * @param toUserName 接收人的openID
+     * @return 提示信息
+     */
+    public TextMessageVO getRootMsg(String toUserName) {
+        return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
+                .msgType(MsgType.TEXT).createTime(new Date()).content(rootMsg).build();
     }
 }

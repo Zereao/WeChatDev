@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * Jaxb MsgType 适配器
  *
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/12  15:05
  */
 public class JaxbMsgTypeAdapter extends XmlAdapter<String, MsgType> {

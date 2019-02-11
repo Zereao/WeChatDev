@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Jaxb 日期适配器
  *
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/11  19:24
  */
 public class JaxbDateAdapter extends XmlAdapter<Long, Date> {

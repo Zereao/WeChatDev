@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 处理接收到的文本消息的Service
@@ -34,18 +33,26 @@ public class TextMessageService extends AbstractMessageService {
     }
 
     private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
+    public static final String ROOT_ENABLED = "REDIS_KEY_OF_ROOT";
 
     @Override
     public Object handleMessage(MessageVO msgVO) {
         Object result = this.checkCommand(msgVO);
         if (result == null) {
-            CommandsHolder.Command command = CommandsHolder.get(msgVO.getContent());
+            String content = msgVO.getContent();
+            CommandsHolder.Command command;
+            if (content.contains("*")) {
+                command = CommandsHolder.get(content.substring(0, content.lastIndexOf("*") + 1));
+            } else {
+                command = CommandsHolder.get(content);
+            }
             return commandServiceMap.get(command.bean).exec(msgVO, command);
         }
         return result;
     }
 
     /**
+     * 非常核心的方法，用来处理 命令组装与匹配
      * 检查命令是否在Redis中存在
      *
      * @param msgVO 包含相关参数的MessageVO
@@ -53,16 +60,40 @@ public class TextMessageService extends AbstractMessageService {
      */
     private Object checkCommand(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        String command = msgVO.getContent().trim();
+        String userCommand = msgVO.getContent();
+        if ("wdxpn".equalsIgnoreCase(userCommand)) {
+            redisService.set(ROOT_ENABLED, "true", 5 * 60);
+            return helpCommandService.getRootMsg(openid);
+        }
         String redisKey = REDIS_KEY_PREFIX + openid;
-        String existsCommand = redisService.get(redisKey);
-        String newCommand;
-        String targetCommand = StringUtils.isBlank(existsCommand) ? (CommandsHolder.contains(command) ? command : null) : (CommandsHolder.contains(newCommand = existsCommand.concat("-").concat(command)) ? newCommand : null);
+        String existedCommand = redisService.get(redisKey);
+        String targetCommand = null;
+        boolean updateRedis = true;
+        if (StringUtils.isBlank(existedCommand)) {
+            if (CommandsHolder.contains(userCommand)) {
+                targetCommand = userCommand;
+            }
+        } else {
+            String newCommand = existedCommand + "-" + userCommand;
+            if (CommandsHolder.contains(newCommand)) {
+                targetCommand = newCommand;
+            } else {
+                newCommand = existedCommand + "-" + "*";
+                if (CommandsHolder.contains(newCommand)) {
+                    updateRedis = false;
+                    targetCommand = newCommand + userCommand;
+                }
+            }
+        }
         if (targetCommand == null) {
+            // 命令不存在时，刷新 菜单树
+            redisService.del(redisKey);
             return helpCommandService.getHelp(openid);
         } else {
             msgVO.setContent(targetCommand);
-            redisService.set(redisKey, targetCommand, 5 * 60);
+            if (updateRedis) {
+                redisService.set(redisKey, targetCommand, 5 * 60);
+            }
             return null;
         }
     }

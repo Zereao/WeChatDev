@@ -6,10 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/19  20:21
  */
 @Slf4j
@@ -28,8 +27,7 @@ public abstract class AbstractCommandService {
         String className = curClass.getName();
         log.info("------->  {}准备执行命令 {}", className, command.toString());
         try {
-            Method method = command.method;
-            return method.invoke(this, msgVO);
+            return command.method.invoke(this, msgVO);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("执行方法 {} 失败！\n{}", command.method.getName(), e);
             return helpCommandService.getErrorMsg(msgVO.getFromUserName());

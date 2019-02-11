@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 /**
  * 消息类型枚举
  *
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/11  19:01
  */
 public enum MsgType {

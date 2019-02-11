@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/13  21:27
  */
 @Repository

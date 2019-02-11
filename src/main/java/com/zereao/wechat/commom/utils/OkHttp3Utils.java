@@ -3,7 +3,6 @@ package com.zereao.wechat.commom.utils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import okhttp3.internal.annotations.EverythingIsNonNull;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -11,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/10  17:26
  */
 @Slf4j
@@ -130,35 +129,6 @@ public class OkHttp3Utils {
     }
 
     /**
-     * 发送异步的Post请求，以JSONObject 的形式传递数据
-     *
-     * @param url  请求Url链接
-     * @param json JSON 对象
-     */
-    public static void doPostAsync(String url, JSONObject json) {
-        log.info("========================= 准备POST-JSON异步请求：{} =========================", url);
-        RequestBody requestBody = RequestBody.create(ContentType.CONTENT_TYPE_JSON_UTF8.getType(), json.toString());
-        Request request = new Request.Builder().url(url).post(requestBody).build();
-        Instance.INSTANCE.client.newCall(request).enqueue(new Callback() {
-            @Override
-            @EverythingIsNonNull
-            public void onFailure(Call call, IOException e) {
-                String url = call.request().url().scheme();
-                log.warn("------> 某次请求 {} 失败了！, {}", url, e);
-            }
-
-            @Override
-            @EverythingIsNonNull
-            public void onResponse(Call call, Response response) throws IOException {
-                String url = call.request().url().url().toString();
-                log.info("------> 某次请求 {} 成功！,返回结果为 {}", url, parseResponse(response).string());
-            }
-        });
-        log.info("------> 请求发送成功！");
-    }
-
-
-    /**
      * 抽离的私有方法，发送请求，并对处理Response
      *
      * @param request Request
@@ -167,17 +137,6 @@ public class OkHttp3Utils {
      */
     private static ResponseBody sendRequest(Request request) throws IOException {
         Response response = Instance.INSTANCE.client.newCall(request).execute();
-        return parseResponse(response);
-    }
-
-    /**
-     * 抽离的公共方法，用于解析Response
-     *
-     * @param response Response
-     * @return 解析出的结果字符串
-     * @throws IOException IOException
-     */
-    private static ResponseBody parseResponse(Response response) throws IOException {
         if (!response.isSuccessful()) {
             throw new IOException("------> 出现未知错误！response = " + response);
         }
@@ -185,7 +144,7 @@ public class OkHttp3Utils {
         if (body == null) {
             log.info("========================= 请求完毕！请求返回的数据体body为null！ =========================");
         } else {
-            log.info("========================= 请求完毕！result = {} =========================", body.string());
+            log.info("========================= 请求完毕！ =========================");
         }
         return body;
     }

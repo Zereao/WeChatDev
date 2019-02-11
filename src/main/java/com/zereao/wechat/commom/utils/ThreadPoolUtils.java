@@ -7,13 +7,13 @@ import java.util.concurrent.*;
 /**
  * 线程池
  *
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/21  18:53
  */
 public class ThreadPoolUtils {
     private static ExecutorService executor = new ThreadPoolExecutor(
+            5,
             10,
-            20,
             60L,
             TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(10),

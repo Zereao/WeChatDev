@@ -8,8 +8,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Darion Mograine H
@@ -25,7 +23,7 @@ public class CommandsHolder {
      */
     static void add(com.zereao.wechat.commom.annotation.Command command, Class cls, Method method) {
         String mapping = command.mapping();
-        holder.put(mapping, Command.builder().mapping(mapping).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
+        holder.put(mapping, Command.builder().mapping(mapping).first(command.first()).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
     }
 
     /**
@@ -56,14 +54,16 @@ public class CommandsHolder {
      * <p>
      * key = 命令名称，value = 命令映射mapping
      *
+     * @param menu  菜单类型，Root菜单 或者 用户菜单
+     * @param first 是否一级菜单
      * @return result LinkedHashMap
      */
-    public static Map<String, String> list(com.zereao.wechat.commom.annotation.Command.MenuType menu) {
+    public static Map<String, String> list(com.zereao.wechat.commom.annotation.Command.MenuType menu, boolean first) {
         Map<String, String> resultMap = new LinkedHashMap<>();
-        holder.entrySet().stream().filter(entry -> {
-            return menu.equals(com.zereao.wechat.commom.annotation.Command.MenuType.ROOT) ||
-                    entry.getValue().menu.equals(menu);
-        }).sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
+        holder.entrySet().stream()
+                .filter(entry -> (entry.getValue().first == first && (menu.equals(com.zereao.wechat.commom.annotation.Command.MenuType.ROOT) || entry.getValue().menu.equals(menu))))
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
         return resultMap;
     }
 
@@ -79,6 +79,7 @@ public class CommandsHolder {
     @Builder
     public static class Command {
         public String mapping, name, bean;
+        public boolean first;
         public com.zereao.wechat.commom.annotation.Command.MenuType menu;
         public Class cls;
         public Method method;
@@ -89,6 +90,7 @@ public class CommandsHolder {
                     "mapping='" + mapping + '\'' +
                     ", name='" + name + '\'' +
                     ", bean='" + bean + '\'' +
+                    ", first='" + first + '\'' +
                     ", menu=" + menu.name() +
                     ", cls=" + (cls == null ? null : StringUtils.uncapitalize(cls.getSimpleName())) +
                     ", method=" + (method == null ? null : method.getName()) +

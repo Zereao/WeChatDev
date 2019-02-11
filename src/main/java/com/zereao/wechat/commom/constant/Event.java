@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * 事件类型枚举
  *
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/12  11:20
  */
 public enum Event {

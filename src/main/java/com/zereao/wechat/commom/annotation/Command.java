@@ -21,11 +21,16 @@ public @interface Command {
     String name() default "";
 
     /**
-     * 菜单类型
+     * 是否一级菜单，默认 false
+     */
+    boolean first() default false;
+
+    /**
+     * 菜单类型，Root菜单 或 用户菜单
      */
     Command.MenuType menu() default MenuType.USER;
 
-    public static enum MenuType {
+    enum MenuType {
         /**
          * Root权限
          */

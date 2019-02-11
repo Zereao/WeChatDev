@@ -163,7 +163,7 @@ public class UnitTest {
     }
 
     @Test
-    public void test1() throws IOException {
-        OkHttp3Utils.doPostAsync("https://www.baidu.com", new JSONObject());
+    public void test1() {
+
     }
 }
