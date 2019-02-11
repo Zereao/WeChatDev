@@ -162,7 +162,7 @@ public class PackageUtils {
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
         /* 经过以下处理，最终得到packagePath =
             org/junit/jupiter/api         */
-        String packagePath = jarPath.substring(jarPath.indexOf("!") + 1).replace("!", "");
+        String packagePath = jarPath.substring(jarPath.indexOf("!") + 2).replace("!", "");
         Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
         try (JarFile jarFile = new JarFile(jarFilePath)) {
             List<String> classNameList = new ArrayList<>();
