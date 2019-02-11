@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class PackageUtils {
     private static final Pattern CLASS_FILE_PATTERN = Pattern.compile("^.*\\\\classes\\\\(.*)\\.class$");
 
-    private static final Pattern JAR_FILE_PATTERN = Pattern.compile("^.*:/(.*\\.jar)$");
+    private static final Pattern JAR_FILE_PATTERN = Pattern.compile("^.*:(/.*\\.jar)$");
 
     private static final String KEY_CLASS_NAME = "classname";
     private static final String KEY_CLASSES = "classes";
