@@ -168,21 +168,18 @@ public class PackageUtils {
             List<String> classNameList = new ArrayList<>();
             List<Class> classList = new ArrayList<>();
             Enumeration<JarEntry> jarEntries = jarFile.entries();
-
-            while (jarEntries.hasMoreElements()) {
-                JarEntry entry = jarEntries.nextElement();
-                log.info("========== 5 ========== entry.getName = {}", entry.getName());
-            }
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
                 log.info("========== 6 ========== entry.getName = {}", entry.getName());
                 String entryName = entry.getName().replace("BOOT-INF/classes/", "");
+                log.info("========== 7 ========== entryName = {}", entryName);
                 if (entryName.endsWith(".class")) {
                     if (containChildPackages) {
                         // 筛选出packagePath包路径下的所有类
                         if (entryName.startsWith(packagePath)) {
                             // 经过以下处理，得到className = org.junit.jupiter.api.BeforeAll
                             String className = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
+                            log.info("========== 7 ========== className = {}", className);
                             classNameList.add(className);
                             classList.add(Class.forName(className));
                         }
