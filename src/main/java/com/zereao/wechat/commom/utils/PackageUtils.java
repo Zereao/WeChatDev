@@ -186,7 +186,7 @@ public class PackageUtils {
                             log.info("========== 1 ==========");
                             classList.add(clz);
                             log.info("========== 0 ==========");
-                            System.out.println();
+                            System.out.println("-");
                         }
                     } else {
                         int index = entryName.lastIndexOf("/");
