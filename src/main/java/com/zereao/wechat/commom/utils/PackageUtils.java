@@ -68,13 +68,11 @@ public class PackageUtils {
      * @return 类型信息Map
      */
     private static Map<String, List<?>> getClassInfo(String packageName, boolean containChildPackages) {
-        log.info("========== 1 ========== packageName = {}, child = {}", packageName, containChildPackages);
         String packagePath = packageName.replace(".", "/");
         Map<String, List<?>> resultMap = null;
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource(packagePath);
         if (url != null) {
-            log.info("========== 2 ========== url = {}", url);
             String path = url.getPath();
             switch (url.getProtocol()) {
                 case "file":
@@ -151,7 +149,6 @@ public class PackageUtils {
      * @return resultMap
      */
     private static Map<String, List<?>> getClassInfoByJar(String jarPath, boolean containChildPackages) {
-        log.info("========== 3 ========== jarPath = {}", jarPath);
         /* 例如，走到这里时，jarPath =
               file:/E:/CodeTools/repository/org/junit/jupiter/junit-jupiter-api/5.2.0/junit-jupiter-api-5.2.0.jar!/org/junit/jupiter/api
            对于SpringBoot项目的Jar，则是：
@@ -163,17 +160,19 @@ public class PackageUtils {
             /home/java_code/WeChatDev/target/wechat-0.0.1-SNAPSHOT.jar  */
         Matcher matcher = JAR_FILE_PATTERN.matcher(jarInfo[0]);
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
-        log.info("========== 4 ========== jarFilePath = {}", jarFilePath);
         /* 经过以下处理，最终得到packagePath =
             com/zereao/wechat  */
         String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 2).replace("!", "");
-        log.info("========== 5 ========== packagePath = {}", packagePath);
         Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
         try (JarFile jarFile = new JarFile(jarFilePath)) {
             List<String> classNameList = new ArrayList<>();
             List<Class> classList = new ArrayList<>();
-
             Enumeration<JarEntry> jarEntries = jarFile.entries();
+
+            while (jarEntries.hasMoreElements()) {
+                JarEntry entry = jarEntries.nextElement();
+                log.info("========== 5 ========== entry.getName = {}", entry.getName());
+            }
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
                 log.info("========== 6 ========== entry.getName = {}", entry.getName());
@@ -206,6 +205,7 @@ public class PackageUtils {
         } catch (IOException | ClassNotFoundException e) {
             log.error("发生了错误！", e);
         }
+        log.info("==================== resultMap = {}", resultMap);
         return resultMap;
     }
 
