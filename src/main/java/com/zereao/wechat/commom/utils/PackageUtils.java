@@ -204,7 +204,7 @@ public class PackageUtils {
             }
             resultMap.put(KEY_CLASS_NAME, classNameList);
             resultMap.put(KEY_CLASSES, classList);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("发生了错误！", e);
         }
         log.info("==================== resultMap = {}", resultMap);

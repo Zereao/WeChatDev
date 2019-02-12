@@ -162,11 +162,28 @@ public class UnitTest {
         System.out.println(encryptedStr);
     }
 
+    public static void main(String[] args) throws ClassNotFoundException {
+        Class c = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$ContentType");
+        Class b = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils");
+        Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");
+        List<Class> ss = new ArrayList<>();
+        ss.add(b);
+        ss.add(c);
+        ss.add(a);
+        System.out.println(ss);
+    }
+
     @Test
     public void test1() throws ClassNotFoundException {
+        Class c = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$ContentType");
+        Class b = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils");
         Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");
-        System.out.println(a.getSimpleName());
         List<Class> ss = new ArrayList<>();
+        ss.add(b);
+        ss.add(c);
         ss.add(a);
+
+        System.out.println(ss);
+
     }
 }
