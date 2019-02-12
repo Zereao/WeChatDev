@@ -1,5 +1,8 @@
 package com.zereao.wechat.controller;
 
+import com.zereao.wechat.WechatApplication;
+import com.zereao.wechat.commom.annotation.resolver.CommandResolver;
+import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import com.zereao.wechat.pojo.vo.ApiTestVO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.message.HelpMessageService;
@@ -9,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXB;
 import java.io.StringWriter;
 
@@ -31,6 +35,11 @@ public class WeChatController {
         this.apiTestService = apiTestService;
         this.helpMessageService = helpMessageService;
         this.msgFactory = msgFactory;
+    }
+
+    @PostConstruct
+    public void scanCommand() {
+        ThreadPoolUtils.execute(new CommandResolver(WechatApplication.class));
     }
 
     @GetMapping(value = "wechat")

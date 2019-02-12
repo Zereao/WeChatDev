@@ -1,12 +1,9 @@
 package com.zereao.wechat;
 
-import com.zereao.wechat.commom.annotation.resolver.CommandResolver;
-import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 
-//@EnableScheduling
 @SpringBootApplication(scanBasePackages = {"com.zereao.wechat"})
 @PropertySource(value = {
         "classpath:config/wechat.properties",
@@ -15,6 +12,5 @@ import org.springframework.context.annotation.PropertySource;
 public class WechatApplication {
     public static void main(String[] args) {
         SpringApplication.run(WechatApplication.class, args);
-        ThreadPoolUtils.execute(new CommandResolver(WechatApplication.class));
     }
 }
