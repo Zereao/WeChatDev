@@ -37,14 +37,12 @@ public class ArticleCommandService extends AbstractCommandService {
     private final ArticlesDAO articlesDAO;
     private final RedisService redisService;
 
-    private static Pattern articleIdPattern = Pattern.compile("id=(.*)&");
+    private static final Pattern ARTICLE_ID_PATTERN = Pattern.compile("id=(.*)&");
 
     @Value("${youdao.getinfo.url}")
     private String infoBaseUrl;
     @Value("${article.img.baseurl}")
     private String imgUrl;
-    @Value("${wechat.from.openid}")
-    private String fromUser;
     @Value("${article.add.info}")
     private String addInfo;
     @Value("${menu.common.cmd}")
@@ -159,7 +157,7 @@ public class ArticleCommandService extends AbstractCommandService {
 
         @Override
         public String call() throws Exception {
-            Matcher matcher = articleIdPattern.matcher(url);
+            Matcher matcher = ARTICLE_ID_PATTERN.matcher(url);
             String articleId = matcher.find() ? matcher.group(1) : "";
             try {
                 String result = OkHttp3Utils.doGet(infoBaseUrl.replace("{}", articleId));

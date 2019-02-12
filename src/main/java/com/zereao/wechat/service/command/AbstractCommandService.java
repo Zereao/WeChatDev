@@ -6,6 +6,7 @@ import com.zereao.wechat.service.message.HelpMessageService;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -19,6 +20,9 @@ public abstract class AbstractCommandService {
     private HelpMessageService helpMessageService;
     @Autowired
     private RedisService redisService;
+
+    @Value("${wechat.from.openid}")
+    protected String fromUser;
 
     private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
 

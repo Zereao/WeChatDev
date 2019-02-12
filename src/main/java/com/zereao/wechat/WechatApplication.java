@@ -8,6 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = {
         "classpath:config/wechat.properties",
         "classpath:config/constant-msg.properties",
+        "classpath:config/almanac.properties",
         "classpath:config/youdao.properties"}, encoding = "utf-8")
 public class WechatApplication {
     public static void main(String[] args) {
