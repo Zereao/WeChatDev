@@ -5,7 +5,6 @@ import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@EnableScheduling
 @SpringBootApplication(scanBasePackages = {"com.zereao.wechat"})
