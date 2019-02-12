@@ -119,6 +119,7 @@ public class ArticleCommandService extends AbstractCommandService {
         String[] urls = msgVO.getContent().split("\\|(wdxpn|WDXPN)\\|");
         CountDownLatch latch = new CountDownLatch(urls.length);
         StringBuilder content;
+        String openid = msgVO.getFromUserName();
         try {
             content = new StringBuilder("文章");
             for (String url : urls) {
@@ -134,8 +135,10 @@ public class ArticleCommandService extends AbstractCommandService {
         } catch (ExecutionException | InterruptedException e) {
             content = new StringBuilder("文章添加失败！");
             log.error("-----> 获取有道云笔记信息失败！", e);
+        } finally {
+            this.cleanCommand(openid);
         }
-        return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
+        return TextMessageVO.builder().toUserName(openid).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
     }
 
