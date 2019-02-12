@@ -15,6 +15,6 @@ import org.springframework.context.annotation.PropertySource;
 public class WechatApplication {
     public static void main(String[] args) {
         ThreadPoolUtils.execute(new CommandResolver(WechatApplication.class));
-        SpringApplication.run(WechatApplication.class, args);
+//        SpringApplication.run(WechatApplication.class, args);
     }
 }
