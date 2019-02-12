@@ -182,7 +182,9 @@ public class PackageUtils {
                             log.info("========== 8 ========== className = {}", className);
                             classNameList.add(className);
                             log.info("========== 9 ==========");
-                            classList.add(Class.forName(className));
+                            Class clz = Class.forName(className);
+                            log.info("========== 1 ==========");
+                            classList.add(clz);
                             log.info("========== 0 ==========");
                             System.out.println();
                         }
@@ -202,7 +204,7 @@ public class PackageUtils {
             }
             resultMap.put(KEY_CLASS_NAME, classNameList);
             resultMap.put(KEY_CLASSES, classList);
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             log.error("发生了错误！", e);
         }
         log.info("==================== resultMap = {}", resultMap);

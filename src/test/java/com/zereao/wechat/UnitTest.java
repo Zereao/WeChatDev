@@ -163,7 +163,10 @@ public class UnitTest {
     }
 
     @Test
-    public void test1() {
-
+    public void test1() throws ClassNotFoundException {
+        Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");
+        System.out.println(a.getSimpleName());
+        List<Class> ss = new ArrayList<>();
+        ss.add(a);
     }
 }
