@@ -47,6 +47,9 @@ public class ArticleCommandService extends AbstractCommandService {
     private String fromUser;
     @Value("${article.add.info}")
     private String addInfo;
+    @Value("${menu.common.cmd}")
+    private String commonCmd;
+
 
     /**
      * 文章列表 - redisKey - 后缀
@@ -80,7 +83,7 @@ public class ArticleCommandService extends AbstractCommandService {
             }
             // redis key 的格式， openid|article-list，5分钟内有效
             redisService.hmset(msgVO.getFromUserName() + redisKeySuffix, articleMap, 5 * 60);
-            content.append("\n\n为了缓解服务器压力，文章代码5分钟内有效哦~");
+            content.append("\n\n为了缓解服务器压力，文章代码5分钟内有效哦~").append(commonCmd);
         }
         return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
@@ -92,17 +95,17 @@ public class ArticleCommandService extends AbstractCommandService {
         Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
         if (articleMap == null || articleMap.size() <= 0) {
             return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(toUser).content("文章列表缓存已过期，请重新操作~").build();
+                    .toUserName(toUser).content("文章列表缓存已过期，请重新操作~" + commonCmd).build();
         }
         String articleId = String.valueOf(articleMap.get(msgVO.getContent().replace("1-*", "")));
         Articles article;
         if (StringUtils.isEmpty(articleId) || (article = articlesDAO.findById(articleId).orElse(null)) == null) {
             return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~").build();
+                    .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
         }
         String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
-                .url(article.getUrl()).description(article.getContent().substring(0, 27).concat("....\n\n查看全文")).build();
+                .url(article.getUrl()).description(article.getContent().substring(0, 37).concat("....\n\n查看全文")).build();
         NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
         return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
                 .articleCount(1).createTime(new Date()).build();
@@ -131,9 +134,9 @@ public class ArticleCommandService extends AbstractCommandService {
                 }
             }
             latch.await();
-            content.append("添加成功！").deleteCharAt(content.lastIndexOf("、"));
+            content.append("添加成功！").deleteCharAt(content.lastIndexOf("、")).append(commonCmd);
         } catch (ExecutionException | InterruptedException e) {
-            content = new StringBuilder("文章添加失败！");
+            content = new StringBuilder("文章添加失败！").append(commonCmd);
             log.error("-----> 获取有道云笔记信息失败！", e);
         } finally {
             this.cleanCommand(openid);
