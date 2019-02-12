@@ -179,9 +179,12 @@ public class PackageUtils {
                         if (entryName.startsWith(packagePath)) {
                             // 经过以下处理，得到className = org.junit.jupiter.api.BeforeAll
                             String className = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
-                            log.info("========== 7 ========== className = {}", className);
+                            log.info("========== 8 ========== className = {}", className);
                             classNameList.add(className);
+                            log.info("========== 9 ==========");
                             classList.add(Class.forName(className));
+                            log.info("========== 0 ==========");
+                            System.out.println();
                         }
                     } else {
                         int index = entryName.lastIndexOf("/");
