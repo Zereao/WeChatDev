@@ -39,6 +39,8 @@ public class HelpMessageService {
     private String rootMsg;
     @Value("${help.permission.error.msg}")
     private String permissionErrorMsg;
+    @Value("${menu.common.cmd}")
+    private String commonCmd;
 
     private final RedisService redisService;
 
@@ -69,11 +71,11 @@ public class HelpMessageService {
     public TextMessageVO getHelp(String toUserName) {
         StringBuilder content = new StringBuilder("Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~\n");
         Command.MenuType menu = Command.MenuType.USER;
-        if ("true".equals(redisService.get(TextMessageService.ROOT_ENABLED))) {
+        if ("true".equals(redisService.get(TextMessageService.ROOT_ENABLED_PREFIX + toUserName))) {
             menu = Command.MenuType.ROOT;
         }
         CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
-        content.append("\n\n您还可以使用以下特殊命令：\n-：返回上级菜单\n#：返回首页");
+        content.append(commonCmd);
         return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
     }
@@ -97,8 +99,9 @@ public class HelpMessageService {
      */
     public TextMessageVO getRootMsg(String toUserName) {
         StringBuilder content = new StringBuilder(rootMsg + "\n");
-        Command.MenuType menu = "true".equals(redisService.get(TextMessageService.ROOT_ENABLED)) ? Command.MenuType.ROOT : Command.MenuType.USER;
+        Command.MenuType menu = "true".equals(redisService.get(TextMessageService.ROOT_ENABLED_PREFIX + toUserName)) ? Command.MenuType.ROOT : Command.MenuType.USER;
         CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        content.append(commonCmd);
         return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
     }

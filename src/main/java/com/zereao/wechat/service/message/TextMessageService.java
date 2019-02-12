@@ -29,9 +29,7 @@ public class TextMessageService extends AbstractMessageService {
 
     private final UserDAO userDAO;
 
-    private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
-    public static final String ROOT_ENABLED = "REDIS_KEY_OF_ROOT";
-
+    private static final String COMMAND_PREFIX = "COMMAND_OF_";
     private static final String COMMAND_ROOT = "wdxpn";
     private static final String COMMAND_FIRST_PAGE = "#";
     private static final String COMMAND_PRE_PAGE = "-";
@@ -46,10 +44,13 @@ public class TextMessageService extends AbstractMessageService {
     }
 
     @PostConstruct
-    public void cleadMenuTree() {
+    public void cleanMenuTree() {
         log.info("----->  准备清理菜单树...");
-        this.userDAO.findAll().forEach(user -> this.redisService.del(REDIS_KEY_PREFIX + user.getOpenid()));
-        this.redisService.del(ROOT_ENABLED);
+        this.userDAO.findAll().forEach(user -> {
+            String openid = user.getOpenid();
+            this.redisService.del(COMMAND_PREFIX + openid);
+            this.redisService.del(ROOT_ENABLED_PREFIX + openid);
+        });
         log.info("----->  菜单树清理完毕~");
     }
 
@@ -58,14 +59,15 @@ public class TextMessageService extends AbstractMessageService {
         Object result = this.checkCommand(msgVO);
         if (result == null) {
             String content = msgVO.getContent();
+            String openid = msgVO.getFromUserName();
             CommandsHolder.Command command;
             if (content.contains("*")) {
                 command = CommandsHolder.get(content.substring(0, content.lastIndexOf("*") + 1));
             } else {
                 command = CommandsHolder.get(content);
             }
-            if (Command.MenuType.ROOT.equals(command.menu) && !StringUtils.equals(redisService.get(ROOT_ENABLED), "true")) {
-                return helpMessageService.getPermissionErrorMsg(msgVO.getFromUserName());
+            if (Command.MenuType.ROOT.equals(command.menu) && !StringUtils.equals(redisService.get(ROOT_ENABLED_PREFIX + openid), "true")) {
+                return helpMessageService.getPermissionErrorMsg(openid);
             }
             return commandServiceMap.get(command.bean).exec(msgVO, command);
         }
@@ -81,13 +83,13 @@ public class TextMessageService extends AbstractMessageService {
     private Object checkCommand(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         String userCommand = msgVO.getContent();
-        String redisKey = REDIS_KEY_PREFIX + openid;
+        String redisKey = COMMAND_PREFIX + openid;
         String existedCommand = redisService.get(redisKey);
 
         switch (userCommand) {
             // 开启ROOT权限命令
             case COMMAND_ROOT:
-                redisService.set(ROOT_ENABLED, "true", 5 * 60);
+                redisService.set(ROOT_ENABLED_PREFIX + openid, "true", 5 * 60);
                 redisService.del(redisKey);
                 return helpMessageService.getRootMsg(openid);
             // 返回首页命令

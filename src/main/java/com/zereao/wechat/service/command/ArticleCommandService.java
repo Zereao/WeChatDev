@@ -64,7 +64,7 @@ public class ArticleCommandService extends AbstractCommandService {
      *
      * @param msgVO 包含所需参数的消息体
      */
-    @Command(mapping = "1", name = "获取文章列表", first = true, menu = Command.MenuType.USER)
+    @Command(mapping = "1", name = "伦哥的随笔", first = true, menu = Command.MenuType.USER)
     public TextMessageVO getAllArticles(MessageVO msgVO) {
         List<Articles> articlesList = articlesDAO.findAll();
         StringBuilder content;
