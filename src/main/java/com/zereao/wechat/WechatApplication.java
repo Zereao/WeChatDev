@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
         "classpath:config/youdao.properties"}, encoding = "utf-8")
 public class WechatApplication {
     public static void main(String[] args) {
+        SpringApplication.run(WechatApplication.class, args);
         ThreadPoolUtils.execute(new CommandResolver(WechatApplication.class));
-//        SpringApplication.run(WechatApplication.class, args);
     }
 }

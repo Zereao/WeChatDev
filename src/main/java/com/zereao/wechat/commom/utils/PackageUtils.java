@@ -160,22 +160,14 @@ public class PackageUtils {
             Enumeration<JarEntry> jarEntries = jarFile.entries();
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
-                log.info("========== 6 ========== entry.getName = {}", entry.getName());
                 String entryName = entry.getName().replace("BOOT-INF/classes/", "");
-                log.info("========== 7 ========== entryName = {}", entryName);
                 if (entryName.endsWith(".class")) {
                     if (containChildPackages) {
                         // 筛选出packagePath包路径下的所有类
                         if (entryName.startsWith(packagePath)) {
                             String className = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
-                            log.info("========== 8 ========== className = {}", className);
                             classNameList.add(className);
-                            log.info("========== 9 ==========");
-                            Class clz = Class.forName(className);
-                            log.info("========== 1 ==========");
-                            classList.add(clz);
-                            log.info("========== 0 ==========");
-                            System.out.println("-");
+                            classList.add(Class.forName(className));
                         }
                     } else {
                         int index = entryName.lastIndexOf("/");
@@ -196,7 +188,6 @@ public class PackageUtils {
         } catch (Throwable e) {
             log.error("发生了错误！", e);
         }
-        log.info("==================== resultMap = {}", resultMap);
         return resultMap;
     }
 
