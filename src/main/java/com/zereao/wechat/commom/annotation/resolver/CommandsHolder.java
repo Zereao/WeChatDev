@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -22,6 +23,7 @@ import static com.zereao.wechat.service.message.AbstractMessageService.ROOT_ENAB
  * @author Darion Mograine H
  * @version 2019/01/16  10:21
  */
+@Component
 public class CommandsHolder implements ApplicationContextAware {
     private static Map<String, Command> holder = new ConcurrentHashMap<>(16);
 
@@ -113,11 +115,6 @@ public class CommandsHolder implements ApplicationContextAware {
         return sb.toString();
     }
 
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        redisService = applicationContext.getBean(RedisService.class);
-    }
-
     @Builder
     public static class Command {
         public String mapping, name, bean;
@@ -138,5 +135,10 @@ public class CommandsHolder implements ApplicationContextAware {
                     ", method=" + (method == null ? null : method.getName()) +
                     "}";
         }
+    }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+        redisService = applicationContext.getBean(RedisService.class);
     }
 }

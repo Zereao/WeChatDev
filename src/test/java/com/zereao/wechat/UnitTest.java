@@ -33,6 +33,10 @@ import java.util.stream.Stream;
  * @version 2018/12/10  20:04
  */
 class UnitTest {
+    @Test
+    void test18() {
+        System.out.println("张安".equals(null));
+    }
 
     @Test
     void test17() {
