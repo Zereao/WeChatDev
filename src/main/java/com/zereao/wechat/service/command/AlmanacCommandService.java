@@ -95,7 +95,7 @@ public class AlmanacCommandService extends AbstractCommandService {
                 .toUserName(openid).content(content.toString()).build();
     }
 
-    @Command(mapping = "2-2", name = "时辰吉凶", level = Level.L2)
+    @Command(mapping = "2-3", name = "时辰吉凶", level = Level.L2)
     public TextMessageVO getTimeLuck(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         AlmanacDTO almanac = commandService.getAlmanacInfo();
