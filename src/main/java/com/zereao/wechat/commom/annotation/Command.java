@@ -23,7 +23,7 @@ public @interface Command {
     /**
      * 是否一级菜单，默认 false
      */
-    boolean first() default false;
+    Level level() default Level.L0;
 
     /**
      * 菜单类型，Root菜单 或 用户菜单
@@ -39,5 +39,20 @@ public @interface Command {
          * 用户权限
          */
         USER
+    }
+
+    enum Level {
+        /**
+         * 零级菜单，通配
+         */
+        L0,
+        /**
+         * 一级菜单
+         */
+        L1,
+        /**
+         * 二级菜单
+         */
+        L2
     }
 }

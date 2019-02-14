@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * 帮助信息Service
  *
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/21  14:03
  */
 @Slf4j
@@ -70,11 +70,7 @@ public class HelpMessageService {
      */
     public TextMessageVO getHelp(String toUserName) {
         StringBuilder content = new StringBuilder("Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~\n");
-        Command.MenuType menu = Command.MenuType.USER;
-        if ("true".equals(redisService.get(TextMessageService.ROOT_ENABLED_PREFIX + toUserName))) {
-            menu = Command.MenuType.ROOT;
-        }
-        CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        CommandsHolder.list(toUserName, Command.Level.L1).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
         content.append(commonCmd);
         return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
@@ -99,8 +95,7 @@ public class HelpMessageService {
      */
     public TextMessageVO getRootMsg(String toUserName) {
         StringBuilder content = new StringBuilder(rootMsg + "\n");
-        Command.MenuType menu = "true".equals(redisService.get(TextMessageService.ROOT_ENABLED_PREFIX + toUserName)) ? Command.MenuType.ROOT : Command.MenuType.USER;
-        CommandsHolder.list(menu, true).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        CommandsHolder.list(toUserName, Command.Level.L1).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
         content.append(commonCmd);
         return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();

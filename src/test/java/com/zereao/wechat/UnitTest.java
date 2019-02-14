@@ -5,6 +5,9 @@ import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,7 +32,17 @@ import java.util.stream.Stream;
 public class UnitTest {
 
     @Test
-    public void test() {
+    public void test15() throws IOException {
+        String url = "http://m.laohuangli.net/";
+        String result = OkHttp3Utils.doGetWithGBK(url);
+        if (StringUtils.isBlank(result)) {
+            return;
+        }
+        Document html = Jsoup.parse(result);
+    }
+
+    @Test
+    public void test144() {
         String packageName = "com.zereao.wechat";
         Package pkg = Package.getPackage(packageName);
         Annotation[] annotations = pkg.getAnnotations();

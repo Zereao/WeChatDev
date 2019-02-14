@@ -2,6 +2,8 @@ package com.zereao.wechat.service.command;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.commom.annotation.Command;
+import com.zereao.wechat.commom.annotation.Command.Level;
+import com.zereao.wechat.commom.annotation.Command.MenuType;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
@@ -28,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/19  20:33
  */
 @Slf4j
@@ -45,9 +47,6 @@ public class ArticleCommandService extends AbstractCommandService {
     private String imgUrl;
     @Value("${article.add.info}")
     private String addInfo;
-    @Value("${menu.common.cmd}")
-    private String commonCmd;
-
 
     /**
      * 文章列表 - redisKey - 后缀
@@ -65,7 +64,7 @@ public class ArticleCommandService extends AbstractCommandService {
      *
      * @param msgVO 包含所需参数的消息体
      */
-    @Command(mapping = "1", name = "伦哥的随笔", first = true, menu = Command.MenuType.USER)
+    @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1, menu = MenuType.USER)
     public TextMessageVO getAllArticles(MessageVO msgVO) {
         List<Articles> articlesList = articlesDAO.findAll();
         StringBuilder content;
@@ -87,7 +86,7 @@ public class ArticleCommandService extends AbstractCommandService {
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
     }
 
-    @Command(mapping = "1-*", name = "获取文章", menu = Command.MenuType.USER)
+    @Command(mapping = "1-*", name = "获取文章", level = Level.L2, menu = MenuType.USER)
     public Object getArticle(MessageVO msgVO) {
         String toUser = msgVO.getFromUserName();
         Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
@@ -109,13 +108,13 @@ public class ArticleCommandService extends AbstractCommandService {
                 .articleCount(1).createTime(new Date()).build();
     }
 
-    @Command(name = "新增文章", mapping = "r1", first = true, menu = Command.MenuType.ROOT)
+    @Command(name = "新增文章", mapping = "r1", level = Level.L1, menu = MenuType.ROOT)
     public TextMessageVO addArticle(MessageVO msgVO) {
         return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
                 .msgType(MsgType.TEXT).createTime(new Date()).content(addInfo).build();
     }
 
-    @Command(name = "文章添加操作", mapping = "r1-*", menu = Command.MenuType.ROOT)
+    @Command(name = "文章添加操作", mapping = "r1-*", menu = MenuType.ROOT)
     public TextMessageVO addArticl(MessageVO msgVO) {
         String[] urls = msgVO.getContent().split("\\|(wdxpn|WDXPN)\\|");
         CountDownLatch latch = new CountDownLatch(urls.length);

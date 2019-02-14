@@ -1,7 +1,14 @@
 package com.zereao.wechat.commom.annotation.resolver;
 
+import com.zereao.wechat.commom.annotation.Command.Level;
+import com.zereao.wechat.commom.annotation.Command.MenuType;
+import com.zereao.wechat.service.redis.RedisService;
 import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -9,12 +16,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.zereao.wechat.service.message.AbstractMessageService.ROOT_ENABLED_PREFIX;
+
 /**
  * @author Darion Mograine H
  * @version 2019/01/16  10:21
  */
-public class CommandsHolder {
+public class CommandsHolder implements ApplicationContextAware {
     private static Map<String, Command> holder = new ConcurrentHashMap<>(16);
+
+    private static RedisService redisService;
 
     /**
      * 向容器中添加一条命令
@@ -23,7 +34,7 @@ public class CommandsHolder {
      */
     static void add(com.zereao.wechat.commom.annotation.Command command, Class cls, Method method) {
         String mapping = command.mapping();
-        holder.put(mapping, Command.builder().mapping(mapping).first(command.first()).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
+        holder.put(mapping, Command.builder().mapping(mapping).level(command.level()).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
     }
 
     /**
@@ -54,14 +65,40 @@ public class CommandsHolder {
      * <p>
      * key = 命令名称，value = 命令映射mapping
      *
-     * @param menu  菜单类型，Root菜单 或者 用户菜单
-     * @param first 是否一级菜单
+     * @param level 菜单等级，1级菜单，2级菜单
      * @return result LinkedHashMap
      */
-    public static Map<String, String> list(com.zereao.wechat.commom.annotation.Command.MenuType menu, boolean first) {
+    public static Map<String, String> list(String openid, Level level) {
+        MenuType menu = "true".equals(redisService.get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
         Map<String, String> resultMap = new LinkedHashMap<>();
         holder.entrySet().stream()
-                .filter(entry -> (entry.getValue().first == first && (menu.equals(com.zereao.wechat.commom.annotation.Command.MenuType.ROOT) || entry.getValue().menu.equals(menu))))
+                .filter(entry -> {
+                    Command command = entry.getValue();
+                    return command.level == level && (menu.equals(MenuType.ROOT) || command.menu.equals(menu));
+                })
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
+        return resultMap;
+    }
+
+    /**
+     * 根据菜单类型 和 扫描类Class对象获取 Class下所有符合条件的菜单命令，按照 命令映射(mapping) 排序
+     * <p>
+     * key = 命令名称，value = 命令映射mapping
+     *
+     * @param openid 当前用户的openid
+     * @param cls    扫描类的Class对象
+     * @param level  菜单等级，1级菜单，2级菜单
+     * @return result LinkedHashMap
+     */
+    public static Map<String, String> list(String openid, Class cls, Level level) {
+        MenuType menu = "true".equals(redisService.get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
+        Map<String, String> resultMap = new LinkedHashMap<>();
+        holder.entrySet().stream()
+                .filter(entry -> {
+                    Command command = entry.getValue();
+                    return command.cls == cls && command.level == level && (menu.equals(MenuType.ROOT) || command.menu.equals(menu));
+                })
                 .sorted(Comparator.comparing(Map.Entry::getKey))
                 .forEach(entry -> resultMap.put(entry.getValue().name, entry.getKey()));
         return resultMap;
@@ -76,11 +113,16 @@ public class CommandsHolder {
         return sb.toString();
     }
 
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+        redisService = applicationContext.getBean(RedisService.class);
+    }
+
     @Builder
     public static class Command {
         public String mapping, name, bean;
-        public boolean first;
-        public com.zereao.wechat.commom.annotation.Command.MenuType menu;
+        public Level level;
+        public MenuType menu;
         public Class cls;
         public Method method;
 
@@ -90,7 +132,7 @@ public class CommandsHolder {
                     "mapping='" + mapping + '\'' +
                     ", name='" + name + '\'' +
                     ", bean='" + bean + '\'' +
-                    ", first='" + first + '\'' +
+                    ", level='" + level + '\'' +
                     ", menu=" + menu.name() +
                     ", cls=" + (cls == null ? null : StringUtils.uncapitalize(cls.getSimpleName())) +
                     ", method=" + (method == null ? null : method.getName()) +

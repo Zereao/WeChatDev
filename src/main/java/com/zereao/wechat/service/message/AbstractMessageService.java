@@ -8,11 +8,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author Zereao
+ * @author Darion Mograine H
  * @version 2018/12/11  18:20
  */
 public abstract class AbstractMessageService extends AbstractMsgService {
-    protected static final String ROOT_ENABLED_PREFIX = "REDIS_KEY_OF_ROOT";
+    public static final String ROOT_ENABLED_PREFIX = "REDIS_KEY_OF_ROOT_";
 
     @Autowired
     private MessageDAO messageDAO;

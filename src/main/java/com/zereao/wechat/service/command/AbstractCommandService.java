@@ -23,6 +23,8 @@ public abstract class AbstractCommandService {
 
     @Value("${wechat.from.openid}")
     protected String fromUser;
+    @Value("${menu.common.cmd}")
+    protected String commonCmd;
 
     private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
 

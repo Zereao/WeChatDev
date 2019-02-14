@@ -74,7 +74,7 @@ public class OkHttp3Utils {
     }
 
     /**
-     * 发送Get请求
+     * 发送Get请求，并返回UTF-8编码的结果
      *
      * @param url 请求Url链接
      * @return 请求结果
@@ -85,6 +85,20 @@ public class OkHttp3Utils {
         Request request = new Request.Builder().url(url).build();
         ResponseBody body = sendRequest(request);
         return body == null ? null : body.string();
+    }
+
+    /**
+     * 发送Get请求，并返回GBK编码的就过
+     *
+     * @param url 请求Url链接
+     * @return 请求结果
+     * @throws IOException IOException
+     */
+    public static String doGetWithGBK(String url) throws IOException {
+        log.info("========================= 准备发起GET请求：{} =========================", url);
+        Request request = new Request.Builder().url(url).build();
+        ResponseBody body = sendRequest(request);
+        return body == null ? null : new String(body.bytes(), "GBK");
     }
 
     /**
