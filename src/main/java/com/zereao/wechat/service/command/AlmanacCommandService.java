@@ -85,7 +85,7 @@ public class AlmanacCommandService extends AbstractCommandService {
             if (tag++ % 4 == 0) {content.append("\n");} else {content.append("  ");}
         }
         content.append("\n\n").append("【今日老黄历忌】\n");
-        tag = 0;
+        tag = 1;
         for (String taboo : almanac.getTabooList()) {
             content.append(taboo);
             if (tag++ % 4 == 0) {content.append("\n");} else {content.append("  ");}
