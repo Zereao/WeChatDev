@@ -101,11 +101,9 @@ public class ArticleCommandService extends AbstractCommandService {
                     .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
         }
         String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
-        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
-                .url(article.getUrl()).description(article.getContent().substring(0, 37).concat("....\n\n查看全文")).build();
-        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
-        return NewsMessageVO.builder().articles(articles).msgType(MsgType.NEWS).toUserName(toUser).fromUserName(fromUser)
-                .articleCount(1).createTime(new Date()).build();
+        return NewsMessageVO.builder().description(article.getContent().substring(0, 37).concat("....\n\n查看全文"))
+                .title(article.getTitle()).picUrl(picUrl).url(article.getUrl()).msgType(MsgType.NEWS)
+                .toUserName(toUser).fromUserName(fromUser).articleCount(1).createTime(new Date()).build();
     }
 
     @Command(name = "新增文章", mapping = "r1", level = Level.L1, menu = MenuType.ROOT)

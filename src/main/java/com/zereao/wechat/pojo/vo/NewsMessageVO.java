@@ -21,10 +21,6 @@ import java.util.Date;
  * @author Zereao
  * @version 2018/12/13  18:44
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NewsMessageVO {
@@ -60,6 +56,65 @@ public class NewsMessageVO {
      */
     @XmlElement(name = "Articles")
     private Articles articles;
+
+    public NewsMessageVO() { }
+
+    public NewsMessageVO(String toUserName, String fromUserName, Date createTime, MsgType msgType, Integer articleCount, Articles articles) {
+        this.toUserName = toUserName;
+        this.fromUserName = fromUserName;
+        this.createTime = createTime;
+        this.msgType = msgType;
+        this.articleCount = articleCount;
+        this.articles = articles;
+    }
+
+    public String getToUserName() {
+        return toUserName;
+    }
+
+    public void setToUserName(String toUserName) {
+        this.toUserName = toUserName;
+    }
+
+    public String getFromUserName() {
+        return fromUserName;
+    }
+
+    public void setFromUserName(String fromUserName) {
+        this.fromUserName = fromUserName;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public MsgType getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(MsgType msgType) {
+        this.msgType = msgType;
+    }
+
+    public Integer getArticleCount() {
+        return articleCount;
+    }
+
+    public void setArticleCount(Integer articleCount) {
+        this.articleCount = articleCount;
+    }
+
+    public Articles getArticles() {
+        return articles;
+    }
+
+    public void setArticles(Articles articles) {
+        this.articles = articles;
+    }
 
     @Data
     @Builder
@@ -98,6 +153,74 @@ public class NewsMessageVO {
              */
             @XmlElement(name = "Url")
             private String url;
+        }
+    }
+
+    public static NewMessageVOBuilder builder() {
+        return new NewMessageVOBuilder();
+    }
+
+    public static class NewMessageVOBuilder {
+        private String toUserName;
+        private String fromUserName;
+        private Date createTime;
+        private MsgType msgType;
+        private Integer articleCount;
+        private String title;
+        private String description;
+        private String picUrl;
+        private String url;
+
+        public NewMessageVOBuilder toUserName(String toUserName) {
+            this.toUserName = toUserName;
+            return this;
+        }
+
+        public NewMessageVOBuilder fromUserName(String fromUserName) {
+            this.fromUserName = fromUserName;
+            return this;
+        }
+
+        public NewMessageVOBuilder createTime(Date createTime) {
+            this.createTime = createTime;
+            return this;
+        }
+
+        public NewMessageVOBuilder msgType(MsgType msgType) {
+            this.msgType = msgType;
+            return this;
+        }
+
+        public NewMessageVOBuilder articleCount(Integer articleCount) {
+            this.articleCount = articleCount;
+            return this;
+        }
+
+        public NewMessageVOBuilder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public NewMessageVOBuilder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public NewMessageVOBuilder picUrl(String picUrl) {
+            this.picUrl = picUrl;
+            return this;
+        }
+
+        public NewMessageVOBuilder url(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public NewsMessageVO build() {
+            NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(this.title).picUrl(this.picUrl)
+                    .url(this.url).description(this.description).build();
+            NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
+            return new NewsMessageVO(toUserName, fromUserName, createTime, msgType, articleCount, articles);
         }
     }
 }

@@ -8,13 +8,16 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.Test;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -29,20 +32,34 @@ import java.util.stream.Stream;
  * @author Zereao
  * @version 2018/12/10  20:04
  */
-public class UnitTest {
+class UnitTest {
 
     @Test
-    public void test15() throws IOException {
-        String url = "http://m.laohuangli.net/";
-        String result = OkHttp3Utils.doGetWithGBK(url);
-        if (StringUtils.isBlank(result)) {
-            return;
-        }
-        Document html = Jsoup.parse(result);
+    void test17() {
+        String a = "  祈福    嫁娶   　移徙  　纳财　 入宅　开市 作灶 破土　启鑽　修坟　";
+        String as = a.replaceAll("[ 　]+", " ");
+        System.out.println(a);
+        System.out.println(as);
     }
 
     @Test
-    public void test144() {
+    void test16() {
+        String[] a = new String[]{"1", "1", "1", "1", "1", "1", "1", "1"};
+        System.out.println(a.length);
+        List<String> as = new ArrayList<>();
+        Collections.addAll(as, a);
+        System.out.println(as);
+    }
+
+    @Test
+    void test15() throws IOException {
+        String url = "http://m.laohuangli.net/";
+        String result = OkHttp3Utils.doGetWithGBK(url);
+        System.out.println(result);
+    }
+
+    @Test
+    void test144() {
         String packageName = "com.zereao.wechat";
         Package pkg = Package.getPackage(packageName);
         Annotation[] annotations = pkg.getAnnotations();
@@ -53,13 +70,13 @@ public class UnitTest {
     }
 
     @Test
-    public void test14() {
+    void test14() {
         String a = "/a//gv///c/////d////f";
         System.out.println(a.replaceAll("//+", "/"));
     }
 
     @Test
-    public void test13() {
+    void test13() {
         StringBuilder sb = new StringBuilder("亲爱的、张安、三、萨达瓦打我、反而、");
         System.out.println(sb.toString());
         StringBuilder a = sb.deleteCharAt(sb.lastIndexOf("、"));
@@ -70,7 +87,7 @@ public class UnitTest {
     private class TestThreadClass implements Callable<String> {
         private String index;
 
-        public TestThreadClass(String index) {
+        TestThreadClass(String index) {
             this.index = index;
         }
 
@@ -82,7 +99,7 @@ public class UnitTest {
     }
 
     @Test
-    public void test12() throws ExecutionException, InterruptedException {
+    void test12() throws ExecutionException, InterruptedException {
         for (int i = 0; i < 5; i++) {
             String index = ThreadPoolUtils.submit(new TestThreadClass(String.valueOf(i)));
         }
@@ -92,10 +109,10 @@ public class UnitTest {
     private static Pattern articleIdPattern = Pattern.compile("id=(.*?)&");
 
     @Test
-    public void test11() {
+    void test11() {
         String share = "1-root.add[xlczj]http://note.youdao.com/noteshare?" +
                 "id=3df33d89adae7e91dbdf697eb88d3075&sub=E889E1B585C84DF08D25D4B1CE654823[xlczj]" +
-                "https://note.youdao.com/yws/public/note/3df33d89adae7e91dbdf697eb88d3075?editorType=0";
+                "https://note.youdao.com/yws//note/3df33d89adae7e91dbdf697eb88d3075?editorType=0";
         String a = share.replaceAll("^*+\\[xlczj]?", "");
         System.out.println(share);
         System.out.println(a);
@@ -103,10 +120,10 @@ public class UnitTest {
     }
 
     @Test
-    public void test10() throws IOException {
+    void test10() throws IOException {
         String share = "http://note.youdao.com/noteshare?id=3df33d89adae7e91dbdf697eb88d3075&sub=E889E1B585C84DF08D25D4B1CE654823";
-//        https://note.youdao.com/yws/public/note/3df33d89adae7e91dbdf697eb88d3075?editorType=0
-        String url = "https://note.youdao.com/yws/public/note/3df33d89adae7e91dbdf697eb88d3075?editorType=0";
+//        https://note.youdao.com/yws//note/3df33d89adae7e91dbdf697eb88d3075?editorType=0
+        String url = "https://note.youdao.com/yws//note/3df33d89adae7e91dbdf697eb88d3075?editorType=0";
 //        String result = OkHttp3Utils.INSTANCE.doGet(url);
 
         Matcher matcher = articleIdPattern.matcher(share);
@@ -115,20 +132,20 @@ public class UnitTest {
     }
 
     @Test
-    public void test09() {
+    void test09() {
         String a = "";
         System.out.println(a.startsWith("1"));
     }
 
     @Test
-    public void test8() {
+    void test8() {
         String code = "1-23-dasa";
         String result = code.replaceAll("-\\d+$", "-");
         System.out.println(result);
     }
 
     @Test
-    public void test07() {
+    void test07() {
         List<Integer> a = new ArrayList<>();
         a.forEach(i -> {
             int b = 1;
@@ -138,19 +155,19 @@ public class UnitTest {
     }
 
     @Test
-    public void test06() {
+    void test06() {
         Integer a = Stream.of(1, 2, 3, 4, 5).filter(i -> i > 2).findFirst().orElse(null);
         System.out.println(a);
     }
 
     @Test
-    public void test05() {
+    void test05() {
         MsgType a = MsgType.of("shortvideo");
         System.out.println(a);
     }
 
     @Test
-    public void test04() throws ParseException {
+    void test04() throws ParseException {
         long a = 1348831860L;
         final String STANDARD_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
         Date s = new SimpleDateFormat(STANDARD_DATE_FORMAT).parse(String.valueOf(a));
@@ -158,12 +175,12 @@ public class UnitTest {
     }
 
     @Test
-    public void test03() {
+    void test03() {
         MsgType a = MsgType.SHORT_VIDEO;
     }
 
     @Test
-    public void test02() {
+    void test02() {
         String token = "lovebluesky";
         String timestamp = String.valueOf(System.currentTimeMillis());
         String nonce = String.valueOf(154);
@@ -175,7 +192,7 @@ public class UnitTest {
         System.out.println(encryptedStr);
     }
 
-    public static void main(String[] args) throws ClassNotFoundException {
+    static void main(String[] args) throws ClassNotFoundException {
         Class c = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$ContentType");
         Class b = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils");
         Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");
@@ -187,7 +204,7 @@ public class UnitTest {
     }
 
     @Test
-    public void test1() throws ClassNotFoundException {
+    void test1() throws ClassNotFoundException {
         Class c = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$ContentType");
         Class b = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils");
         Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");

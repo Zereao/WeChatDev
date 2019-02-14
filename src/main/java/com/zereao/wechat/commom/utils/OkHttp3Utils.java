@@ -132,14 +132,14 @@ public class OkHttp3Utils {
     /**
      * 剥离出的发送post请求的公共方法
      *
-     * @param url  URL
-     * @param body requestBody
+     * @param url         URL
+     * @param requestBody requestBody
      * @return String or null
      */
-    private static String post(String url, RequestBody body) throws IOException {
-        Request request = new Request.Builder().url(url).post(body).build();
-        ResponseBody resp = sendRequest(request);
-        return resp == null ? null : resp.string();
+    private static String post(String url, RequestBody requestBody) throws IOException {
+        Request request = new Request.Builder().url(url).post(requestBody).build();
+        ResponseBody body = sendRequest(request);
+        return body == null ? null : body.string();
     }
 
     /**
