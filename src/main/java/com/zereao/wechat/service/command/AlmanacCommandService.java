@@ -50,7 +50,7 @@ public class AlmanacCommandService extends AbstractCommandService {
 
     private static final Pattern TIME_LUCK_PATTERN = Pattern.compile("时 (.*〗)");
 
-    @Command(mapping = "2", name = "老爹的黄历", level = Level.L1, menu = MenuType.USER)
+    @Command(mapping = "2", name = "老爹的黄历", level = Level.L1)
     public TextMessageVO getFatherAlmanac(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), Level.L2);
@@ -65,18 +65,47 @@ public class AlmanacCommandService extends AbstractCommandService {
     }
 
 
-    @Command(mapping = "2-1", name = "今日运势-网页版", level = Level.L2, menu = MenuType.USER)
+    @Command(mapping = "2-1", name = "今日运势-网页版", level = Level.L2)
     public Object obWithHtml(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         AlmanacDTO almanac = commandService.getAlmanacInfo();
-        if (almanac == null) {
-            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(openid).content(errorInfo + commonCmd).build();
-        } else {
-            String picUrl = almanac.getSuitableList().size() > almanac.getTabooList().size() ? luckyImg : restImg;
-            return NewsMessageVO.builder().title("今日运势").description(almanac.getDate()).msgType(MsgType.NEWS).url(url)
-                    .picUrl(picUrl).toUserName(openid).fromUserName(fromUser).articleCount(1).createTime(new Date()).build();
+        String picUrl = almanac.getSuitableList().size() > almanac.getTabooList().size() ? luckyImg : restImg;
+        return NewsMessageVO.builder().title("今日运势").description(almanac.getDate()).msgType(MsgType.NEWS).url(url)
+                .picUrl(picUrl).toUserName(openid).fromUserName(fromUser).articleCount(1).createTime(new Date()).build();
+    }
+
+    @Command(mapping = "2-2", name = "今日宜忌", level = Level.L2)
+    public TextMessageVO getLuck(MessageVO msgVO) {
+        String openid = msgVO.getFromUserName();
+        AlmanacDTO almanac = commandService.getAlmanacInfo();
+        int tag = 1;
+        StringBuilder content = new StringBuilder("【今日老黄历宜】\n");
+        for (String suitable : almanac.getSuitableList()) {
+            content.append(suitable);
+            if (tag++ % 4 == 0) {content.append("\n");} else {content.append("  ");}
         }
+        content.append("\n\n").append("【今日老黄历忌】\n");
+        tag = 0;
+        for (String taboo : almanac.getTabooList()) {
+            content.append(taboo);
+            if (tag++ % 4 == 0) {content.append("\n");} else {content.append("  ");}
+        }
+        content.append(commonCmd);
+        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                .toUserName(openid).content(content.toString()).build();
+    }
+
+    @Command(mapping = "2-2", name = "时辰吉凶", level = Level.L2)
+    public TextMessageVO getTimeLuck(MessageVO msgVO) {
+        String openid = msgVO.getFromUserName();
+        AlmanacDTO almanac = commandService.getAlmanacInfo();
+        StringBuilder content = new StringBuilder("【今日老黄历时辰吉凶】\n");
+        for (String luck : almanac.getTimeLuck()) {
+            content.append("\n").append(luck);
+        }
+        content.append(commonCmd);
+        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                .toUserName(openid).content(content.toString()).build();
     }
 
     @Cacheable("almanac")
@@ -129,6 +158,6 @@ public class AlmanacCommandService extends AbstractCommandService {
         } catch (IOException e) {
             log.error("访问[" + url + "]出错！", e);
         }
-        return null;
+        return AlmanacDTO.builder().build();
     }
 }

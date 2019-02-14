@@ -64,7 +64,7 @@ public class ArticleCommandService extends AbstractCommandService {
      *
      * @param msgVO 包含所需参数的消息体
      */
-    @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1, menu = MenuType.USER)
+    @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1)
     public TextMessageVO getAllArticles(MessageVO msgVO) {
         List<Articles> articlesList = articlesDAO.findAll();
         StringBuilder content;
@@ -86,7 +86,7 @@ public class ArticleCommandService extends AbstractCommandService {
                 .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
     }
 
-    @Command(mapping = "1-*", name = "获取文章", level = Level.L2, menu = MenuType.USER)
+    @Command(mapping = "1-*", name = "获取文章", level = Level.L2)
     public Object getArticle(MessageVO msgVO) {
         String toUser = msgVO.getFromUserName();
         Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));

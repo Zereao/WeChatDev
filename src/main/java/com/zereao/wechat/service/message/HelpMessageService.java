@@ -6,9 +6,7 @@ import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
-import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +40,6 @@ public class HelpMessageService {
     @Value("${menu.common.cmd}")
     private String commonCmd;
 
-    private final RedisService redisService;
-
-    @Autowired
-    public HelpMessageService(RedisService redisService) {this.redisService = redisService;}
-
     /**
      * 获取首次登陆时的欢迎信息
      *
@@ -54,12 +47,8 @@ public class HelpMessageService {
      * @return 欢迎信息
      */
     public NewsMessageVO getWelcomeArticle(MessageVO msgVO) {
-        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder()
-                .title(title).picUrl(bannerUrl).description(description).url(detail).build();
-        NewsMessageVO.Articles articles = NewsMessageVO.Articles.builder().item(item).build();
-        return NewsMessageVO.builder().articleCount(1).articles(articles)
-                .toUserName(msgVO.getFromUserName()).msgType(MsgType.NEWS)
-                .fromUserName(fromUser).createTime(new Date()).build();
+        return NewsMessageVO.builder().articleCount(1).title(title).picUrl(bannerUrl).description(description).url(detail)
+                .toUserName(msgVO.getFromUserName()).msgType(MsgType.NEWS).fromUserName(fromUser).createTime(new Date()).build();
     }
 
     /**
