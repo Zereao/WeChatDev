@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -16,10 +18,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,8 +33,32 @@ import java.util.stream.Stream;
  */
 class UnitTest {
     @Test
+    void test19() {
+
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    private class A {
+        private String a;
+        private Integer b;
+    }
+
+    @Test
     void test18() {
-        System.out.println("张安".equals(null));
+        for (int i = 0; i < 5; i++) {
+            A a;
+            if (i % 2 == 0) {
+                a = new A("张三", 25 * i);
+            } else {
+                a = null;
+            }
+            System.out.println();
+            A result = Optional.ofNullable(a).orElse(null);
+            System.out.println(result);
+        }
+
     }
 
     @Test

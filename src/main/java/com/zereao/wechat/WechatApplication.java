@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "classpath:config/wechat.properties",
         "classpath:config/constant-msg.properties",
         "classpath:config/almanac.properties",
+        "classpath:config/toys.attr.properties",
         "classpath:config/youdao.properties"}, encoding = "utf-8")
 public class WechatApplication {
     public static void main(String[] args) {
