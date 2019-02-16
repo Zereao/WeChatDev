@@ -43,6 +43,10 @@ public enum MsgType {
      */
     EVENT("event"),
     /**
+     * 音乐
+     */
+    MUSIC("music"),
+    /**
      * 图文消息
      */
     NEWS("news");

@@ -1,7 +1,8 @@
 package com.zereao.wechat.service.command.toys;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
+import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -13,7 +14,6 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * 图片转txt
@@ -23,46 +23,21 @@ import java.util.Arrays;
  */
 @Slf4j
 @Service
-@SuppressWarnings("Duplicates")
 public class Img2TxtToyService {
     //    @Value("${toys.img2txt.elements}")
     private static String strElements = "@#&$%*o!;.";
 
-    /**
-     * 图片转字符串，宽 x 高 = 1 x 2
-     *
-     * @param img BufferedImage图片
-     * @return 转换后的字符串
-     */
-    public String transfer2String1x2(BufferedImage img) {
-        int len = strElements.length();
-        int width = img.getWidth();
-        int height = img.getHeight();
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < height; i += 2) {
-            for (int j = 0; j < width; j++) {
-                // (0,0),(1,0),(2,0),(3,0),(4,0),换行,(0,1),(1,1),(2,1),(3,1),(4,1) 这个顺序开始读的
-                int pixel = img.getRGB(j, i);
-                // 下面三行代码将一个数字转换为RGB数字
-                int red = (pixel & 0xff0000) >> 16;
-                int green = (pixel & 0xff00) >> 8;
-                int blue = (pixel & 0xff);
-                float gray = 0.299f * red + 0.578f * green + 0.114f * blue;
-                int index = Math.round(gray * (len + 1) / 255);
-                result.append(index >= len ? " " : String.valueOf(strElements.charAt(index)));
-            }
-            result.append("\r\n");
-        }
-        return result.toString();
+    public void transfer2TextImg(String sourcePath) {
+
     }
 
     /**
-     * 图片转字符串，宽 x 高 = 1 x 1
+     * 图片转字符串
      *
      * @param img BufferedImage图片
      * @return 转换后的字符串
      */
-    public String transfer2String1x1(BufferedImage img) {
+    public String transfer2String(BufferedImage img) {
         int len = strElements.length();
         int width = img.getWidth();
         int height = img.getHeight();
@@ -70,13 +45,7 @@ public class Img2TxtToyService {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 // (0,0),(1,0),(2,0),(3,0),(4,0),换行,(0,1),(1,1),(2,1),(3,1),(4,1) 这个顺序开始读的
-                int pixel = img.getRGB(j, i);
-                // 下面三行代码将一个数字转换为RGB数字
-                int red = (pixel & 0xff0000) >> 16;
-                int green = (pixel & 0xff00) >> 8;
-                int blue = (pixel & 0xff);
-                float gray = 0.299f * red + 0.578f * green + 0.114f * blue;
-                int index = Math.round(gray * (len + 1) / 255);
+                int index = this.getCharIndex(img.getRGB(j, i));
                 result.append(index >= len ? " " : String.valueOf(strElements.charAt(index)));
             }
             result.append("\r\n");
@@ -85,28 +54,21 @@ public class Img2TxtToyService {
     }
 
     /**
-     * 图片转字符数组，宽 x 高 = 1 x 2
+     * 图片转字符数组，宽 x 高 = 1 x 1
      * 返回的二维数组的大小等于 Height ； 元素的大小等于 Width
      *
      * @param img BufferedImage图片
      * @return 转换后二维字符数组
      */
-    public String[][] transfer2CharArray1x2(BufferedImage img) {
+    public String[][] transfer2CharArray(BufferedImage img) {
         int len = strElements.length();
         int width = img.getWidth();
         int height = img.getHeight();
-        int xSize = height % 2 == 0 ? height / 2 : height / 2 + 1;
-        String[][] result = new String[xSize][width];
-        for (int i = 0; i < height; i += 2) {
+        String[][] result = new String[height][width];
+        for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int pixel = img.getRGB(j, i);
-                // 下面三行代码将一个数字转换为RGB数字
-                int red = (pixel & 0xff0000) >> 16;
-                int green = (pixel & 0xff00) >> 8;
-                int blue = (pixel & 0xff);
-                float gray = 0.299f * red + 0.578f * green + 0.114f * blue;
-                int index = Math.round(gray * (len + 1) / 255);
-                result[i / 2][j] = index >= len ? " " : String.valueOf(strElements.charAt(index));
+                int index = this.getCharIndex(img.getRGB(j, i));
+                result[i][j] = index >= len ? " " : String.valueOf(strElements.charAt(index));
             }
         }
         return result;
@@ -125,11 +87,11 @@ public class Img2TxtToyService {
         double hZoom = (double) longSize / oldHeight;
         int width = longSize, height = longSize;
         if (wZoom < hZoom) {
-            wZoom = hZoom;
-            width = (int) (wZoom * source.getWidth());
-        } else {
             hZoom = wZoom;
-            height = (int) (hZoom * source.getHeight());
+            height = (int) (wZoom * oldHeight);
+        } else {
+            wZoom = hZoom;
+            width = (int) (hZoom * oldWidth);
         }
         BufferedImage target;
         if (type == BufferedImage.TYPE_CUSTOM) {
@@ -140,48 +102,21 @@ public class Img2TxtToyService {
         } else {
             target = new BufferedImage(width, height, type);
         }
-        Graphics2D g = target.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g.drawRenderedImage(source, AffineTransform.getScaleInstance(wZoom, hZoom));
-        g.dispose();
+        Graphics2D graphics2D = target.createGraphics();
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        graphics2D.drawRenderedImage(source, AffineTransform.getScaleInstance(wZoom, hZoom));
+        graphics2D.dispose();
         return target;
-    }
-
-    /**
-     * 图片转字符数组，宽 x 高 = 1 x 1
-     * 返回的二维数组的大小等于 Height ； 元素的大小等于 Width
-     *
-     * @param img BufferedImage图片
-     * @return 转换后二维字符数组
-     */
-    public String[][] transfer2CharArray1x1(BufferedImage img) {
-        int len = strElements.length();
-        int width = img.getWidth();
-        int height = img.getHeight();
-        String[][] result = new String[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                int pixel = img.getRGB(j, i);
-                // 下面三行代码将一个数字转换为RGB数字
-                int red = (pixel & 0xff0000) >> 16;
-                int green = (pixel & 0xff00) >> 8;
-                int blue = (pixel & 0xff);
-                float gray = 0.299f * red + 0.578f * green + 0.114f * blue;
-                int index = Math.round(gray * (len + 1) / 255);
-                result[i][j] = index >= len ? " " : String.valueOf(strElements.charAt(index));
-            }
-        }
-        return result;
     }
 
     /**
      * 图片转字符再保存为图片
      *
-     * @param img     原图BufferedImage对象
-     * @param outPath 输出文件夹
+     * @param chars   原图转出的二维字符数组
+     * @param outPath 输出路径
      * @param zoom    缩放倍数，推荐 传入 7/8
      */
-    public void txtToImage(BufferedImage img, String outPath, int zoom) throws IOException {
+    public void textToImage(String[][] chars, String outPath, int zoom) throws IOException {
         int extIndex = outPath.lastIndexOf(".");
         String config = "_缩放" + zoom + "倍";
         String realOutPath = new StringBuilder(outPath).insert(extIndex, config).toString();
@@ -189,8 +124,7 @@ public class Img2TxtToyService {
         if (!outImg.exists()) {
             boolean newImgFile = outImg.createNewFile();
         }
-        String[][] chars = this.transfer2CharArray1x1(img);
-        int width = img.getWidth() * zoom;
+        int width = chars[0].length * zoom;
         int height = chars.length * zoom;
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // 获取图像上下文
@@ -202,61 +136,18 @@ public class Img2TxtToyService {
         }
         graphics.dispose();
         // 保存为jpg图片
-        try {
-            File outImg2 = new File("C:/Users/Jupiter/Desktop/未压缩_20190215122021.jpg");
-            if (!outImg2.exists()) {
-                boolean newImgFile = outImg.createNewFile();
-            }
-
-
-            BufferedImage commpressed = this.compress(bufferedImage, 500);
-            boolean result = ImageIO.write(commpressed, outPath.substring(extIndex), outImg);
-            System.out.println(result);
-        } catch (ImageFormatException | IOException e) {
-            e.printStackTrace();
-        }
+        boolean result = ImageIO.write(this.compress(bufferedImage, 1920), outPath.substring(extIndex + 1), outImg);
+        log.info("--------> 文本转图片{}！", result ? "成功" : "失败");
     }
 
-    public static void main(String[] args) throws IOException {
-        Img2TxtToyService toy = new Img2TxtToyService();
-        String inputFileName = "C:/Users/Jupiter/Desktop/20180619202355878.jpg";
-        BufferedImage image = ImageIO.read(new File(inputFileName));
-        String outputFile = "C:/Users/Jupiter/Desktop/zhangsan压缩后的.jpg";
-
-        ImageIO.write(toy.compress(image, 500), "jpg", new File(outputFile));
-
-//        ImageIO.write(toy.compress(image, 500), "jpg", new File(outputFile));
-
-
-//        String outputFileName = "C:/Users/Jupiter/Desktop/20180619202355878.jpg.txt";
-//        String[][] chars = toy.transfer2CharArray(image);
-//        toy.write2File(chars, outputFileName);
-//        toy.txtToImage(image, outputFile, 8);
-    }
-
-    class task implements Runnable {
-        BufferedImage image;
-        String outputFile;
-        int i;
-
-        public task(BufferedImage image, String outputFile, int i) {
-            this.image = image;
-            this.outputFile = outputFile;
-            this.i = i;
-        }
-
-        @Override
-        public void run() {
-            Img2TxtToyService toy = new Img2TxtToyService();
-            try {
-                toy.txtToImage(image, outputFile, 3);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void write2File(String[][] content, String outPath) throws IOException {
+    /**
+     * 将 二维字符数组按照格式写入txt文件中
+     *
+     * @param content 二维字符数组内容
+     * @param outPath 输出路径
+     * @throws IOException IO异常
+     */
+    public void write2File(String[][] content, String outPath) throws IOException {
         File file = new File(outPath);
         if (file.isFile() && file.exists()) {
             boolean del = file.delete();
@@ -270,6 +161,46 @@ public class Img2TxtToyService {
                 writer.flush();
             }
         }
+    }
+
+    private static class Text2ImgTask implements Runnable {
+        @Autowired
+        private Img2TxtToyService toyService;
+
+        private String[][] chars;
+        private String outPath;
+        private int zoom;
+
+        Text2ImgTask(String[][] chars, String outPath, int zoom) {
+            this.chars = chars;
+            this.outPath = outPath;
+            this.zoom = zoom;
+        }
+
+        @Override
+        public void run() {
+            try {
+                toyService.textToImage(chars, outPath, zoom);
+            } catch (IOException e) {
+                log.error("========>  文本转为图片出错！缩放倍数为：{}, 输出路径为：{}", zoom, outPath);
+                log.error("错误信息 ----->", e);
+            }
+        }
+    }
+
+    /**
+     * 提取的公共方法，根据像素值pixel获取该像素应该填充的字符元素的索引
+     *
+     * @param pixel 像素值
+     * @return 填充元素的索引
+     */
+    private int getCharIndex(int pixel) {
+        // 下面三行代码将一个数字转换为RGB数字
+        int red = (pixel & 0xff0000) >> 16;
+        int green = (pixel & 0xff00) >> 8;
+        int blue = (pixel & 0xff);
+        float gray = 0.299f * red + 0.578f * green + 0.114f * blue;
+        return Math.round(gray * (strElements.length() + 1) / 255);
     }
 
     /**

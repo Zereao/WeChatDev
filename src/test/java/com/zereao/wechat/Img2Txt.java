@@ -1,7 +1,5 @@
 package com.zereao.wechat;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -95,7 +93,7 @@ public class Img2Txt {
         // 保存为jpg图片
         try {
             ImageIO.write(bufferedImage, "jpg", imageFile);
-        } catch (ImageFormatException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return bufferedImage;

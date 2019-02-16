@@ -66,6 +66,7 @@ public class ArticleCommandService extends AbstractCommandService {
      */
     @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1)
     public TextMessageVO getAllArticles(MessageVO msgVO) {
+        String openid = msgVO.getFromUserName();
         List<Articles> articlesList = articlesDAO.findAll();
         StringBuilder content;
         if (articlesList.size() <= 0) {
@@ -79,11 +80,10 @@ public class ArticleCommandService extends AbstractCommandService {
                 content.append("\n").append(i + 1).append("：").append(articles.getTitle());
             }
             // redis key 的格式， openid|article-list，5分钟内有效
-            redisService.hmset(msgVO.getFromUserName() + redisKeySuffix, articleMap, 5 * 60);
+            redisService.hmset(openid + redisKeySuffix, articleMap, 5 * 60);
             content.append("\n\n为了缓解服务器压力，文章代码5分钟内有效哦~").append(commonCmd);
         }
-        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                .toUserName(msgVO.getFromUserName()).content(content.toString()).build();
+        return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 
     @Command(mapping = "1-*", name = "获取文章", level = Level.L2)
@@ -101,19 +101,18 @@ public class ArticleCommandService extends AbstractCommandService {
                     .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
         }
         String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
-        return NewsMessageVO.builder().description(article.getContent().substring(0, 37).concat("....\n\n查看全文"))
-                .title(article.getTitle()).picUrl(picUrl).url(article.getUrl()).msgType(MsgType.NEWS)
-                .toUserName(toUser).fromUserName(fromUser).articleCount(1).createTime(new Date()).build();
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
+                .url(article.getUrl()).description(article.getContent().substring(0, 37).concat("....\n\n查看全文")).build();
+        return NewsMessageVO.builder().articles(new NewsMessageVO.Articles(item)).toUserName(toUser).build();
     }
 
     @Command(name = "新增文章", mapping = "r1", level = Level.L1, menu = MenuType.ROOT)
     public TextMessageVO addArticle(MessageVO msgVO) {
-        return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(addInfo).build();
+        return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).content(addInfo).build();
     }
 
     @Command(name = "文章添加操作", mapping = "r1-*", menu = MenuType.ROOT)
-    public TextMessageVO addArticl(MessageVO msgVO) {
+    public TextMessageVO addArticleOperate(MessageVO msgVO) {
         String[] urls = msgVO.getContent().split("\\|(wdxpn|WDXPN)\\|");
         CountDownLatch latch = new CountDownLatch(urls.length);
         StringBuilder content;
@@ -136,8 +135,7 @@ public class ArticleCommandService extends AbstractCommandService {
         } finally {
             this.cleanCommand(openid);
         }
-        return TextMessageVO.builder().toUserName(openid).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
+        return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 
     /**

@@ -36,20 +36,23 @@ public class MusicMessageVO {
     /**
      * 开发者微信号
      */
+    @Builder.Default
     @XmlElement(name = "FromUserName")
-    private String fromUserName;
+    private String fromUserName = "gh_eeaaf5c9001c";
     /**
      * 消息创建时间 （整型）
      */
+    @Builder.Default
     @XmlElement(name = "CreateTime")
     @XmlJavaTypeAdapter(JaxbDateAdapter.class)
-    private Date createTime;
+    private Date createTime = new Date();
     /**
      * 回复消息类型，music
      */
+    @Builder.Default
     @XmlElement(name = "MsgType")
     @XmlJavaTypeAdapter(JaxbMsgTypeAdapter.class)
-    private MsgType msgType;
+    private MsgType msgType = MsgType.MUSIC;
     /**
      * 通过素材管理中的接口上传多媒体文件，得到的id。
      */

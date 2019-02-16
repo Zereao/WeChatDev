@@ -1,7 +1,10 @@
 package com.zereao.wechat.service.command;
 
+import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
+import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.TextMessageVO;
 import com.zereao.wechat.service.message.HelpMessageService;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * @author Darion Mograine H
@@ -25,6 +30,8 @@ public abstract class AbstractCommandService {
     protected String fromUser;
     @Value("${menu.common.cmd}")
     protected String commonCmd;
+    @Value("${menu.header.info}")
+    protected String header;
 
     private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
 
@@ -56,4 +63,16 @@ public abstract class AbstractCommandService {
         redisService.del(redisKey);
     }
 
+    protected TextMessageVO getMenu(MessageVO msgVO) {
+        String openid = msgVO.getFromUserName();
+        Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), Command.Level.L2);
+        StringBuilder sb = new StringBuilder(header).append("\n");
+        int i = 1;
+        for (String commandName : commandMap.keySet()) {
+            sb.append("\n").append(i++).append("：").append(commandName);
+        }
+        sb.append(commonCmd);
+        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
+                .toUserName(openid).content(sb.toString()).build();
+    }
 }

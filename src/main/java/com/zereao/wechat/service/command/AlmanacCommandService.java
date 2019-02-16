@@ -2,9 +2,6 @@ package com.zereao.wechat.service.command;
 
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.Command.Level;
-import com.zereao.wechat.commom.annotation.Command.MenuType;
-import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
-import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.pojo.dto.AlmanacDTO;
 import com.zereao.wechat.pojo.vo.MessageVO;
@@ -22,7 +19,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,8 +34,6 @@ import java.util.regex.Pattern;
 public class AlmanacCommandService extends AbstractCommandService {
     @Value("${almanac.url}")
     private String url;
-    @Value("${menu.header.info}")
-    private String header;
     @Value("${almanac.img.lucky.url}")
     private String luckyImg;
     @Value("${almanac.img.rest.url}")
@@ -52,26 +49,18 @@ public class AlmanacCommandService extends AbstractCommandService {
 
     @Command(mapping = "2", name = "老爹的黄历", level = Level.L1)
     public TextMessageVO getFatherAlmanac(MessageVO msgVO) {
-        String openid = msgVO.getFromUserName();
-        Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), Level.L2);
-        StringBuilder sb = new StringBuilder(header).append("\n");
-        int i = 1;
-        for (String commandName : commandMap.keySet()) {
-            sb.append("\n").append(i++).append("：").append(commandName);
-        }
-        sb.append(commonCmd);
-        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                .toUserName(openid).content(sb.toString()).build();
+        return this.getMenu(msgVO);
     }
 
 
     @Command(mapping = "2-1", name = "今日运势-网页版", level = Level.L2)
-    public Object obWithHtml(MessageVO msgVO) {
+    public NewsMessageVO obWithHtml(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         AlmanacDTO almanac = commandService.getAlmanacInfo();
         String picUrl = almanac.getSuitableList().size() > almanac.getTabooList().size() ? luckyImg : restImg;
-        return NewsMessageVO.builder().title("今日运势").description(almanac.getDate()).msgType(MsgType.NEWS).url(url)
-                .picUrl(picUrl).toUserName(openid).fromUserName(fromUser).articleCount(1).createTime(new Date()).build();
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title("今日运势")
+                .description(almanac.getDate()).url(url).picUrl(picUrl).build();
+        return NewsMessageVO.builder().toUserName(openid).articles(new NewsMessageVO.Articles(item)).build();
     }
 
     @Command(mapping = "2-2", name = "今日宜忌", level = Level.L2)
@@ -91,8 +80,7 @@ public class AlmanacCommandService extends AbstractCommandService {
             if (tag++ % 4 == 0) {content.append("\n");} else {content.append("  ");}
         }
         content.append(commonCmd);
-        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                .toUserName(openid).content(content.toString()).build();
+        return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 
     @Command(mapping = "2-3", name = "时辰吉凶", level = Level.L2)
@@ -104,8 +92,7 @@ public class AlmanacCommandService extends AbstractCommandService {
             content.append("\n").append(luck);
         }
         content.append(commonCmd);
-        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                .toUserName(openid).content(content.toString()).build();
+        return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 
     @Cacheable("almanac")

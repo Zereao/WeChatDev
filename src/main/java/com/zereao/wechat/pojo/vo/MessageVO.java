@@ -24,7 +24,9 @@ import java.util.Date;
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MessageVO {
-    // 接收到的消息
+    /**
+     * 接收到的消息
+     */
     @XmlElement(name = "ToUserName")
     private String toUserName;
     @XmlElement(name = "FromUserName")
@@ -57,8 +59,9 @@ public class MessageVO {
     private String format;
     @XmlElement(name = "Recognition")
     private String recognition;
-
-    // 事件类型
+    /**
+     * 事件类型
+     */
     @XmlElement(name = "Event")
     @XmlJavaTypeAdapter(JaxbEventAdapter.class)
     private Event event;
@@ -72,8 +75,4 @@ public class MessageVO {
     private Double longitude;
     @XmlElement(name = "Precision")
     private Double precision;
-
-    public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
-    }
 }

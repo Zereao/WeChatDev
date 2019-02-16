@@ -36,20 +36,23 @@ public class VoiceMessageVO {
     /**
      * 开发者微信号
      */
+    @Builder.Default
     @XmlElement(name = "FromUserName")
-    private String fromUserName;
+    private String fromUserName = "gh_eeaaf5c9001c";
     /**
      * 消息创建时间 （整型）
      */
+    @Builder.Default
     @XmlElement(name = "CreateTime")
     @XmlJavaTypeAdapter(JaxbDateAdapter.class)
-    private Date createTime;
+    private Date createTime = new Date();
     /**
      * 回复消息类型，text
      */
+    @Builder.Default
     @XmlElement(name = "MsgType")
     @XmlJavaTypeAdapter(JaxbMsgTypeAdapter.class)
-    private MsgType msgType;
+    private MsgType msgType = MsgType.VOICE;
 
     @XmlElement(name = "Voice")
     private Voice voice;

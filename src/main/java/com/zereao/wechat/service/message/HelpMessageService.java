@@ -35,6 +35,8 @@ public class HelpMessageService {
     private String detail;
     @Value("${help.root.msg}")
     private String rootMsg;
+    @Value("${help.common.msg}")
+    private String helpMsg;
     @Value("${help.permission.error.msg}")
     private String permissionErrorMsg;
     @Value("${menu.common.cmd}")
@@ -47,8 +49,8 @@ public class HelpMessageService {
      * @return 欢迎信息
      */
     public NewsMessageVO getWelcomeArticle(MessageVO msgVO) {
-        return NewsMessageVO.builder().articleCount(1).title(title).picUrl(bannerUrl).description(description).url(detail)
-                .toUserName(msgVO.getFromUserName()).msgType(MsgType.NEWS).fromUserName(fromUser).createTime(new Date()).build();
+        NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(title).picUrl(bannerUrl).description(description).url(detail).build();
+        return NewsMessageVO.builder().articles(new NewsMessageVO.Articles(item)).toUserName(msgVO.getFromUserName()).build();
     }
 
     /**
@@ -58,11 +60,7 @@ public class HelpMessageService {
      * @return 帮助信息
      */
     public TextMessageVO getHelp(String toUserName) {
-        StringBuilder content = new StringBuilder("Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~\n");
-        CommandsHolder.list(toUserName, Command.Level.L1).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
-        content.append(commonCmd);
-        return TextMessageVO.builder().createTime(new Date()).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).toUserName(toUserName).content(content.toString()).build();
+        return this.getTargetMsg(helpMsg, toUserName);
     }
 
     /**
@@ -72,8 +70,7 @@ public class HelpMessageService {
      * @return 错误信息
      */
     public TextMessageVO getErrorMsg(String toUserName) {
-        return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(errorMsg).build();
+        return TextMessageVO.builder().toUserName(toUserName).content(errorMsg).build();
     }
 
     /**
@@ -83,11 +80,7 @@ public class HelpMessageService {
      * @return 提示信息
      */
     public TextMessageVO getRootMsg(String toUserName) {
-        StringBuilder content = new StringBuilder(rootMsg + "\n");
-        CommandsHolder.list(toUserName, Command.Level.L1).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
-        content.append(commonCmd);
-        return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(content.toString()).build();
+        return this.getTargetMsg(rootMsg, toUserName);
     }
 
     /**
@@ -97,9 +90,20 @@ public class HelpMessageService {
      * @return 提示信息
      */
     public TextMessageVO getPermissionErrorMsg(String toUserName) {
-        return TextMessageVO.builder().toUserName(toUserName).fromUserName(fromUser)
-                .msgType(MsgType.TEXT).createTime(new Date()).content(permissionErrorMsg).build();
+        return TextMessageVO.builder().toUserName(toUserName).content(permissionErrorMsg).build();
     }
 
-
+    /**
+     * 抽离出的公共方法
+     *
+     * @param msg        消息头
+     * @param toUserName 收件人
+     * @return 返回消息
+     */
+    private TextMessageVO getTargetMsg(String msg, String toUserName) {
+        StringBuilder content = new StringBuilder(msg).append("\n");
+        CommandsHolder.list(toUserName, Command.Level.L1).forEach((k, v) -> content.append("\n").append(v).append("：").append(k));
+        content.append(commonCmd);
+        return TextMessageVO.builder().toUserName(toUserName).content(content.toString()).build();
+    }
 }
