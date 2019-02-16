@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version 2018/12/11  18:20
  */
 public abstract class AbstractMessageService extends AbstractMsgService {
-    public static final String ROOT_ENABLED_PREFIX = "REDIS_KEY_OF_ROOT_";
-
     @Autowired
     private MessageDAO messageDAO;
 
@@ -36,5 +34,4 @@ public abstract class AbstractMessageService extends AbstractMsgService {
         BeanUtils.copyProperties(msgVO, message);
         messageDAO.save(message);
     }
-
 }

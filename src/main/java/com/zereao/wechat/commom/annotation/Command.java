@@ -21,14 +21,19 @@ public @interface Command {
     String name() default "";
 
     /**
-     * 是否一级菜单，默认 false
+     * 菜单等级，Level.L1 一级菜单，Level.L2 二级菜单  | Level.L0 通配菜单
      */
-    Level level() default Level.L0;
+    Level level();
 
     /**
      * 菜单类型，Root菜单 或 用户菜单
      */
-    Command.MenuType menu() default MenuType.USER;
+    MenuType menu() default MenuType.USER;
+
+    /**
+     * 目标资源类型，默认文本
+     */
+    TargetSource src() default TargetSource.TEXT;
 
     enum MenuType {
         /**
@@ -43,7 +48,7 @@ public @interface Command {
 
     enum Level {
         /**
-         * 零级菜单，通配
+         * 通配菜单，一定是最后一级菜单
          */
         L0,
         /**
@@ -54,5 +59,16 @@ public @interface Command {
          * 二级菜单
          */
         L2
+    }
+
+    enum TargetSource {
+        /**
+         * 文本
+         */
+        TEXT,
+        /**
+         * 图片
+         */
+        IMAGE
     }
 }

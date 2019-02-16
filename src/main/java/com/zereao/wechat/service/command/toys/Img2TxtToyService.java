@@ -3,6 +3,7 @@ package com.zereao.wechat.service.command.toys;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -24,11 +25,35 @@ import java.io.IOException;
 @Slf4j
 @Service
 public class Img2TxtToyService {
-    //    @Value("${toys.img2txt.elements}")
-    private static String strElements = "@#&$%*o!;.";
+    @Value("${toys.img2txt.elements}")
+    private String strElements;
+    @Value("${toys.img2txt.temp.path}")
+    private String imgsTempPath;
+    @Value("${toys.img2txt.temp.result.path}")
+    private String outBasePath;
 
-    public void transfer2TextImg(String sourcePath) {
-
+    /**
+     * 将源文件转换为字符画，实际转换操作为异步执行。
+     * 共计生成5张字符画，字体大小分别为：6 7 8 9 10； 缩放倍率为 3 3 4 4 5
+     *
+     * @param sourcePath 源文件路径
+     * @param openid     用户的openid，用来命名生成后的文件
+     *                   生成的文件路径：  /home/temp/wechat_dev/imgs/{openid}/{openid}_{current}_字体大小为[x]_缩放[x]倍.jpg
+     * @throws IOException IO异常
+     */
+    public void transfer2TextImg(String sourcePath, String openid) throws IOException {
+        BufferedImage img = ImageIO.read(new File(sourcePath));
+        int width = img.getWidth(), height = img.getHeight();
+        // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
+        boolean maxOver1000 = (width > height ? width : height) > 1000;
+        if (maxOver1000) {
+            img = this.compress(img, 1000);
+        }
+        String[][] chars = this.transfer2CharArray(img);
+        for (int fontSize = 6; fontSize <= 10; fontSize++) {
+            String outPath = outBasePath.replace("{openid}", openid).replace("{current}", String.valueOf(System.currentTimeMillis()));
+            ThreadPoolUtils.execute(new Text2ImgTask(chars, outPath, fontSize));
+        }
     }
 
     /**
@@ -112,13 +137,15 @@ public class Img2TxtToyService {
     /**
      * 图片转字符再保存为图片
      *
-     * @param chars   原图转出的二维字符数组
-     * @param outPath 输出路径
-     * @param zoom    缩放倍数，推荐 传入 7/8
+     * @param chars    原图转出的二维字符数组
+     * @param outPath  输出路径
+     * @param fontSize 转换出的图片中的文字大小，也是缩放倍数x2 。
+     *                 推荐 传入偶数 8；传入 fontSize = 8时，字体大小为8,缩放倍数为 8 / 2 =4；输出像素间隔为
      */
-    public void textToImage(String[][] chars, String outPath, int zoom) throws IOException {
+    public void textToImage(String[][] chars, String outPath, int fontSize) throws IOException {
+        int zoom = fontSize / 2;
         int extIndex = outPath.lastIndexOf(".");
-        String config = "_缩放" + zoom + "倍";
+        StringBuilder config = new StringBuilder("_字体大小为[").append(fontSize).append("]_缩放[").append(zoom).append("]倍");
         String realOutPath = new StringBuilder(outPath).insert(extIndex, config).toString();
         File outImg = new File(realOutPath);
         if (!outImg.exists()) {
@@ -128,15 +155,15 @@ public class Img2TxtToyService {
         int height = chars.length * zoom;
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // 获取图像上下文
-        Graphics graphics = createGraphics(bufferedImage, width, height, zoom);
-        for (int i = 0, lenOfH = chars.length; i < lenOfH; i++) {
-            for (int j = 0, lenOfW = chars[i].length; j < lenOfW; j++) {
+        Graphics graphics = createGraphics(bufferedImage, width, height, fontSize);
+        for (int i = 0, lenOfH = chars.length; i < lenOfH; i += 2) {
+            for (int j = 0, lenOfW = chars[i].length; j < lenOfW; j += 2) {
                 graphics.drawString(chars[i][j], j * zoom, i * zoom);
             }
         }
         graphics.dispose();
         // 保存为jpg图片
-        boolean result = ImageIO.write(this.compress(bufferedImage, 1920), outPath.substring(extIndex + 1), outImg);
+        boolean result = ImageIO.write(bufferedImage, outPath.substring(extIndex + 1), outImg);
         log.info("--------> 文本转图片{}！", result ? "成功" : "失败");
     }
 
@@ -169,20 +196,20 @@ public class Img2TxtToyService {
 
         private String[][] chars;
         private String outPath;
-        private int zoom;
+        private int fontSize;
 
-        Text2ImgTask(String[][] chars, String outPath, int zoom) {
+        Text2ImgTask(String[][] chars, String outPath, int fontSize) {
             this.chars = chars;
             this.outPath = outPath;
-            this.zoom = zoom;
+            this.fontSize = fontSize;
         }
 
         @Override
         public void run() {
             try {
-                toyService.textToImage(chars, outPath, zoom);
+                toyService.textToImage(chars, outPath, fontSize);
             } catch (IOException e) {
-                log.error("========>  文本转为图片出错！缩放倍数为：{}, 输出路径为：{}", zoom, outPath);
+                log.error("========>  文本转为图片出错！字体大小为：{}, 输出路径为：{}", fontSize, outPath);
                 log.error("错误信息 ----->", e);
             }
         }
@@ -221,7 +248,7 @@ public class Img2TxtToyService {
         // 设置前景色
         graphics.setColor(Color.BLACK);
         // 设置字体
-        graphics.setFont(new Font("微软雅黑", Font.PLAIN, fontSize));
+        graphics.setFont(new Font("宋体", Font.PLAIN, fontSize));
         return graphics;
     }
 }

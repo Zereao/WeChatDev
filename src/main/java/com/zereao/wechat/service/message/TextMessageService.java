@@ -2,16 +2,13 @@ package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
-import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
-import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
@@ -24,34 +21,14 @@ import java.util.Map;
 @Service
 public class TextMessageService extends AbstractMessageService {
     private final Map<String, AbstractCommandService> commandServiceMap;
-    private final HelpMessageService helpMessageService;
-    private final RedisService redisService;
 
-    private final UserDAO userDAO;
-
-    private static final String COMMAND_PREFIX = "COMMAND_OF_";
     private static final String COMMAND_ROOT = "wdxpn";
     private static final String COMMAND_FIRST_PAGE = "#";
     private static final String COMMAND_PRE_PAGE = "-";
 
-
     @Autowired
-    public TextMessageService(Map<String, AbstractCommandService> commandServiceMap, HelpMessageService helpMessageService, RedisService redisService, UserDAO userDAO) {
+    public TextMessageService(Map<String, AbstractCommandService> commandServiceMap) {
         this.commandServiceMap = commandServiceMap;
-        this.helpMessageService = helpMessageService;
-        this.redisService = redisService;
-        this.userDAO = userDAO;
-    }
-
-    @PostConstruct
-    public void cleanMenuTree() {
-        log.info("----->  准备清理菜单树...");
-        this.userDAO.findAll().forEach(user -> {
-            String openid = user.getOpenid();
-            this.redisService.del(COMMAND_PREFIX + openid);
-            this.redisService.del(ROOT_ENABLED_PREFIX + openid);
-        });
-        log.info("----->  菜单树清理完毕~");
     }
 
     @Override
@@ -83,31 +60,51 @@ public class TextMessageService extends AbstractMessageService {
     private Object checkCommand(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         String userCommand = msgVO.getContent();
-        String redisKey = COMMAND_PREFIX + openid;
+        String redisKey = COMMAND_TEEE_PREFIX + openid;
         String existedCommand = redisService.get(redisKey);
 
         switch (userCommand) {
-            // 开启ROOT权限命令
+            /* 开启ROOT权限  命令，执行以下操作：
+                1、将当前用户置为Root状态
+                2、清理掉当前用户的菜单树；（可能之前的菜单树中不存在ROOT功能）
+                3、返回获得Root权限后的帮助信息    */
             case COMMAND_ROOT:
                 redisService.set(ROOT_ENABLED_PREFIX + openid, "true", 5 * 60);
                 redisService.del(redisKey);
                 return helpMessageService.getRootMsg(openid);
-            // 返回首页命令
+            /* 返回首页  命令，执行以下操作：
+                1、清理掉当前用户的菜单树；（可能之前的菜单树中不存在ROOT功能）
+                2、返回帮助信息    */
             case COMMAND_FIRST_PAGE:
                 redisService.del(redisKey);
                 return helpMessageService.getHelp(openid);
-            // 返回上一页 命令
+            /* 返回上一页   命令，分两种情况：
+                一、如果Redis中已经存在命令树，并且包含分隔符 - ：（说明命令树中至少存在两级菜单），执行：
+                    1、更新 Redis中已存在的命令为 当前已存在命令的上一级命令，5分钟内有效
+                    2、更新MessageVO的内容为 上面更新后的 上一级命令，用于接下来程序执行
+                    3、返回 null，则程序继续解析、执行上面的MessageVO中设定的命令
+                二、如果Redis中不存在命令树，则执行：
+                    1、直接返回 帮助信息给用户     */
             case COMMAND_PRE_PAGE:
                 if (StringUtils.isNotBlank(existedCommand) && existedCommand.contains("-")) {
                     existedCommand = existedCommand.substring(0, existedCommand.lastIndexOf("-"));
                     redisService.set(redisKey, existedCommand, 5 * 60);
                     msgVO.setContent(existedCommand);
                 } else {
-                    redisService.del(redisKey);
                     return helpMessageService.getHelp(openid);
                 }
                 return null;
-            // 常规命令
+            /* 常规命令，分为两种情况：
+                一、如果Redis中不存在当前用户的命令树：
+                    1、同时命令容器CommandsHolder中存在当前用户输入的命令，将当前命令存入Redis命令树中；
+                二、如果Redis中已经存在当前用户的命令树，则又分为两种情况：
+                    首先，拼接好新的命令；
+                    1、如果，CommandsHolder中包含新的命令，将新的命令更新进Redis命令树中；
+                    2、否则，再判断当前命令是否对应 通配命令——已存在的命令-*，如果对应是通配命令，则不更新Redis中的命令树，
+                        同时执行【已存在的命令-* + 用户命令】
+
+                    PS：针对上面的 二.2 情况，如果当前命令对应统配命令，而用户发送的命令实际不存在，则具体的命令树处理逻辑由具体业务处理，
+                    此情况只针对 通配命令     */
             default:
                 String targetCommand = null;
                 boolean updateRedis = true;

@@ -2,7 +2,6 @@ package com.zereao.wechat.service.command;
 
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
-import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
 import com.zereao.wechat.service.message.HelpMessageService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -24,7 +22,7 @@ public abstract class AbstractCommandService {
     @Autowired
     private HelpMessageService helpMessageService;
     @Autowired
-    private RedisService redisService;
+    protected RedisService redisService;
 
     @Value("${wechat.from.openid}")
     protected String fromUser;
@@ -33,7 +31,10 @@ public abstract class AbstractCommandService {
     @Value("${menu.header.info}")
     protected String header;
 
-    private static final String REDIS_KEY_PREFIX = "COMMAND_OF_";
+    // 某个用户的 命令树  redis Key 前缀
+    private static final String COMMAND_TREE_PREFIX = "COMMAND_OF_";
+    // 某个用户正在等待图片消息 redis Key 前缀
+    protected static final String IMG_READY_PREFIX = "IMG_READY_OF_";
 
     /**
      * 执行命令
@@ -58,8 +59,8 @@ public abstract class AbstractCommandService {
      *
      * @param openid 用户openid
      */
-    void cleanCommand(String openid) {
-        String redisKey = REDIS_KEY_PREFIX + openid;
+    protected void cleanCommand(String openid) {
+        String redisKey = COMMAND_TREE_PREFIX + openid;
         redisService.del(redisKey);
     }
 
@@ -72,7 +73,10 @@ public abstract class AbstractCommandService {
             sb.append("\n").append(i++).append("：").append(commandName);
         }
         sb.append(commonCmd);
-        return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                .toUserName(openid).content(sb.toString()).build();
+        return TextMessageVO.builder().toUserName(openid).content(sb.toString()).build();
+    }
+
+    protected void imgReady(String openid) {
+        redisService.set(IMG_READY_PREFIX + openid, "true", 2 * 60);
     }
 }

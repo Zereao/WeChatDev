@@ -86,17 +86,6 @@ class UnitTest {
     }
 
     @Test
-    void test144() {
-        String packageName = "com.zereao.wechat";
-        Package pkg = Package.getPackage(packageName);
-        Annotation[] annotations = pkg.getAnnotations();
-        for (Annotation annotation : annotations) {
-            System.out.println(annotation.toString());
-        }
-
-    }
-
-    @Test
     void test14() {
         String a = "/a//gv///c/////d////f";
         System.out.println(a.replaceAll("//+", "/"));

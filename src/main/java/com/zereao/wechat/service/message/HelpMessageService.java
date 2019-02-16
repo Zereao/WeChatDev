@@ -2,15 +2,11 @@ package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
-import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 /**
  * 帮助信息Service
@@ -18,11 +14,8 @@ import java.util.Date;
  * @author Darion Mograine H
  * @version 2018/12/21  14:03
  */
-@Slf4j
 @Service
 public class HelpMessageService {
-    @Value("${wechat.from.openid}")
-    private String fromUser;
     @Value("${help.error.msg}")
     private String errorMsg;
     @Value("${welcome.msg.title}")
@@ -41,6 +34,8 @@ public class HelpMessageService {
     private String permissionErrorMsg;
     @Value("${menu.common.cmd}")
     private String commonCmd;
+    @Value("${img.ready.error.msg}")
+    private String imgErrorMsg;
 
     /**
      * 获取首次登陆时的欢迎信息
@@ -94,7 +89,17 @@ public class HelpMessageService {
     }
 
     /**
-     * 抽离出的公共方法
+     * 获取 图片等待状态错误的信息
+     *
+     * @param toUserName 接收人的openID
+     * @return 提示信息
+     */
+    public TextMessageVO getImgReadyErrorMsg(String toUserName) {
+        return TextMessageVO.builder().toUserName(toUserName).content(imgErrorMsg).build();
+    }
+
+    /**
+     * 抽离出的公共方法，实际逻辑是获取命令容器CommandsHolder中所有的L1级命令，并组装成菜单TextMessageVO
      *
      * @param msg        消息头
      * @param toUserName 收件人

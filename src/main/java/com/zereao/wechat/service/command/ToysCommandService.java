@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ToysCommandService extends AbstractCommandService {
 
-    @Value("${toys.txt2img.header}")
-    private String txt2ImgHeader;
+    @Value("${img.msg.ready.info}")
+    private String imgReadyInfo;
 
     @Command(mapping = "3", name = "胖妹的玩具", level = Command.Level.L1)
     public TextMessageVO getDarlingToys(MessageVO msgVO) {
@@ -28,8 +28,8 @@ public class ToysCommandService extends AbstractCommandService {
     @Command(mapping = "3-1", name = "图片转字符画", level = Command.Level.L2)
     public TextMessageVO img2TextImg(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-
-        return TextMessageVO.builder().content(txt2ImgHeader + commonCmd).toUserName(openid).build();
+        this.imgReady(openid);
+        return TextMessageVO.builder().content(imgReadyInfo + commonCmd).toUserName(openid).build();
     }
 
 }

@@ -1,10 +1,12 @@
 package com.zereao.wechat;
 
+import com.zereao.wechat.service.command.toys.Img2TxtToyService;
+import org.junit.jupiter.api.Test;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -12,6 +14,35 @@ import java.io.IOException;
  * @version 2019/02/15  11:15
  */
 public class Img2Txt {
+    @Test
+    void test001() throws IOException {
+        Img2TxtToyService toy = new Img2TxtToyService();
+        String file = "C:/Users/Jupiter/Desktop/微信图片_20190215122021.jpg";
+        BufferedImage img = ImageIO.read(new File(file));
+
+
+        String compressedPath = "C:/Users/Jupiter/Desktop/20180619202355878-压缩.jpg";
+
+        int width = img.getWidth(), height = img.getHeight();
+        boolean maxOver1000 = (width > height ? width : height) > 1000;
+        if (maxOver1000) {
+            img = toy.compress(img, 1000);
+            ImageIO.write(img, "jpg", new File(compressedPath));
+        }
+
+//        BufferedImage c = toy.compress(img, 100);
+
+//        ImageIO.write(c, "jpg", new File(compressedPath));
+        String outPath = "C:/Users/Jupiter/Desktop/2weixin0180619202355878.jpg";
+
+        String[][] chars = toy.transfer2CharArray(img);
+        toy.textToImage(chars, outPath, 6);
+        toy.textToImage(chars, outPath, 8);
+        toy.textToImage(chars, outPath, 7);
+        toy.textToImage(chars, outPath, 9);
+        toy.textToImage(chars, outPath, 10);
+    }
+
     /**
      * 定义把灰度值转化成的txt字符集
      */

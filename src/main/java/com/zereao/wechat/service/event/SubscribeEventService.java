@@ -3,7 +3,6 @@ package com.zereao.wechat.service.event;
 import com.zereao.wechat.dao.UserDAO;
 import com.zereao.wechat.pojo.po.User;
 import com.zereao.wechat.pojo.vo.MessageVO;
-import com.zereao.wechat.service.message.HelpMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,10 @@ import java.util.Date;
 @Service
 public class SubscribeEventService extends AbstractEventService {
     private final UserDAO userDAO;
-    private final HelpMessageService helpMessageService;
 
     @Autowired
-    public SubscribeEventService(UserDAO userDAO, HelpMessageService helpMessageService) {
+    public SubscribeEventService(UserDAO userDAO) {
         this.userDAO = userDAO;
-        this.helpMessageService = helpMessageService;
     }
 
     @Override

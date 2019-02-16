@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.commom.annotation.Command;
 import com.zereao.wechat.commom.annotation.Command.Level;
 import com.zereao.wechat.commom.annotation.Command.MenuType;
-import com.zereao.wechat.commom.constant.MsgType;
 import com.zereao.wechat.commom.utils.OkHttp3Utils;
 import com.zereao.wechat.commom.utils.ThreadPoolUtils;
 import com.zereao.wechat.dao.ArticlesDAO;
@@ -12,7 +11,6 @@ import com.zereao.wechat.pojo.po.Articles;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
-import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +20,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -37,7 +38,6 @@ import java.util.regex.Pattern;
 @Service
 public class ArticleCommandService extends AbstractCommandService {
     private final ArticlesDAO articlesDAO;
-    private final RedisService redisService;
 
     private static final Pattern ARTICLE_ID_PATTERN = Pattern.compile("id=(.*)&");
 
@@ -48,15 +48,12 @@ public class ArticleCommandService extends AbstractCommandService {
     @Value("${article.add.info}")
     private String addInfo;
 
-    /**
-     * 文章列表 - redisKey - 后缀
-     */
+    // 文章列表 - redisKey - 后缀
     private String redisKeySuffix = "|article-list";
 
     @Autowired
-    public ArticleCommandService(ArticlesDAO articlesDAO, RedisService redisService) {
+    public ArticleCommandService(ArticlesDAO articlesDAO) {
         this.articlesDAO = articlesDAO;
-        this.redisService = redisService;
     }
 
     /**
@@ -91,14 +88,12 @@ public class ArticleCommandService extends AbstractCommandService {
         String toUser = msgVO.getFromUserName();
         Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
         if (articleMap == null || articleMap.size() <= 0) {
-            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(toUser).content("文章列表缓存已过期，请重新操作~" + commonCmd).build();
+            return TextMessageVO.builder().toUserName(toUser).content("文章列表缓存已过期，请重新操作~" + commonCmd).build();
         }
         String articleId = String.valueOf(articleMap.get(msgVO.getContent().replace("1-*", "")));
         Articles article;
         if (StringUtils.isEmpty(articleId) || (article = articlesDAO.findById(articleId).orElse(null)) == null) {
-            return TextMessageVO.builder().createTime(new Date()).msgType(MsgType.TEXT).fromUserName(fromUser)
-                    .toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
+            return TextMessageVO.builder().toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
         }
         String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
@@ -111,7 +106,7 @@ public class ArticleCommandService extends AbstractCommandService {
         return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).content(addInfo).build();
     }
 
-    @Command(name = "文章添加操作", mapping = "r1-*", menu = MenuType.ROOT)
+    @Command(name = "文章添加操作", mapping = "r1-*", level = Level.L0, menu = MenuType.ROOT)
     public TextMessageVO addArticleOperate(MessageVO msgVO) {
         String[] urls = msgVO.getContent().split("\\|(wdxpn|WDXPN)\\|");
         CountDownLatch latch = new CountDownLatch(urls.length);

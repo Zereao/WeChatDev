@@ -2,6 +2,7 @@ package com.zereao.wechat.commom.annotation.resolver;
 
 import com.zereao.wechat.commom.annotation.Command.Level;
 import com.zereao.wechat.commom.annotation.Command.MenuType;
+import com.zereao.wechat.commom.annotation.Command.TargetSource;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
@@ -17,8 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.zereao.wechat.service.message.AbstractMessageService.ROOT_ENABLED_PREFIX;
-
 /**
  * @author Darion Mograine H
  * @version 2019/01/16  10:21
@@ -29,14 +28,19 @@ public class CommandsHolder implements ApplicationContextAware {
 
     private static RedisService redisService;
 
+    // 是否启用ROOT 权限 redis key前缀
+    private static final String ROOT_ENABLED_PREFIX = "ROOT_ENABLE_OF_";
+
     /**
      * 向容器中添加一条命令
      *
-     * @param command 命令
+     * @param command {@link com.zereao.wechat.commom.annotation.Command}，包含信息的 Command 注解对象
+     * @param cls     Command 所在类 的 Class对象
+     * @param method  Command 所标注方法的Method对象
      */
     static void add(com.zereao.wechat.commom.annotation.Command command, Class cls, Method method) {
         String mapping = command.mapping();
-        holder.put(mapping, Command.builder().mapping(mapping).level(command.level()).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
+        holder.put(mapping, Command.builder().mapping(mapping).level(command.level()).src(command.src()).bean(StringUtils.uncapitalize(cls.getSimpleName())).cls(cls).method(method).name(command.name()).menu(command.menu()).build());
     }
 
     /**
@@ -120,6 +124,7 @@ public class CommandsHolder implements ApplicationContextAware {
         public String mapping, name, bean;
         public Level level;
         public MenuType menu;
+        public TargetSource src;
         public Class cls;
         public Method method;
 
@@ -131,6 +136,7 @@ public class CommandsHolder implements ApplicationContextAware {
                     ", bean='" + bean + '\'' +
                     ", level='" + level + '\'' +
                     ", menu=" + menu.name() +
+                    ", src=" + src.name() +
                     ", cls=" + (cls == null ? null : StringUtils.uncapitalize(cls.getSimpleName())) +
                     ", method=" + (method == null ? null : method.getName()) +
                     "}";
