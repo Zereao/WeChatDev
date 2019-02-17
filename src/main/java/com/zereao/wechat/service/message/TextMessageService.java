@@ -3,6 +3,7 @@ package com.zereao.wechat.service.message;
 import com.zereao.wechat.common.annotation.Command;
 import com.zereao.wechat.common.holder.CommandsHolder;
 import com.zereao.wechat.pojo.vo.MessageVO;
+import com.zereao.wechat.pojo.vo.TextMessageVO;
 import com.zereao.wechat.service.command.AbstractCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -103,7 +104,8 @@ public class TextMessageService extends AbstractMessageService {
                     首先，拼接好新的命令；
                     1、如果，CommandsHolder中包含新的命令，将新的命令更新进Redis命令树中；
                     2、否则，再判断当前命令是否对应 通配命令——已存在的命令-*，如果对应是通配命令，则不更新Redis中的命令树，
-                        同时执行【已存在的命令-* + 用户命令】
+                        同时执行【已存在的命令-* + 用户命令】；
+                       如果对应不是通配命令，并且该命令
 
                     PS：针对上面的 二.2 情况，如果当前命令对应统配命令，而用户发送的命令实际不存在，则具体的命令树处理逻辑由具体业务处理，
                     TODO 此情况【只针对 通配命令】     */
@@ -116,14 +118,18 @@ public class TextMessageService extends AbstractMessageService {
                     }
                 } else {
                     String newCommand = existedCommand + "-" + userCommand;
+                    // 如果包含新命令
                     if (CommandsHolder.contains(newCommand)) {
                         targetCommand = newCommand;
+                    } else if (CommandsHolder.contains(existedCommand + "-*")) {
+                        // 如果包含当前命令对应的通配命令
+                        updateRedis = false;
+                        targetCommand = existedCommand + "-*" + userCommand;
                     } else {
-                        newCommand = existedCommand + "-" + "*";
-                        if (CommandsHolder.contains(newCommand)) {
-                            updateRedis = false;
-                            targetCommand = newCommand + userCommand;
-                        }
+                        // 不存在该命令
+                        String preMsg = this.getPreMsg(openid);
+                        return StringUtils.isBlank(preMsg) ? helpMessageService.getHelp(openid) :
+                                TextMessageVO.builder().content(preMsg).toUserName(openid).build();
                     }
                 }
                 if (targetCommand == null) {
