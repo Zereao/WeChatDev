@@ -67,10 +67,10 @@ public class ToysCommandService extends AbstractCommandService {
         String sourcePath = imgOutBasePath.replace("{openid}", openidCut).replace("{current}", curTime);
         InputStream stream = OkHttp3Utils.doGetStream(msgVO.getPicUrl());
         List<String> imgNameList = img2TxtToyService.transfer2TextImg(stream, sourcePath);
-        StringBuilder content = new StringBuilder(resultInfoHeader).append("\n\n");
+        StringBuilder content = new StringBuilder(resultInfoHeader);
         for (String imgName : imgNameList) {
             String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", imgName);
-            content.append(imgName).append("：\n").append(url);
+            content.append("\n\n").append(imgName).append("：\n").append(url);
         }
         content.append(commonCmd);
         return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();

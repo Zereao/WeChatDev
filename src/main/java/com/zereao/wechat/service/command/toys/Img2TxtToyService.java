@@ -4,7 +4,6 @@ import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
