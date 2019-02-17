@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -71,6 +72,20 @@ public class OkHttp3Utils {
      */
     public static OkHttpClient getClient() {
         return Instance.INSTANCE.client;
+    }
+
+    /**
+     * 发送GET请求，并返回InputStream
+     *
+     * @param url 请求Url链接
+     * @return 返回的输入流
+     * @throws IOException IO异常
+     */
+    public static InputStream doGetStream(String url) throws IOException {
+        log.info("========================= 准备发起GET请求：{} =========================", url);
+        Request request = new Request.Builder().url(url).build();
+        ResponseBody body = sendRequest(request);
+        return body == null ? null : body.byteStream();
     }
 
     /**

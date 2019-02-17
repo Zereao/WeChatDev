@@ -125,7 +125,7 @@ public class OperateHolder implements ApplicationContextAware {
 
         @Override
         public String toString() {
-            return "Command{" +
+            return "Operate{" +
                     "mapping='" + mapping + '\'' +
                     ", bean='" + bean + '\'' +
                     ", type='" + type + '\'' +

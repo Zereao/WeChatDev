@@ -4,6 +4,7 @@ import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -15,6 +16,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 图片转txt
@@ -27,8 +29,6 @@ import java.io.IOException;
 public class Img2TxtToyService {
     @Value("${toys.img2txt.elements}")
     private String strElements;
-    @Value("${toys.img2txt.temp.path}")
-    private String imgsTempPath;
     @Value("${toys.img2txt.temp.result.path}")
     private String outBasePath;
 
@@ -36,13 +36,37 @@ public class Img2TxtToyService {
      * 将源文件转换为字符画，实际转换操作为异步执行。
      * 共计生成5张字符画，字体大小分别为：6 7 8 9 10； 缩放倍率为 3 3 4 4 5
      *
+     * @param source     源文件的输入流
      * @param sourcePath 源文件路径
-     * @param openid     用户的openid，用来命名生成后的文件
-     *                   生成的文件路径：  /home/temp/wechat_dev/imgs/{openid}/{openid}_{current}_字体大小为[x]_缩放[x]倍.jpg
      * @throws IOException IO异常
      */
-    public void transfer2TextImg(String sourcePath, String openid) throws IOException {
-        BufferedImage img = ImageIO.read(new File(sourcePath));
+    @Async
+    public void transfer2TextImg(InputStream source, String sourcePath) throws IOException {
+        this.transfer2TextImg(ImageIO.read(source), sourcePath);
+    }
+
+    /**
+     * 将源文件转换为字符画，实际转换操作为异步执行。
+     * 共计生成5张字符画，字体大小分别为：6 7 8 9 10； 缩放倍率为 3 3 4 4 5
+     *
+     * @param sourcePath 源文件路径
+     * @throws IOException IO异常
+     */
+    @Async
+    public void transfer2TextImg(String sourcePath) throws IOException {
+        this.transfer2TextImg(ImageIO.read(new File(sourcePath)), sourcePath);
+    }
+
+    /**
+     * 将源文件转换为字符画，实际转换操作为异步执行。
+     * 共计生成5张字符画，字体大小分别为：6 7 8 9 10； 缩放倍率为 3 3 4 4 5
+     *
+     * @param img        源文件的BufferedImage对象
+     * @param sourcePath 源文件路径
+     * @throws IOException IO异常
+     */
+    @Async
+    public void transfer2TextImg(BufferedImage img, String sourcePath) throws IOException {
         int width = img.getWidth(), height = img.getHeight();
         // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
         boolean maxOver1000 = (width > height ? width : height) > 1000;
@@ -51,8 +75,7 @@ public class Img2TxtToyService {
         }
         String[][] chars = this.transfer2CharArray(img);
         for (int fontSize = 6; fontSize <= 10; fontSize++) {
-            String outPath = outBasePath.replace("{openid}", openid).replace("{current}", String.valueOf(System.currentTimeMillis()));
-            ThreadPoolUtils.execute(new Text2ImgTask(chars, outPath, fontSize));
+            ThreadPoolUtils.execute(new Text2ImgTask(chars, sourcePath, fontSize));
         }
     }
 
