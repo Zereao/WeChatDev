@@ -13,9 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 小玩具命令Service
@@ -30,8 +31,6 @@ public class ToysCommandService extends AbstractCommandService {
 
     @Value("${img.msg.ready.info}")
     private String imgReadyInfo;
-    @Value("${toys.img2txt.temp.result.folder}")
-    private String imgOutBaseFolder;
     @Value("${toys.img2txt.temp.result.path}")
     private String imgOutBasePath;
     @Value("${toys.img2txt.result.header}")
@@ -61,24 +60,17 @@ public class ToysCommandService extends AbstractCommandService {
      * @return 文件路径
      */
     @Operate("3-1")
-    public TextMessageVO img2TextImgOperate(MessageVO msgVO) throws IOException {
+    public TextMessageVO img2TextImgOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
         String openid = msgVO.getFromUserName();
         String curTime = String.valueOf(System.currentTimeMillis());
-        String sourcePath = imgOutBasePath.replace("{openid}", openid).replace("{current}", curTime);
+        String openidCut = openid.substring(openid.length() / 4, openid.length() / 2);
+        String sourcePath = imgOutBasePath.replace("{openid}", openidCut).replace("{current}", curTime);
         InputStream stream = OkHttp3Utils.doGetStream(msgVO.getPicUrl());
-        img2TxtToyService.transfer2TextImg(stream, sourcePath);
-        String outFolder = imgOutBaseFolder.replace("{openid}", openid).replace("{current}", curTime);
-        File[] files = new File(outFolder).listFiles();
-        StringBuilder content;
-        if (files == null || files.length <= 0) {
-            content = new StringBuilder("");
-        } else {
-            content = new StringBuilder(resultInfoHeader).append("\n\n");
-            for (File file : files) {
-                String filename = file.getName();
-                String url = resultBathUrl.replace("{openid}", openid).replace("{current}", curTime).replace("{filename}", filename);
-                content.append(filename).append("：\n").append(url);
-            }
+        List<String> imgNameList = img2TxtToyService.transfer2TextImg(stream, sourcePath);
+        StringBuilder content = new StringBuilder(resultInfoHeader).append("\n\n");
+        for (String imgName : imgNameList) {
+            String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", imgName);
+            content.append(imgName).append("：\n").append(url);
         }
         content.append(commonCmd);
         return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();
