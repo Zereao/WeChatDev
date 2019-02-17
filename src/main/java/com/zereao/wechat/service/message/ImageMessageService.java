@@ -7,6 +7,10 @@ import com.zereao.wechat.common.holder.OperateHolder;
 import com.zereao.wechat.common.holder.OperateHolder.Operate;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +21,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 @Slf4j
 @Service
-public class ImageMessageService extends AbstractMessageService {
+public class ImageMessageService extends AbstractMessageService implements ApplicationContextAware {
+    private ApplicationContext applicationContext;
 
     @Override
     public Object handleMessage(MessageVO msgVO) {
@@ -31,10 +36,16 @@ public class ImageMessageService extends AbstractMessageService {
         Operate operate = OperateHolder.get(curCmd.mapping);
         try {
             log.info("------->  {}准备执行命令 {}", operate.bean, operate.toString());
-            return operate.method.invoke(operate.cls, msgVO);
+            //noinspection unchecked 不检测下面这一行的 unchecked 警告
+            return operate.method.invoke(this.applicationContext.getBean(operate.cls), msgVO);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("{}命令执行失败！\n", operate.toString(), e);
             return helpMessageService.getErrorMsg(openid);
         }
+    }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
