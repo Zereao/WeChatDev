@@ -138,6 +138,11 @@
             <version>1.11.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
 
         <!-- 主要 用来兼容 JDK 9+ -->
         <dependency>

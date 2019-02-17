@@ -8,6 +8,7 @@ import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,9 @@ import java.util.stream.Stream;
 class UnitTest {
     @Test
     void test19() {
-
+        String path = "/home/data/a.jpg";
+        File file = new File(path);
+        System.out.println(file.getParentFile().getAbsolutePath());
     }
 
 

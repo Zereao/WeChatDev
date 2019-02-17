@@ -5,19 +5,23 @@ import com.zereao.wechat.common.annotation.Command.Level;
 import com.zereao.wechat.common.annotation.Command.TargetSource;
 import com.zereao.wechat.common.annotation.Operate;
 import com.zereao.wechat.common.utils.OkHttp3Utils;
+import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
 import com.zereao.wechat.service.command.toys.Img2TxtToyService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 小玩具命令Service
@@ -74,6 +78,29 @@ public class ToysCommandService extends AbstractCommandService {
             content.append("\n\n").append("字体大小：").append(imgInfo.get("font_size")).append("，缩放倍数：").append(imgInfo.get("zoom")).append("：\n").append(url);
         }
         content.append(commonCmd);
+        ThreadPoolUtils.execute(new GcManager(sourcePath));
         return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();
+    }
+
+    /**
+     * 垃圾清理定时任务
+     */
+    private static class GcManager implements Runnable {
+        private File folder;
+
+        GcManager(String path) {
+            this.folder = new File(path).getParentFile();
+        }
+
+        @Override
+        public void run() {
+            try {
+                TimeUnit.MINUTES.sleep(30L);
+                FileUtils.deleteDirectory(folder);
+                log.info("--------> 垃圾清理完毕！ path = {}", this.folder.getAbsolutePath());
+            } catch (InterruptedException | IOException e) {
+                log.error("-------> 临时文件夹清理失败！    filePath = {}", this.folder.getAbsolutePath());
+            }
+        }
     }
 }
