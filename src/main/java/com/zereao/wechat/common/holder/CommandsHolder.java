@@ -3,13 +3,10 @@ package com.zereao.wechat.common.holder;
 import com.zereao.wechat.common.annotation.Command.Level;
 import com.zereao.wechat.common.annotation.Command.MenuType;
 import com.zereao.wechat.common.annotation.Command.TargetSource;
+import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -23,10 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 2019/01/16  10:21
  */
 @Component
-public class CommandsHolder implements ApplicationContextAware {
+public class CommandsHolder {
     private static Map<String, Command> holder = new ConcurrentHashMap<>(16);
-
-    private static RedisService redisService;
 
     // 是否启用ROOT 权限 redis key前缀
     private static final String ROOT_ENABLED_PREFIX = "ROOT_ENABLE_OF_";
@@ -82,7 +77,7 @@ public class CommandsHolder implements ApplicationContextAware {
      * @return result LinkedHashMap
      */
     public static Map<String, String> list(String openid, Level level) {
-        MenuType menu = "true".equals(redisService.get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
+        MenuType menu = "true".equals(SpringBeanUtils.getBean(RedisService.class).get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
         Map<String, String> resultMap = new LinkedHashMap<>();
         holder.entrySet().stream()
                 .filter(entry -> {
@@ -105,7 +100,7 @@ public class CommandsHolder implements ApplicationContextAware {
      * @return result LinkedHashMap
      */
     public static Map<String, String> list(String openid, Class cls, Level level) {
-        MenuType menu = "true".equals(redisService.get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
+        MenuType menu = "true".equals(SpringBeanUtils.getBean(RedisService.class).get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
         Map<String, String> resultMap = new LinkedHashMap<>();
         holder.entrySet().stream()
                 .filter(entry -> {
@@ -148,10 +143,5 @@ public class CommandsHolder implements ApplicationContextAware {
                     ", method=" + (method == null ? null : method.getName()) +
                     "}";
         }
-    }
-
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        redisService = applicationContext.getBean(RedisService.class);
     }
 }

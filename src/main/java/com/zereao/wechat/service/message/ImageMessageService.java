@@ -5,12 +5,10 @@ import com.zereao.wechat.common.holder.CommandsHolder;
 import com.zereao.wechat.common.holder.CommandsHolder.Command;
 import com.zereao.wechat.common.holder.OperateHolder;
 import com.zereao.wechat.common.holder.OperateHolder.Operate;
+import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,15 +19,18 @@ import java.lang.reflect.InvocationTargetException;
  */
 @Slf4j
 @Service
-public class ImageMessageService extends AbstractMessageService implements ApplicationContextAware {
-    private ApplicationContext applicationContext;
-
+public class ImageMessageService extends AbstractMessageService {
     @Override
     public Object handleMessage(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         // 当前 命令树中的命令
-        Command curCmd = CommandsHolder.get(redisService.get(COMMAND_TEEE_PREFIX + openid));
-        boolean imgReady = "true".equals(redisService.get(IMG_READY_PREFIX + openid)) && curCmd.src.equals(TargetSource.IMAGE);
+        String curCmdMapping = redisService.get(COMMAND_TEEE_PREFIX + openid);
+        if (StringUtils.isBlank(curCmdMapping)) {
+            return helpMessageService.getImgReadyErrorMsg(openid);
+        }
+        Command curCmd = CommandsHolder.get(curCmdMapping);
+        boolean imgReady = "true".equals(redisService.get(IMG_READY_PREFIX + openid))
+                && curCmd != null && curCmd.src.equals(TargetSource.IMAGE);
         if (!imgReady) {
             return helpMessageService.getImgReadyErrorMsg(openid);
         }
@@ -37,15 +38,10 @@ public class ImageMessageService extends AbstractMessageService implements Appli
         try {
             log.info("------->  {}准备执行命令 {}", operate.bean, operate.toString());
             //noinspection unchecked 不检测下面这一行的 unchecked 警告
-            return operate.method.invoke(this.applicationContext.getBean(operate.cls), msgVO);
+            return operate.method.invoke(SpringBeanUtils.getBean(operate.cls), msgVO);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("{}命令执行失败！\n", operate.toString(), e);
             return helpMessageService.getErrorMsg(openid);
         }
-    }
-
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }

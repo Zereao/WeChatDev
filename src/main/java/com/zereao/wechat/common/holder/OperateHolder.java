@@ -1,17 +1,17 @@
 package com.zereao.wechat.common.holder;
 
 import com.zereao.wechat.common.annotation.Operate.OperateType;
+import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,10 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 2019/02/17  13:33
  */
 @Component
-public class OperateHolder implements ApplicationContextAware {
+public class OperateHolder {
     private static Map<String, Operate> holder = new ConcurrentHashMap<>(16);
-
-    private static RedisService redisService;
 
     // 是否启用ROOT 权限 redis key前缀
     private static final String ROOT_ENABLED_PREFIX = "ROOT_ENABLE_OF_";
@@ -78,7 +76,7 @@ public class OperateHolder implements ApplicationContextAware {
      */
     public static List<String> list(String openid) {
         List<String> opList = new ArrayList<>();
-        OperateType type = "true".equals(redisService.get(ROOT_ENABLED_PREFIX + openid)) ? OperateType.ROOT : OperateType.USER;
+        OperateType type = "true".equals(SpringBeanUtils.getBean(RedisService.class).get(ROOT_ENABLED_PREFIX + openid)) ? OperateType.ROOT : OperateType.USER;
         holder.entrySet().stream().filter(entry -> type.equals(OperateType.ROOT) || entry.getValue().type.equals(type))
                 .sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> opList.add(entry.getKey()));
         return opList;
@@ -133,10 +131,5 @@ public class OperateHolder implements ApplicationContextAware {
                     ", method=" + (method == null ? null : method.getName()) +
                     "}";
         }
-    }
-
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        redisService = applicationContext.getBean(RedisService.class);
     }
 }

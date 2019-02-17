@@ -1,8 +1,8 @@
 package com.zereao.wechat.service.command.toys;
 
+import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -214,9 +214,6 @@ public class Img2TxtToyService {
     }
 
     private static class Text2ImgTask implements Runnable {
-        @Autowired
-        private Img2TxtToyService toyService;
-
         private String[][] chars;
         private String outPath;
         private int fontSize;
@@ -230,7 +227,7 @@ public class Img2TxtToyService {
         @Override
         public void run() {
             try {
-                toyService.textToImage(chars, outPath, fontSize);
+                SpringBeanUtils.getBean(Img2TxtToyService.class).textToImage(chars, outPath, fontSize);
             } catch (IOException e) {
                 log.error("========>  文本转为图片出错！字体大小为：{}, 输出路径为：{}", fontSize, outPath);
                 log.error("错误信息 ----->", e);

@@ -11,3 +11,19 @@ Content-Type: application/xml
 </xml>
 
 ###
+POST http://localhost:8080/xlczj/wechat
+Content-Type: application/xml
+
+<xml>
+    <ToUserName>10010</ToUserName>
+    <FromUserName>oQNld1W7beFJgJ_CfuGE1_tKVZZ4</FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>image</MsgType>
+    <PicUrl>
+        http://mmbiz.qpic.cn/mmbiz_jpg/8ApexOpS4ZfJVzVia9F8W4o5lusZOT4C1wJQmxHsqMqGwQ41maiaWTYNJ5vQvGeaIb2iavr0yTl7rYcF0D8fRgang/0
+    </PicUrl>
+    <MediaId>1234567890123456</MediaId>
+    <MsgId>1234567890123456</MsgId>
+</xml>
+
+###
