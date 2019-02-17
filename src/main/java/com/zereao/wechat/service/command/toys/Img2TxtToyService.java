@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -43,7 +45,7 @@ public class Img2TxtToyService {
      * @param sourcePath 源文件路径
      * @throws IOException IO异常
      */
-    public List<String> transfer2TextImg(InputStream source, String sourcePath) throws IOException, ExecutionException, InterruptedException {
+    public List<Map<String, String>> transfer2TextImg(InputStream source, String sourcePath) throws IOException, ExecutionException, InterruptedException {
         return this.transfer2TextImg(ImageIO.read(source), sourcePath);
     }
 
@@ -54,7 +56,7 @@ public class Img2TxtToyService {
      * @param sourcePath 源文件路径
      * @throws IOException IO异常
      */
-    public List<String> transfer2TextImg(String sourcePath) throws IOException, ExecutionException, InterruptedException {
+    public List<Map<String, String>> transfer2TextImg(String sourcePath) throws IOException, ExecutionException, InterruptedException {
         return this.transfer2TextImg(ImageIO.read(new File(sourcePath)), sourcePath);
     }
 
@@ -65,7 +67,7 @@ public class Img2TxtToyService {
      * @param img        源文件的BufferedImage对象
      * @param sourcePath 源文件路径
      */
-    public List<String> transfer2TextImg(BufferedImage img, String sourcePath) throws ExecutionException, InterruptedException {
+    public List<Map<String, String>> transfer2TextImg(BufferedImage img, String sourcePath) throws ExecutionException, InterruptedException {
         int width = img.getWidth(), height = img.getHeight();
         // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
         boolean maxOver1000 = (width > height ? width : height) > 1000;
@@ -73,7 +75,7 @@ public class Img2TxtToyService {
             img = this.compress(img, 1000);
         }
         String[][] chars = this.transfer2CharArray(img);
-        List<String> imgNameList = new CopyOnWriteArrayList<>();
+        List<Map<String, String>> imgNameList = new CopyOnWriteArrayList<>();
         for (int fontSize = 6; fontSize <= 10; fontSize++) {
             imgNameList.add(ThreadPoolUtils.submit(new Text2ImgTask(chars, sourcePath, fontSize)));
         }
@@ -165,12 +167,12 @@ public class Img2TxtToyService {
      * @param outPath  输出路径
      * @param fontSize 转换出的图片中的文字大小，也是缩放倍数x2 。
      *                 推荐 传入偶数 8；传入 fontSize = 8时，字体大小为8,缩放倍数为 8 / 2 =4；输出像素间隔为
-     * @return 生成的文件名
+     * @return 生成的文件的信息Map
      */
-    public String textToImage(String[][] chars, String outPath, int fontSize) throws IOException {
+    public Map<String, String> textToImage(String[][] chars, String outPath, int fontSize) throws IOException {
         int zoom = fontSize / 2;
         int extIndex = outPath.lastIndexOf(".");
-        StringBuilder config = new StringBuilder("_字体大小为[").append(fontSize).append("]_缩放[").append(zoom).append("]倍");
+        StringBuilder config = new StringBuilder("_fontsize=").append(fontSize).append("_zoom=").append(zoom);
         String realOutPath = new StringBuilder(outPath).insert(extIndex, config).toString();
         File outImg = new File(realOutPath);
         if (!outImg.exists()) {
@@ -192,7 +194,11 @@ public class Img2TxtToyService {
         boolean result = ImageIO.write(bufferedImage, outPath.substring(extIndex + 1), outImg);
         String imgName = outImg.getName();
         log.info("--------> 文本转图片{}！   img = {}", result ? "成功" : "失败", imgName);
-        return imgName;
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("font_size", String.valueOf(fontSize));
+        resultMap.put("zoom", String.valueOf(zoom));
+        resultMap.put("img_name", imgName);
+        return resultMap;
     }
 
     /**
@@ -218,7 +224,7 @@ public class Img2TxtToyService {
         }
     }
 
-    private static class Text2ImgTask implements Callable<String> {
+    private static class Text2ImgTask implements Callable<Map<String, String>> {
         private String[][] chars;
         private String outPath;
         private int fontSize;
@@ -230,7 +236,7 @@ public class Img2TxtToyService {
         }
 
         @Override
-        public String call() throws Exception {
+        public Map<String, String> call() throws Exception {
             return SpringBeanUtils.getBean(Img2TxtToyService.class).textToImage(chars, outPath, fontSize);
         }
     }

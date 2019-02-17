@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -66,11 +67,11 @@ public class ToysCommandService extends AbstractCommandService {
         String openidCut = openid.substring(openid.length() / 4, openid.length() / 2);
         String sourcePath = imgOutBasePath.replace("{openid}", openidCut).replace("{current}", curTime);
         InputStream stream = OkHttp3Utils.doGetStream(msgVO.getPicUrl());
-        List<String> imgNameList = img2TxtToyService.transfer2TextImg(stream, sourcePath);
+        List<Map<String, String>> imgNameList = img2TxtToyService.transfer2TextImg(stream, sourcePath);
         StringBuilder content = new StringBuilder(resultInfoHeader);
-        for (String imgName : imgNameList) {
-            String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", imgName);
-            content.append("\n\n").append(imgName).append("：\n").append(url);
+        for (Map<String, String> imgInfo : imgNameList) {
+            String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", imgInfo.get("img_name"));
+            content.append("\n\n").append("字体大小：").append(imgInfo.get("font_size")).append("，缩放倍数：").append(imgInfo.get("zoom")).append("：\n").append(url);
         }
         content.append(commonCmd);
         return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();
