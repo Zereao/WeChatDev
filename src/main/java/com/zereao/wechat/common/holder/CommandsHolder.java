@@ -23,7 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommandsHolder {
     private static Map<String, Command> holder = new ConcurrentHashMap<>(16);
 
-    // 是否启用ROOT 权限 redis key前缀
+    /**
+     * 是否启用ROOT 权限 redis key前缀
+     */
     private static final String ROOT_ENABLED_PREFIX = "ROOT_ENABLE_OF_";
 
     /**
