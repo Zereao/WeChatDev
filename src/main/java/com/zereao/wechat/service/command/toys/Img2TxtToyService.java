@@ -172,7 +172,8 @@ public class Img2TxtToyService {
         String realOutPath = new StringBuilder(outPath).insert(extIndex, config).toString();
         File outImg = new File(realOutPath);
         if (!outImg.exists()) {
-            boolean newImgFile = outImg.createNewFile();
+            boolean newFile = outImg.mkdirs();
+            newFile = outImg.createNewFile();
         }
         int width = chars[0].length * zoom;
         int height = chars.length * zoom;
