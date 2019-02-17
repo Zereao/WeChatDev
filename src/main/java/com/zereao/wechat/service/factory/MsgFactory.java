@@ -36,7 +36,7 @@ public class MsgFactory {
      */
     public AbstractMsgService getInstance(MessageVO msgVO) {
         MsgType msgType = msgVO.getMsgType();
-        return MsgType.TEXT.equals(msgType) ? this.getMessageService(msgType) : this.getEventService(msgVO.getEvent());
+        return MsgType.EVENT.equals(msgType) ? this.getEventService(msgVO.getEvent()) : this.getMessageService(msgType);
     }
 
     /**
