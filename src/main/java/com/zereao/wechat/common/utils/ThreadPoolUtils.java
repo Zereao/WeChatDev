@@ -1,4 +1,4 @@
-package com.zereao.wechat.commom.utils;
+package com.zereao.wechat.common.utils;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 

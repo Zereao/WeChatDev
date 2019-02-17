@@ -1,7 +1,8 @@
 package com.zereao.wechat.service.command;
 
-import com.zereao.wechat.commom.annotation.Command;
-import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
+import com.zereao.wechat.common.annotation.Command.Level;
+import com.zereao.wechat.common.holder.CommandsHolder;
+import com.zereao.wechat.common.holder.CommandsHolder.Command;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
 import com.zereao.wechat.service.message.HelpMessageService;
@@ -42,7 +43,7 @@ public abstract class AbstractCommandService {
      * @param msgVO 封装了参数的消息实体
      * @return 返回值
      */
-    public Object exec(MessageVO msgVO, CommandsHolder.Command command) {
+    public Object exec(MessageVO msgVO, Command command) {
         Class<?> curClass = this.getClass();
         String className = curClass.getName();
         log.info("------->  {}准备执行命令 {}", className, command.toString());
@@ -66,7 +67,7 @@ public abstract class AbstractCommandService {
 
     protected TextMessageVO getMenu(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), Command.Level.L2);
+        Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), Level.L2);
         StringBuilder sb = new StringBuilder(header).append("\n");
         int i = 1;
         for (String commandName : commandMap.keySet()) {

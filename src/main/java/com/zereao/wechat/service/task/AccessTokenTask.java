@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.task;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zereao.wechat.commom.utils.OkHttp3Utils;
+import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

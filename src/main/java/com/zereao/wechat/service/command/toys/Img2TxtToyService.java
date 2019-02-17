@@ -1,6 +1,6 @@
 package com.zereao.wechat.service.command.toys;
 
-import com.zereao.wechat.commom.utils.ThreadPoolUtils;
+import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

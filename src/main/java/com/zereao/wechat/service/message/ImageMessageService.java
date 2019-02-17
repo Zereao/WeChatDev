@@ -1,35 +1,40 @@
 package com.zereao.wechat.service.message;
 
-import com.zereao.wechat.commom.annotation.Command.TargetSource;
-import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
+import com.zereao.wechat.common.annotation.Command.TargetSource;
+import com.zereao.wechat.common.holder.CommandsHolder;
+import com.zereao.wechat.common.holder.CommandsHolder.Command;
+import com.zereao.wechat.common.holder.OperateHolder;
+import com.zereao.wechat.common.holder.OperateHolder.Operate;
 import com.zereao.wechat.pojo.vo.MessageVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Darion Mograine H
  * @version 2019/01/16  18:31
  */
+@Slf4j
 @Service
 public class ImageMessageService extends AbstractMessageService {
 
     @Override
     public Object handleMessage(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        if (!this.imgReady(openid)) {
+        // 当前 命令树中的命令
+        Command curCmd = CommandsHolder.get(redisService.get(COMMAND_TEEE_PREFIX + openid));
+        boolean imgReady = "true".equals(redisService.get(IMG_READY_PREFIX + openid)) && curCmd.src.equals(TargetSource.IMAGE);
+        if (!imgReady) {
             return helpMessageService.getImgReadyErrorMsg(openid);
         }
-        //
-        return null;
-    }
-
-    /**
-     * 检查当前用户是否在图片等待状态，并且 当前命令树中命令的TargetSource 是 TargetSource.IMAGE
-     *
-     * @param openid 当前用户的openid
-     * @return true or false ；用户是否是在图片等待状态
-     */
-    private boolean imgReady(String openid) {
-        return "true".equals(redisService.get(IMG_READY_PREFIX + openid)) &&
-                CommandsHolder.get(redisService.get(COMMAND_TEEE_PREFIX + openid)).src.equals(TargetSource.IMAGE);
+        Operate operate = OperateHolder.get(curCmd.mapping);
+        try {
+            log.info("------->  {}准备执行命令 {}", operate.bean, operate.toString());
+            return operate.method.invoke(operate.cls, msgVO);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error("{}命令执行失败！\n", operate.toString(), e);
+            return helpMessageService.getErrorMsg(openid);
+        }
     }
 }

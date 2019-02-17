@@ -1,8 +1,8 @@
 package com.zereao.wechat.pojo.vo;
 
-import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
-import com.zereao.wechat.commom.utils.jaxbadapter.JaxbMsgTypeAdapter;
+import com.zereao.wechat.common.constant.MsgType;
+import com.zereao.wechat.common.utils.jaxbadapter.JaxbDateAdapter;
+import com.zereao.wechat.common.utils.jaxbadapter.JaxbMsgTypeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

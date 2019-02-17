@@ -1,4 +1,4 @@
-package com.zereao.wechat.commom.annotation;
+package com.zereao.wechat.common.annotation;
 
 import java.lang.annotation.*;
 

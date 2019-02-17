@@ -1,10 +1,10 @@
 package com.zereao.wechat.pojo.vo;
 
-import com.zereao.wechat.commom.constant.Event;
-import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.commom.utils.jaxbadapter.JaxbDateAdapter;
-import com.zereao.wechat.commom.utils.jaxbadapter.JaxbEventAdapter;
-import com.zereao.wechat.commom.utils.jaxbadapter.JaxbMsgTypeAdapter;
+import com.zereao.wechat.common.constant.Event;
+import com.zereao.wechat.common.constant.MsgType;
+import com.zereao.wechat.common.utils.jaxbadapter.JaxbDateAdapter;
+import com.zereao.wechat.common.utils.jaxbadapter.JaxbEventAdapter;
+import com.zereao.wechat.common.utils.jaxbadapter.JaxbMsgTypeAdapter;
 import lombok.Data;
 
 import javax.xml.bind.annotation.XmlAccessType;

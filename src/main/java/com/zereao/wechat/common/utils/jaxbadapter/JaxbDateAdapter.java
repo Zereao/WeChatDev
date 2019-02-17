@@ -1,4 +1,4 @@
-package com.zereao.wechat.commom.utils.jaxbadapter;
+package com.zereao.wechat.common.utils.jaxbadapter;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Date;

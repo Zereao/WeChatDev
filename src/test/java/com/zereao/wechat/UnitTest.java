@@ -1,21 +1,14 @@
 package com.zereao.wechat;
 
-import com.alibaba.fastjson.JSONObject;
-import com.zereao.wechat.commom.constant.MsgType;
-import com.zereao.wechat.commom.utils.OkHttp3Utils;
-import com.zereao.wechat.commom.utils.ThreadPoolUtils;
+import com.zereao.wechat.common.constant.MsgType;
+import com.zereao.wechat.common.utils.OkHttp3Utils;
+import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -209,9 +202,9 @@ class UnitTest {
     }
 
     static void main(String[] args) throws ClassNotFoundException {
-        Class c = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$ContentType");
-        Class b = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils");
-        Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");
+        Class c = Class.forName("com.zereao.wechat.common.utils.OkHttp3Utils$ContentType");
+        Class b = Class.forName("com.zereao.wechat.common.utils.OkHttp3Utils");
+        Class a = Class.forName("com.zereao.wechat.common.utils.OkHttp3Utils$Instance");
         List<Class> ss = new ArrayList<>();
         ss.add(b);
         ss.add(c);
@@ -221,9 +214,9 @@ class UnitTest {
 
     @Test
     void test1() throws ClassNotFoundException {
-        Class c = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$ContentType");
-        Class b = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils");
-        Class a = Class.forName("com.zereao.wechat.commom.utils.OkHttp3Utils$Instance");
+        Class c = Class.forName("com.zereao.wechat.common.utils.OkHttp3Utils$ContentType");
+        Class b = Class.forName("com.zereao.wechat.common.utils.OkHttp3Utils");
+        Class a = Class.forName("com.zereao.wechat.common.utils.OkHttp3Utils$Instance");
         List<Class> ss = new ArrayList<>();
         ss.add(b);
         ss.add(c);

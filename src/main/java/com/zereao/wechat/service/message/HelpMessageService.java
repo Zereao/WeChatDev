@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.message;
 
-import com.zereao.wechat.commom.annotation.Command;
-import com.zereao.wechat.commom.annotation.resolver.CommandsHolder;
+import com.zereao.wechat.common.annotation.Command;
+import com.zereao.wechat.common.holder.CommandsHolder;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;

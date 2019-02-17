@@ -1,7 +1,8 @@
-package com.zereao.wechat.commom.annotation.resolver;
+package com.zereao.wechat.common.annotation.resolver;
 
-import com.zereao.wechat.commom.annotation.Command;
-import com.zereao.wechat.commom.utils.PackageUtils;
+import com.zereao.wechat.common.annotation.Command;
+import com.zereao.wechat.common.holder.CommandsHolder;
+import com.zereao.wechat.common.utils.PackageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

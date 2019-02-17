@@ -1,7 +1,7 @@
 package com.zereao.wechat.service.factory;
 
-import com.zereao.wechat.commom.constant.Event;
-import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.common.constant.Event;
+import com.zereao.wechat.common.constant.MsgType;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.event.AbstractEventService;
 import com.zereao.wechat.service.message.AbstractMessageService;

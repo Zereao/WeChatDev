@@ -1,8 +1,8 @@
 package com.zereao.wechat.service.command;
 
-import com.zereao.wechat.commom.annotation.Command;
-import com.zereao.wechat.commom.annotation.Command.Level;
-import com.zereao.wechat.commom.utils.OkHttp3Utils;
+import com.zereao.wechat.common.annotation.Command;
+import com.zereao.wechat.common.annotation.Command.Level;
+import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.pojo.dto.AlmanacDTO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;

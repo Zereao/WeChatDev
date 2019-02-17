@@ -1,8 +1,9 @@
 package com.zereao.wechat.controller;
 
 import com.zereao.wechat.WechatApplication;
-import com.zereao.wechat.commom.annotation.resolver.CommandResolver;
-import com.zereao.wechat.commom.utils.ThreadPoolUtils;
+import com.zereao.wechat.common.annotation.resolver.CommandResolver;
+import com.zereao.wechat.common.annotation.resolver.OperateResolver;
+import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.pojo.vo.ApiTestVO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.service.message.HelpMessageService;
@@ -38,8 +39,9 @@ public class WeChatController {
     }
 
     @PostConstruct
-    public void scanCommand() {
+    public void init() {
         ThreadPoolUtils.execute(new CommandResolver(WechatApplication.class));
+        ThreadPoolUtils.execute(new OperateResolver(WechatApplication.class));
     }
 
     @GetMapping(value = "wechat")

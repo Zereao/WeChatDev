@@ -1,11 +1,11 @@
 package com.zereao.wechat.service.command;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zereao.wechat.commom.annotation.Command;
-import com.zereao.wechat.commom.annotation.Command.Level;
-import com.zereao.wechat.commom.annotation.Command.MenuType;
-import com.zereao.wechat.commom.utils.OkHttp3Utils;
-import com.zereao.wechat.commom.utils.ThreadPoolUtils;
+import com.zereao.wechat.common.annotation.Command;
+import com.zereao.wechat.common.annotation.Command.Level;
+import com.zereao.wechat.common.annotation.Command.MenuType;
+import com.zereao.wechat.common.utils.OkHttp3Utils;
+import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.dao.ArticlesDAO;
 import com.zereao.wechat.pojo.po.Articles;
 import com.zereao.wechat.pojo.vo.MessageVO;

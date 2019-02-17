@@ -1,6 +1,6 @@
-package com.zereao.wechat.commom.utils.jaxbadapter;
+package com.zereao.wechat.common.utils.jaxbadapter;
 
-import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.common.constant.MsgType;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

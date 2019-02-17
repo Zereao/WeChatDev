@@ -1,6 +1,6 @@
 package com.zereao.wechat.pojo.po;
 
-import com.zereao.wechat.commom.constant.MsgType;
+import com.zereao.wechat.common.constant.MsgType;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
