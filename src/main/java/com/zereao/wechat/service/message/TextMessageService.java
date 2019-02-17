@@ -129,7 +129,7 @@ public class TextMessageService extends AbstractMessageService {
                         // 不存在该命令
                         String preMsg = this.getPreMsg(openid);
                         return StringUtils.isBlank(preMsg) ? helpMessageService.getHelp(openid) :
-                                TextMessageVO.builder().content(preMsg).toUserName(openid).build();
+                                TextMessageVO.builder().content("您输入的命令不存在哦~" + preMsg).toUserName(openid).build();
                     }
                 }
                 if (targetCommand == null) {
