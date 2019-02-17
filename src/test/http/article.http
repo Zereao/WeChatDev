@@ -6,7 +6,7 @@ Content-Type: application/xml
     <FromUserName>10086</FromUserName>
     <CreateTime>1348831860</CreateTime>
     <MsgType>text</MsgType>
-    <Content>想跑</Content>
+    <Content>-</Content>
     <MsgId>1234567890123456</MsgId>
 </xml>
 

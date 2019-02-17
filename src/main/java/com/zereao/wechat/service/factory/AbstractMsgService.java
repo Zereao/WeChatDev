@@ -38,6 +38,15 @@ public abstract class AbstractMsgService {
     public abstract Object handleMsg(MessageVO msgVO);
 
     /**
+     * 清理用户的菜单树
+     *
+     * @param openid 用户的openid
+     */
+    protected void cleanCommandTree(String openid) {
+        redisService.del(COMMAND_TEEE_PREFIX + openid);
+    }
+
+    /**
      * 获取当前用户的上一条返回的信息；如果信息不存在，则返回帮助信息
      *
      * @param openid 当前用户的openid

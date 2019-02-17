@@ -91,6 +91,8 @@ public class TextMessageService extends AbstractMessageService {
                     redisService.set(redisKey, existedCommand, 5 * 60);
                     msgVO.setContent(existedCommand);
                 } else {
+                    // 如果当前只剩一级命令，则直接清理掉用户的菜单树
+                    this.cleanCommandTree(openid);
                     return helpMessageService.getHelp(openid);
                 }
                 return null;
@@ -104,7 +106,7 @@ public class TextMessageService extends AbstractMessageService {
                         同时执行【已存在的命令-* + 用户命令】
 
                     PS：针对上面的 二.2 情况，如果当前命令对应统配命令，而用户发送的命令实际不存在，则具体的命令树处理逻辑由具体业务处理，
-                    此情况只针对 通配命令     */
+                    TODO 此情况【只针对 通配命令】     */
             default:
                 String targetCommand = null;
                 boolean updateRedis = true;
