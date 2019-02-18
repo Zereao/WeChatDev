@@ -65,9 +65,16 @@ public abstract class AbstractCommandService {
         redisService.del(redisKey);
     }
 
-    protected TextMessageVO getMenu(MessageVO msgVO) {
+    /**
+     * 获取当前类的 level 级菜单
+     *
+     * @param msgVO 包含信息的MessageVO
+     * @param level 菜单等级
+     * @return 菜单消息
+     */
+    protected TextMessageVO getMenu(MessageVO msgVO, Level level) {
         String openid = msgVO.getFromUserName();
-        Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), Level.L2);
+        Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), level);
         StringBuilder sb = new StringBuilder(header).append("\n");
         int i = 1;
         for (String commandName : commandMap.keySet()) {

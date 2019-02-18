@@ -49,7 +49,7 @@ public class AlmanacCommandService extends AbstractCommandService {
 
     @Command(mapping = "2", name = "老爹的黄历", level = Level.L1)
     public TextMessageVO getFatherAlmanac(MessageVO msgVO) {
-        return this.getMenu(msgVO);
+        return this.getMenu(msgVO, Level.L2);
     }
 
 

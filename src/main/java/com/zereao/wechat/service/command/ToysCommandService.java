@@ -48,7 +48,7 @@ public class ToysCommandService extends AbstractCommandService {
 
     @Command(mapping = "3", name = "胖妹的玩具", level = Level.L1)
     public TextMessageVO getDarlingToys(MessageVO msgVO) {
-        return this.getMenu(msgVO);
+        return this.getMenu(msgVO, Level.L2);
     }
 
     @Command(mapping = "3-1", name = "图片转字符画", level = Level.L2, src = TargetSource.IMAGE)

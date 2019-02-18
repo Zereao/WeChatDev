@@ -31,6 +31,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 伦哥的随笔
+ *
  * @author Darion Mograine H
  * @version 2018/12/19  20:33
  */
@@ -56,12 +58,17 @@ public class ArticleCommandService extends AbstractCommandService {
         this.articlesDAO = articlesDAO;
     }
 
+    @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1)
+    public TextMessageVO godEssay(MessageVO msgVO) {
+        return this.getMenu(msgVO, Level.L2);
+    }
+
     /**
      * 获取所有的文章(标题)
      *
      * @param msgVO 包含所需参数的消息体
      */
-    @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1)
+    @Command(mapping = "1-1", name = "获取文章列表", level = Level.L2)
     public TextMessageVO getAllArticles(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         List<Articles> articlesList = articlesDAO.findAll();
@@ -83,7 +90,7 @@ public class ArticleCommandService extends AbstractCommandService {
         return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 
-    @Command(mapping = "1-*", name = "获取文章", level = Level.L2)
+    @Command(mapping = "1-1-*", name = "获取文章", level = Level.L0)
     public Object getArticle(MessageVO msgVO) {
         String toUser = msgVO.getFromUserName();
         Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
@@ -101,12 +108,12 @@ public class ArticleCommandService extends AbstractCommandService {
         return NewsMessageVO.builder().articles(new NewsMessageVO.Articles(item)).toUserName(toUser).build();
     }
 
-    @Command(name = "新增文章", mapping = "r1", level = Level.L1, menu = MenuType.ROOT)
+    @Command(name = "新增文章", mapping = "1-r1", level = Level.L2, menu = MenuType.ROOT)
     public TextMessageVO addArticle(MessageVO msgVO) {
         return TextMessageVO.builder().toUserName(msgVO.getFromUserName()).content(addInfo).build();
     }
 
-    @Command(name = "文章添加操作", mapping = "r1-*", level = Level.L0, menu = MenuType.ROOT)
+    @Command(name = "文章添加操作", mapping = "1-r1-*", level = Level.L0, menu = MenuType.ROOT)
     public TextMessageVO addArticleOperate(MessageVO msgVO) {
         String[] urls = msgVO.getContent().split("\\|(wdxpn|WDXPN)\\|");
         CountDownLatch latch = new CountDownLatch(urls.length);

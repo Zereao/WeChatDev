@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class TextMessageService extends AbstractMessageService {
+public class                     TextMessageService extends AbstractMessageService {
     private final Map<String, AbstractCommandService> commandServiceMap;
 
     private static final String COMMAND_ROOT = "wdxpn";

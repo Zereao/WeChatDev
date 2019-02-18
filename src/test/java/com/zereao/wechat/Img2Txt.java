@@ -4,9 +4,12 @@ import com.zereao.wechat.service.command.toys.Img2TxtToyService;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -14,6 +17,21 @@ import java.io.IOException;
  * @version 2019/02/15  11:15
  */
 public class Img2Txt {
+
+    @Test
+    void test002() throws IOException {
+        String gifPath = "C:/Users/Jupiter/Desktop/QQ图片20190215160757.gif";
+        ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+        reader.setInput(new FileImageInputStream(new File(gifPath)));
+        int num = reader.getNumImages(true);
+        BufferedImage[] frames = new BufferedImage[num];
+        for (int i = 0; i < num; i++) {
+            BufferedImage imgFrame = reader.read(i);
+
+        }
+    }
+
+
     @Test
     void test001() throws IOException {
         Img2TxtToyService toy = new Img2TxtToyService();
@@ -36,11 +54,6 @@ public class Img2Txt {
         String outPath = "C:/Users/Jupiter/Desktop/2weixin0180619202355878.jpg";
 
         String[][] chars = toy.transfer2CharArray(img);
-        toy.textToImage(chars, outPath, 6);
-        toy.textToImage(chars, outPath, 8);
-        toy.textToImage(chars, outPath, 7);
-        toy.textToImage(chars, outPath, 9);
-        toy.textToImage(chars, outPath, 10);
     }
 
     /**
