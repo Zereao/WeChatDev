@@ -91,13 +91,14 @@ public class ArticleCommandService extends AbstractCommandService {
     }
 
     @Command(mapping = "1-1-*", name = "获取文章", level = Level.L0)
-    public Object getArticle(MessageVO msgVO) {
+    public Object getArticle(MessageVO msgVO) throws NoSuchMethodException {
         String toUser = msgVO.getFromUserName();
         Map<Object, Object> articleMap = redisService.hmget(toUser.concat(redisKeySuffix));
         if (articleMap == null || articleMap.size() <= 0) {
             return TextMessageVO.builder().toUserName(toUser).content("文章列表缓存已过期，请重新操作~" + commonCmd).build();
         }
-        String articleId = String.valueOf(articleMap.get(msgVO.getContent().replace("1-*", "")));
+        Command thisCmd = this.getClass().getDeclaredMethod("getArticle", MessageVO.class).getAnnotation(Command.class);
+        String articleId = String.valueOf(articleMap.get(msgVO.getContent().replace(thisCmd.mapping(), "")));
         Articles article;
         if (StringUtils.isEmpty(articleId) || (article = articlesDAO.findById(articleId).orElse(null)) == null) {
             return TextMessageVO.builder().toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
