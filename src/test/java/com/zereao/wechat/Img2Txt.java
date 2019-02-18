@@ -29,6 +29,7 @@ public class Img2Txt {
             BufferedImage imgFrame = reader.read(i);
 
         }
+
     }
 
 
@@ -44,7 +45,6 @@ public class Img2Txt {
         int width = img.getWidth(), height = img.getHeight();
         boolean maxOver1000 = (width > height ? width : height) > 1000;
         if (maxOver1000) {
-            img = toy.compress(img, 1000);
             ImageIO.write(img, "jpg", new File(compressedPath));
         }
 

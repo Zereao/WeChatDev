@@ -145,9 +145,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.facebook.fresco</groupId>
-            <artifactId>animated-gif</artifactId>
-            <version>1.12.1</version>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
         </dependency>
 
 

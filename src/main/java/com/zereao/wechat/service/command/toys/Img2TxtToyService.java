@@ -3,6 +3,7 @@ package com.zereao.wechat.service.command.toys;
 import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -67,12 +68,12 @@ public class Img2TxtToyService {
      * @param img        源文件的BufferedImage对象
      * @param sourcePath 源文件路径
      */
-    public List<Map<String, String>> transfer2TextImg(BufferedImage img, String sourcePath) throws ExecutionException, InterruptedException {
+    public List<Map<String, String>> transfer2TextImg(BufferedImage img, String sourcePath) throws ExecutionException, InterruptedException, IOException {
         int width = img.getWidth(), height = img.getHeight();
         // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
         boolean maxOver1000 = (width > height ? width : height) > 1000;
         if (maxOver1000) {
-            img = this.compress(img, 1000);
+            img = Thumbnails.of(img).scale(1000, 1000).asBufferedImage();
         }
         String[][] chars = this.transfer2CharArray(img);
         List<Map<String, String>> imgNameList = new CopyOnWriteArrayList<>();
@@ -130,6 +131,7 @@ public class Img2TxtToyService {
      * @param longSize 压缩后较长边的大小
      * @return 压缩后的BufferedImage对象
      */
+    @Deprecated
     public BufferedImage compress(BufferedImage source, int longSize) {
         int type = source.getType();
         int oldWidth = source.getWidth();
