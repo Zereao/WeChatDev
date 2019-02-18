@@ -69,10 +69,9 @@ public class Img2TxtToyService {
      * @param sourcePath 源文件路径
      */
     public List<Map<String, String>> transfer2TextImg(BufferedImage img, String sourcePath) throws ExecutionException, InterruptedException, IOException {
-        int width = img.getWidth(), height = img.getHeight();
         // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
-        boolean maxOver1000 = (width > height ? width : height) > 1000;
-        if (maxOver1000) {
+        if (img.getWidth() > 1000 || img.getHeight() > 1000) {
+            // 等比例缩放至 最长边为1000
             img = Thumbnails.of(img).scale(1000, 1000).asBufferedImage();
         }
         String[][] chars = this.transfer2CharArray(img);
