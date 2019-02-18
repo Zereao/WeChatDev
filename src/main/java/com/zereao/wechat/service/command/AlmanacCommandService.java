@@ -60,6 +60,7 @@ public class AlmanacCommandService extends AbstractCommandService {
         String picUrl = almanac.getSuitableList().size() > almanac.getTabooList().size() ? luckyImg : restImg;
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title("今日运势")
                 .description(almanac.getDate()).url(url).picUrl(picUrl).build();
+        this.set2PreCommand(openid);
         return NewsMessageVO.builder().toUserName(openid).articles(new NewsMessageVO.Articles(item)).build();
     }
 
@@ -80,6 +81,7 @@ public class AlmanacCommandService extends AbstractCommandService {
             if (tag++ % 4 == 0) {content.append("\n");} else {content.append("  ");}
         }
         content.append(commonCmd);
+        this.set2PreCommand(openid);
         return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 
@@ -92,6 +94,7 @@ public class AlmanacCommandService extends AbstractCommandService {
             content.append("\n").append(luck);
         }
         content.append(commonCmd);
+        this.set2PreCommand(openid);
         return TextMessageVO.builder().toUserName(openid).content(content.toString()).build();
     }
 

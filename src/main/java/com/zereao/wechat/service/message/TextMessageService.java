@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class                     TextMessageService extends AbstractMessageService {
+public class TextMessageService extends AbstractMessageService {
     private final Map<String, AbstractCommandService> commandServiceMap;
 
     private static final String COMMAND_ROOT = "wdxpn";
@@ -127,9 +127,9 @@ public class                     TextMessageService extends AbstractMessageServi
                         targetCommand = existedCommand + "-*" + userCommand;
                     } else {
                         // 不存在该命令
-                        String preMsg = this.getPreMsg(openid);
+                        String preMsg = this.getPreMsg(openid).replace("您输入的命令不存在哦~\n", "");
                         return StringUtils.isBlank(preMsg) ? helpMessageService.getHelp(openid) :
-                                TextMessageVO.builder().content("您输入的命令不存在哦~" + preMsg).toUserName(openid).build();
+                                TextMessageVO.builder().content("您输入的命令不存在哦~\n" + preMsg).toUserName(openid).build();
                     }
                 }
                 if (targetCommand == null) {

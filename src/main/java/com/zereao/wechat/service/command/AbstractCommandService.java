@@ -87,4 +87,16 @@ public abstract class AbstractCommandService {
     protected void imgReady(String openid) {
         redisService.set(IMG_READY_PREFIX + openid, "true", 2 * 60);
     }
+
+    /**
+     * 手动将当前用户的命令树更新为上一级命令
+     *
+     * @param openid 用户的openid
+     */
+    protected void set2PreCommand(String openid) {
+        String redisKey = COMMAND_TREE_PREFIX + openid;
+        String existedCommand = redisService.get(redisKey);
+        existedCommand = existedCommand.substring(0, existedCommand.lastIndexOf("-"));
+        redisService.set(redisKey, existedCommand, 5 * 60);
+    }
 }
