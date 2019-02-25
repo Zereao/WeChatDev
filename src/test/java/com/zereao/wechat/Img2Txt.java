@@ -1,6 +1,8 @@
 package com.zereao.wechat;
 
+import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.service.command.toys.Img2TxtToyService;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -11,12 +13,129 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Darion Mograine H
  * @version 2019/02/15  11:15
  */
 public class Img2Txt {
+
+    @Test
+    void test006() throws InterruptedException {
+        InnerTask task = new InnerTask(30);
+        new ForkJoinPool().submit(task);
+        while (true) {
+            if (task.isDone()) {
+                System.out.println("=======================已完成");
+                break;
+            } else {
+                TimeUnit.MILLISECONDS.sleep(500);
+                System.out.println("====== 等待 =====");
+            }
+        }
+        System.out.println("=++++++++++++++++++++++");
+    }
+
+    private class InnerTask extends RecursiveTask<String> {
+        private Integer i;
+
+        public InnerTask(Integer i) {
+            this.i = i;
+        }
+
+        @Override
+        protected String compute() {
+            if (i <= 5) {
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                    System.out.println("执行最小单元");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return "测试完毕";
+            } else {
+                int num = i / 5 + 1;
+                List<InnerTask> taskList = new ArrayList<>();
+                for (int j = 0; j < num; j++) {
+                    InnerTask task = new InnerTask(5);
+                    taskList.add(task);
+                    task.fork();
+                }
+                for (InnerTask task : taskList) {
+                    System.out.println("join 前");
+//                    task.join();
+                    System.out.println("Join侯曼");
+                    System.out.println();
+                }
+            }
+
+
+            return null;
+        }
+    }
+
+    @Test
+    void test005() throws InterruptedException {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("第一线程");
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("第二线程");
+                try {
+                    TimeUnit.SECONDS.sleep(15);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        thread.join();
+        System.out.println("完毕");
+        thread1.start();
+    }
+
+    @Test
+    void test004() {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add(i);
+        }
+
+        for (Integer integer : list) {
+            if (integer.equals(5)) {
+                list.remove(5);
+            }
+        }
+
+    }
+
+    @Test
+    void test003() {
+        String path1 = "/Users/jupiter/Documents/test/";
+//        FileUtils.
+        File file = new File(path1);
+        System.out.println(file.isDirectory());
+        System.out.println(file.exists());
+    }
 
     @Test
     void test002() throws IOException {

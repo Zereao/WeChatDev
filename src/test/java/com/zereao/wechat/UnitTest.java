@@ -113,7 +113,7 @@ class UnitTest {
     @Test
     void test12() throws ExecutionException, InterruptedException {
         for (int i = 0; i < 5; i++) {
-            String index = ThreadPoolUtils.submit(new TestThreadClass(String.valueOf(i)));
+//            String index = ThreadPoolUtils.submit(new TestThreadClass(String.valueOf(i)));
         }
 
     }

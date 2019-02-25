@@ -20,13 +20,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,12 +120,26 @@ public class ArticleCommandService extends AbstractCommandService {
         String openid = msgVO.getFromUserName();
         try {
             content = new StringBuilder("文章");
+            List<Future<String>> futureList = new ArrayList<>();
             for (String url : urls) {
-                String title = ThreadPoolUtils.submit(new AddArticleThread(url, latch));
-                if (StringUtils.isEmpty(title)) {
-                    log.error("文章[{}]添加失败！", url);
-                } else {
-                    content.append("【").append(title).append("】、");
+                futureList.add(ThreadPoolUtils.submit(new AddArticleThread(url, latch)));
+            }
+            int index = urls.length;
+            while (index > 0) {
+                Iterator<Future<String>> iter = futureList.iterator();
+                //noinspection WhileLoopReplaceableByForEach
+                while (iter.hasNext()) {
+                    Future<String> future = iter.next();
+                    if (future.isDone()) {
+                        String title = future.get();
+                        if (StringUtils.isEmpty(title)) {
+                            log.error("------> 文章添加失败！");
+                        } else {
+                            content.append("【").append(title).append("】、");
+                        }
+                        --index;
+                        futureList.remove(future);
+                    }
                 }
             }
             latch.await();

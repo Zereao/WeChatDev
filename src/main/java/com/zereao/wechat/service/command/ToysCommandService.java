@@ -51,7 +51,7 @@ public class ToysCommandService extends AbstractCommandService {
         return this.getMenu(msgVO, Level.L2);
     }
 
-    @Command(mapping = "3-1", name = "图片转字符画", level = Level.L2, src = TargetSource.IMAGE)
+    @Command(mapping = "3-1", name = "静态图片转字符画", level = Level.L2, src = TargetSource.IMAGE)
     public TextMessageVO img2TextImg(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
         this.imgReady(openid);
@@ -65,6 +65,7 @@ public class ToysCommandService extends AbstractCommandService {
      * @return 文件路径
      */
     @Operate("3-1")
+    @SuppressWarnings("Duplicates")
     public TextMessageVO img2TextImgOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
         String openid = msgVO.getFromUserName();
         String curTime = String.valueOf(System.currentTimeMillis());
@@ -79,6 +80,36 @@ public class ToysCommandService extends AbstractCommandService {
         }
         content.append(commonCmd);
         ThreadPoolUtils.execute(new GcManager(sourcePath));
+        return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();
+    }
+
+    @Command(mapping = "3-2", name = "动态GIF转字符画", level = Level.L2, src = TargetSource.IMAGE)
+    public TextMessageVO gif2TextGif(MessageVO msgVO) {
+        String openid = msgVO.getFromUserName();
+        this.imgReady(openid);
+        return TextMessageVO.builder().content(imgReadyInfo + commonCmd).toUserName(openid).build();
+    }
+
+    /**
+     * GIF转字符画的具体操作
+     *
+     * @param msgVO 包含相关信息的msgVO
+     * @return 文件URL
+     */
+    @Operate("3-2")
+    @SuppressWarnings("Duplicates")
+    public TextMessageVO gif2TextGifOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
+        String openid = msgVO.getFromUserName();
+        String curTime = String.valueOf(System.currentTimeMillis());
+        String openidCut = openid.substring(openid.length() / 4, openid.length() / 2);
+        String outPath = imgOutBasePath.replace("{openid}", openidCut).replace("{current}", curTime);
+        InputStream stream = OkHttp3Utils.doGetStream(msgVO.getPicUrl());
+        Map<String, String> gifInfo = img2TxtToyService.transfer2TextGif(stream, outPath);
+        StringBuilder content = new StringBuilder(resultInfoHeader);
+        String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", gifInfo.get("img_name"));
+        content.append("\n\n").append("字体大小：").append(gifInfo.get("font_size")).append("，缩放倍数：")
+                .append(gifInfo.get("zoom")).append("：\n").append(url).append(commonCmd);
+        ThreadPoolUtils.execute(new GcManager(outPath));
         return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();
     }
 
