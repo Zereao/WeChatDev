@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class Img2TxtToyService {
     @Value("${toys.img2txt.elements}")
-    private String strElements = "@#&$%*o!; ";
+    private String strElements;
 
     /**
      * 将源文件转换为字符画，实际转换操作为异步执行。
@@ -57,12 +57,11 @@ public class Img2TxtToyService {
         int index = 5;
         while (index > 0) {
             Iterator<Future<Map<String, String>>> iter = futureList.iterator();
-            //noinspection WhileLoopReplaceableByForEach
             while (iter.hasNext()) {
                 Future<Map<String, String>> future = iter.next();
                 if (future.isDone()) {
                     imgNameList.add(future.get());
-                    futureList.remove(future);
+                    iter.remove();
                     --index;
                 }
             }

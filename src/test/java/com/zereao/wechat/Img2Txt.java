@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,13 @@ import java.util.concurrent.TimeUnit;
  * @version 2019/02/15  11:15
  */
 public class Img2Txt {
+    @Test
+    void test007() throws IOException, InterruptedException, ExecutionException {
+        Img2TxtToyService toy = new Img2TxtToyService();
+        String path = "/Users/jupiter/Documents/4c8a56d8d513493dbdd6dc70a4e8d777.png";
+        toy.transfer2TextImg(new FileInputStream(path), path);
+
+    }
 
     @Test
     void test006() throws InterruptedException {
