@@ -357,7 +357,11 @@ public class Img2TxtToyService {
      */
     private File getOutputFile(String outPath, int fontSize, int zoom) {
         StringBuilder config = new StringBuilder("_fontsize=").append(fontSize).append("_zoom=").append(zoom);
-        return new File(new StringBuilder(outPath).insert(outPath.lastIndexOf("."), config).toString());
+        File out = new File(new StringBuilder(outPath).insert(outPath.lastIndexOf("."), config).toString());
+        if (!out.getParentFile().exists()) {
+            boolean mkdirs = out.mkdirs();
+        }
+        return out;
     }
 
     /**
