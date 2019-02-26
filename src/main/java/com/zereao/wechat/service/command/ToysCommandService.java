@@ -53,9 +53,7 @@ public class ToysCommandService extends AbstractCommandService {
 
     @Command(mapping = "3-1", name = "静态图片转字符画", level = Level.L2, src = TargetSource.IMAGE)
     public TextMessageVO img2TextImg(MessageVO msgVO) {
-        String openid = msgVO.getFromUserName();
-        this.imgReady(openid);
-        return TextMessageVO.builder().content(imgReadyInfo + commonCmd).toUserName(openid).build();
+        return this.getResult(msgVO.getFromUserName());
     }
 
     /**
@@ -85,9 +83,7 @@ public class ToysCommandService extends AbstractCommandService {
 
     @Command(mapping = "3-2", name = "动态GIF转字符画", level = Level.L2, src = TargetSource.IMAGE)
     public TextMessageVO gif2TextGif(MessageVO msgVO) {
-        String openid = msgVO.getFromUserName();
-        this.imgReady(openid);
-        return TextMessageVO.builder().content(imgReadyInfo + commonCmd).toUserName(openid).build();
+        return this.getResult(msgVO.getFromUserName());
     }
 
     /**
@@ -133,5 +129,16 @@ public class ToysCommandService extends AbstractCommandService {
                 log.error("-------> 临时文件夹清理失败！    filePath = {}", this.folder.getAbsolutePath());
             }
         }
+    }
+
+    /**
+     * 剥离出的公共方法，用来获取准备结果
+     *
+     * @param openid 用户的openid
+     * @return 提示信息
+     */
+    private TextMessageVO getResult(String openid) {
+        this.imgReady(openid);
+        return TextMessageVO.builder().content(imgReadyInfo + commonCmd).toUserName(openid).build();
     }
 }

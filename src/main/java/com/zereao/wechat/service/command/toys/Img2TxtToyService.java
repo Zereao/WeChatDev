@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class Img2TxtToyService {
     @Value("${toys.img2txt.elements}")
-    private String strElements = "@#&$%*o!; ";
+    private String strElements;
 
     /**
      * 将源文件转换为字符画，实际转换操作为异步执行。
@@ -272,8 +272,7 @@ public class Img2TxtToyService {
         private int fontSize;
         private int zoom;
 
-        private static Img2TxtToyService toy = new Img2TxtToyService();
-//        private static Img2TxtToyService toy = SpringBeanUtils.getBean(Img2TxtToyService.class);
+        private static Img2TxtToyService toy = SpringBeanUtils.getBean(Img2TxtToyService.class);
 
         Text2ImgTask(String[][] chars, String outPath, int fontSize, int zoom) {
             this.chars = chars;
