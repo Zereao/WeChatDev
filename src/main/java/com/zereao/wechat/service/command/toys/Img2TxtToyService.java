@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class Img2TxtToyService {
     @Value("${toys.img2txt.elements}")
-    private String strElements;
+    private String strElements = "@#&$%*o!; ";
 
     /**
      * 将源文件转换为字符画，实际转换操作为异步执行。
@@ -46,7 +46,7 @@ public class Img2TxtToyService {
         // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
         if (img.getWidth() > 1000 || img.getHeight() > 1000) {
             // 等比例缩放至 最长边为1000
-            img = Thumbnails.of(img).scale(1000, 1000).asBufferedImage();
+            img = Thumbnails.of(img).size(1000, 1000).asBufferedImage();
         }
         String[][] chars = this.transfer2CharArray(img);
         List<Future<Map<String, String>>> futureList = new ArrayList<>();
@@ -272,7 +272,8 @@ public class Img2TxtToyService {
         private int fontSize;
         private int zoom;
 
-        private static Img2TxtToyService toy = SpringBeanUtils.getBean(Img2TxtToyService.class);
+        private static Img2TxtToyService toy = new Img2TxtToyService();
+//        private static Img2TxtToyService toy = SpringBeanUtils.getBean(Img2TxtToyService.class);
 
         Text2ImgTask(String[][] chars, String outPath, int fontSize, int zoom) {
             this.chars = chars;

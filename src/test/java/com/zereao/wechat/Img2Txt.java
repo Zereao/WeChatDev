@@ -2,6 +2,7 @@ package com.zereao.wechat;
 
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.service.command.toys.Img2TxtToyService;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +28,21 @@ import java.util.concurrent.TimeUnit;
  * @version 2019/02/15  11:15
  */
 public class Img2Txt {
+
+    @Test
+    void test008() throws IOException {
+        String path = "/Users/jupiter/Downloads/WX20190223-232232@2x.png";
+        File file = new File(path);
+        BufferedImage img = Thumbnails.of(file).size(1000, 1000).asBufferedImage();
+        String out = "/Users/jupiter/Downloads/输出.png";
+        boolean result = ImageIO.write(img, "png", new File(out));
+        System.out.println(result);
+    }
+
     @Test
     void test007() throws IOException, InterruptedException, ExecutionException {
         Img2TxtToyService toy = new Img2TxtToyService();
-        String path = "/Users/jupiter/Documents/4c8a56d8d513493dbdd6dc70a4e8d777.png";
+        String path = "/Users/jupiter/Downloads/WX20190223-232232@2x.png";
         toy.transfer2TextImg(new FileInputStream(path), path);
 
     }
