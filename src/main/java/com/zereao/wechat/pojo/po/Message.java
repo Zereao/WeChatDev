@@ -42,6 +42,7 @@ public class Message {
     /**
      * 消息类型
      */
+    @Enumerated(EnumType.STRING)
     private MsgType msgType;
     /**
      * 文本消息内容
@@ -74,7 +75,7 @@ public class Message {
      */
     private String label;
     /**
-     * 视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
+     * 视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据
      */
     private String thumbMediaId;
     /**
@@ -88,6 +89,7 @@ public class Message {
     /**
      * 事件类型
      */
+    @Enumerated(EnumType.STRING)
     private Event event;
     /**
      * 事件KEY值
