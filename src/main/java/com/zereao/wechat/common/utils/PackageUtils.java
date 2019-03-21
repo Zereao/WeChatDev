@@ -133,13 +133,12 @@ public class PackageUtils {
      * @return resultMap
      */
     private static TwoTuple<List<String>, List<Class<?>>> getClassInfoByJar(String jarPath, boolean containChildPackages) {
-        System.out.println("****************************************************************");
-        System.out.println(jarPath);
-        System.out.println("****************************************************************");
+        /* 例如，走到这里时，jarPath =
+            file:/home/tom/apps/wechat-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/com/zereao/wechat      */
         String[] jarInfo = jarPath.split("!");
         Matcher matcher = JAR_FILE_PATTERN.matcher(jarInfo[0]);
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
-        String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 2).replace("!", "");
+        String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 2);
 
         List<String> classNameList = new ArrayList<>();
         List<Class<?>> classList = new ArrayList<>();
