@@ -1,13 +1,12 @@
 package com.zereao.wechat.common.utils;
 
+import com.zereao.wechat.common.TwoTuple;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -19,12 +18,9 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class PackageUtils {
-    private static final Pattern CLASS_FILE_PATTERN = Pattern.compile("^.*\\\\classes\\\\(.*)\\.class$");
+    private static final Pattern CLASS_FILE_PATTERN = Pattern.compile("^.*[\\\\/]classes[\\\\/](.*)\\.class$");
 
     private static final Pattern JAR_FILE_PATTERN = Pattern.compile("^.*:(/.*\\.jar)$");
-
-    private static final String KEY_CLASS_NAME = "classname";
-    private static final String KEY_CLASSES = "classes";
 
     /**
      * 获取某个包下的所有的类的Class对象
@@ -33,9 +29,9 @@ public class PackageUtils {
      * @param containChildPackages 是否包含子包
      * @return class list
      */
-    public static List<Class> getClass(String packageName, boolean containChildPackages) {
+    public static List<Class<?>> getClass(String packageName, boolean containChildPackages) {
         log.debug("------>  getClass Start! packageName = {}", packageName);
-        return getClassInfo(packageName, containChildPackages, KEY_CLASSES);
+        return getClassInfo(packageName, containChildPackages).classObj;
     }
 
     /**
@@ -47,17 +43,9 @@ public class PackageUtils {
      */
     public static List<String> getClassName(String packageName, boolean containChildPackages) {
         log.debug("------>  getClassName Start! packageName = {}", packageName);
-        return getClassInfo(packageName, containChildPackages, KEY_CLASS_NAME);
+        return getClassInfo(packageName, containChildPackages).name;
     }
 
-    /**
-     * 剥离出的一个公共方法
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> List<T> getClassInfo(String packageName, boolean containChildPackages, String key) {
-        Map<String, List<?>> resultMap = getClassInfo(packageName, containChildPackages);
-        return (resultMap == null || resultMap.size() <= 0 || !resultMap.containsKey(key)) ? new ArrayList<>() : (List<T>) resultMap.get(key);
-    }
 
     /**
      * 获取某个包下的类信息
@@ -66,28 +54,28 @@ public class PackageUtils {
      * @param containChildPackages 是否包含子包
      * @return 类型信息Map
      */
-    private static Map<String, List<?>> getClassInfo(String packageName, boolean containChildPackages) {
+    private static TwoTuple<List<String>, List<Class<?>>> getClassInfo(String packageName, boolean containChildPackages) {
         String packagePath = packageName.replace(".", "/");
-        Map<String, List<?>> resultMap = null;
+        TwoTuple<List<String>, List<Class<?>>> nameClassTuple = null;
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource(packagePath);
         if (url != null) {
             String path = url.getPath();
             switch (url.getProtocol()) {
                 case "file":
-                    resultMap = getClassInfoByFile(path, containChildPackages);
+                    nameClassTuple = getClassInfoByFile(path, containChildPackages);
                     break;
                 case "jar":
-                    resultMap = getClassInfoByJar(path, containChildPackages);
+                    nameClassTuple = getClassInfoByJar(path, containChildPackages);
                     break;
                 default:
                     break;
             }
         } else {
             URL[] urls = ((URLClassLoader) loader).getURLs();
-            resultMap = PackageUtils.getClassInfoByJars(urls, packagePath, containChildPackages);
+            nameClassTuple = PackageUtils.getClassInfoByJars(urls, packagePath, containChildPackages);
         }
-        return resultMap;
+        return nameClassTuple;
     }
 
     /**
@@ -97,35 +85,32 @@ public class PackageUtils {
      * @param containChildPackages 是否遍历子包
      * @return resultMap
      */
-    @SuppressWarnings("unchecked")
-    private static Map<String, List<?>> getClassInfoByFile(String path, boolean containChildPackages) {
-        Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
-        List<String> classNameList = new CopyOnWriteArrayList<>();
-        List<Class> classList = new CopyOnWriteArrayList<>();
-        resultMap.put(KEY_CLASS_NAME, classNameList);
-        resultMap.put(KEY_CLASSES, classList);
+    private static TwoTuple<List<String>, List<Class<?>>> getClassInfoByFile(String path, boolean containChildPackages) {
+        List<String> classNameList = new ArrayList<>();
+        List<Class<?>> classList = new ArrayList<>();
+        TwoTuple<List<String>, List<Class<?>>> nameClassTuple = new TwoTuple<>(classNameList, classList);
         File[] files = new File(path).listFiles();
         if (files == null || files.length <= 0) {
             return null;
         }
-        Arrays.stream(files).parallel().forEach(file -> {
+        Arrays.stream(files).forEach(file -> {
             if (file.isDirectory()) {
                 if (containChildPackages) {
-                    Map<String, List<?>> tempMap = getClassInfoByFile(file.getPath(), true);
-                    if (tempMap != null && tempMap.size() > 0) {
-                        classList.addAll((List<Class>) tempMap.get(KEY_CLASSES));
-                        classNameList.addAll((List<String>) tempMap.get(KEY_CLASS_NAME));
+                    TwoTuple<List<String>, List<Class<?>>> tempTuple = getClassInfoByFile(file.getPath(), true);
+                    if (tempTuple != null) {
+                        classNameList.addAll(tempTuple.name);
+                        classList.addAll(tempTuple.classObj);
                     }
                 }
             } else {
                 String filePath = file.getPath();
                 if (filePath.endsWith(".class")) {
-                    /*  例如：childFilePath =
-                      E:\JavaCode\ChatRoom\ChatRoomServer\target\classes\com\zereao\chatroom\app\ServerApp.class
-                      经过下面这一步处理过后，得到结果 com\zereao\chatroom\app\ServerApp                      */
+                    /*  例如：filePath =
+                      /Users/jupiter/Code/JavaCode/WeChatDev/target/classes/com/zereao/wechat/dao/ArticlesDAO.class
+                      经过下面这一步处理过后，得到结果 className = com.zereao.wechat.dao.ArticlesDAO        */
                     Matcher matcher = CLASS_FILE_PATTERN.matcher(filePath);
                     if (matcher.find()) {
-                        String className = matcher.group(1).replace("\\", ".");
+                        String className = matcher.group(1).replace(File.separator, ".");
                         classNameList.add(className);
                         try {
                             classList.add(Class.forName(className));
@@ -137,7 +122,7 @@ public class PackageUtils {
                 }
             }
         });
-        return resultMap;
+        return nameClassTuple;
     }
 
     /**
@@ -147,15 +132,19 @@ public class PackageUtils {
      * @param containChildPackages 是否遍历子包
      * @return resultMap
      */
-    private static Map<String, List<?>> getClassInfoByJar(String jarPath, boolean containChildPackages) {
+    private static TwoTuple<List<String>, List<Class<?>>> getClassInfoByJar(String jarPath, boolean containChildPackages) {
+        System.out.println("****************************************************************");
+        System.out.println(jarPath);
+        System.out.println("****************************************************************");
         String[] jarInfo = jarPath.split("!");
         Matcher matcher = JAR_FILE_PATTERN.matcher(jarInfo[0]);
         String jarFilePath = matcher.find() ? matcher.group(1) : "";
         String packagePath = jarPath.substring(jarPath.lastIndexOf("!") + 2).replace("!", "");
-        Map<String, List<?>> resultMap = new ConcurrentHashMap<>(16);
+
+        List<String> classNameList = new ArrayList<>();
+        List<Class<?>> classList = new ArrayList<>();
+        TwoTuple<List<String>, List<Class<?>>> nameClassTuple = new TwoTuple<>(classNameList, classList);
         try (JarFile jarFile = new JarFile(jarFilePath)) {
-            List<String> classNameList = new ArrayList<>();
-            List<Class> classList = new ArrayList<>();
             Enumeration<JarEntry> jarEntries = jarFile.entries();
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
@@ -182,12 +171,10 @@ public class PackageUtils {
                     }
                 }
             }
-            resultMap.put(KEY_CLASS_NAME, classNameList);
-            resultMap.put(KEY_CLASSES, classList);
         } catch (Throwable e) {
             log.error("发生了错误！", e);
         }
-        return resultMap;
+        return nameClassTuple;
     }
 
     /**
@@ -198,17 +185,20 @@ public class PackageUtils {
      * @param containChildPackages 是否包含子包
      * @return 类的完整名称List
      */
-    private static Map<String, List<?>> getClassInfoByJars(URL[] urls, String packagePath, boolean containChildPackages) {
+    private static TwoTuple<List<String>, List<Class<?>>> getClassInfoByJars(URL[] urls, String packagePath, boolean containChildPackages) {
         if (urls != null) {
-            final Map<String, List<?>> resultMap = new HashMap<>();
+            List<String> classNameList = new ArrayList<>();
+            List<Class<?>> classList = new ArrayList<>();
+            TwoTuple<List<String>, List<Class<?>>> nameClassTuple = new TwoTuple<>(classNameList, classList);
             for (URL url : urls) {
                 String jarPath = url.getPath() + "!/" + packagePath;
-                Boolean result = Optional.ofNullable(getClassInfoByJar(jarPath, containChildPackages)).map(map -> {
-                    map.forEach(resultMap::put);
+                Boolean result = Optional.ofNullable(getClassInfoByJar(jarPath, containChildPackages)).map(tuple -> {
+                    classList.addAll(tuple.classObj);
+                    classNameList.addAll(tuple.name);
                     return true;
                 }).orElse(null);
             }
-            return resultMap;
+            return nameClassTuple;
         }
         return null;
     }

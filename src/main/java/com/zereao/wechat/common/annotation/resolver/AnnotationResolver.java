@@ -1,7 +1,9 @@
 package com.zereao.wechat.common.annotation.resolver;
 
 import com.zereao.wechat.common.annotation.Command;
+import com.zereao.wechat.common.annotation.Operate;
 import com.zereao.wechat.common.holder.CommandsHolder;
+import com.zereao.wechat.common.holder.OperateHolder;
 import com.zereao.wechat.common.utils.PackageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,10 +20,10 @@ import java.lang.reflect.Method;
  * @version 2019/01/14  14:39
  */
 @Slf4j
-public class CommandResolver implements Runnable {
+public class AnnotationResolver implements Runnable {
     private Class cls;
 
-    public CommandResolver(Class cls) {
+    public AnnotationResolver(Class cls) {
         this.cls = cls;
     }
 
@@ -38,6 +40,12 @@ public class CommandResolver implements Runnable {
                         log.info("Put the command into the CommandHolder ------->  mapping = {}, name = {}, level = {}, menu = {}, source = {}, bean = {}, class = {}, method = {}",
                                 command.mapping(), command.name(), command.level(), command.menu().name(), command.src().name(), StringUtils.uncapitalize(clz.getSimpleName()), clz.getName(), method.getName());
                     }
+//                    else if (method.isAnnotationPresent(Operate.class)) {
+//                        Operate operate = method.getAnnotation(Operate.class);
+//                        OperateHolder.add(operate, clz, method);
+//                        log.info("Put the operate into the OperateHolder ------->  mapping = {}, bean = {}, type = {}, class = {}, method = {}",
+//                                operate.value(), StringUtils.uncapitalize(clz.getSimpleName()), operate.type().name(), clz.getName(), method.getName());
+//                    }
                 }
             });
         }
