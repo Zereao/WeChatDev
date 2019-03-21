@@ -32,9 +32,10 @@ public class OperateHolder {
      * @param cls     Operate 所在类 的 Class对象
      * @param method  Operate 所标注方法的Method对象
      */
-    public static void add(com.zereao.wechat.common.annotation.Operate operate, Class cls, Method method) {
+    public static void add(com.zereao.wechat.common.annotation.Operate operate, Class<?> cls, Method method) {
         String mapping = operate.value();
-        holder.put(mapping, Operate.builder().mapping(mapping).bean(StringUtils.uncapitalize(cls.getSimpleName())).type(operate.type()).cls(cls).method(method).build());
+        holder.put(mapping, Operate.builder().mapping(mapping).bean(StringUtils.uncapitalize(cls.getSimpleName()))
+                .type(operate.type()).cls(cls).method(method).build());
     }
 
     /**
@@ -76,7 +77,8 @@ public class OperateHolder {
      */
     public static List<String> list(String openid) {
         List<String> opList = new ArrayList<>();
-        OperateType type = "true".equals(SpringBeanUtils.getBean(RedisService.class).get(ROOT_ENABLED_PREFIX + openid)) ? OperateType.ROOT : OperateType.USER;
+        OperateType type = "true".equals(SpringBeanUtils.getBean(RedisService.class)
+                .get(ROOT_ENABLED_PREFIX + openid)) ? OperateType.ROOT : OperateType.USER;
         holder.entrySet().stream().filter(entry -> type.equals(OperateType.ROOT) || entry.getValue().type.equals(type))
                 .sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> opList.add(entry.getKey()));
         return opList;
@@ -109,16 +111,14 @@ public class OperateHolder {
      * 自定义的 toString()
      */
     public static String values() {
-        StringBuilder sb = new StringBuilder("[ OperateHolder.size() = ").append(holder.size());
-        sb.append(", Content =[").append(holder).append("] ]");
-        return sb.toString();
+        return "[ OperateHolder.size() = " + holder.size() + ", Content =[" + holder + "] ]";
     }
 
     @Builder
     public static class Operate {
         public String mapping, bean;
         public OperateType type;
-        public Class cls;
+        public Class<?> cls;
         public Method method;
 
         @Override

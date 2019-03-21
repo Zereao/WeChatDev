@@ -39,13 +39,12 @@ public class AnnotationResolver implements Runnable {
                         CommandsHolder.add(command, clz, method);
                         log.info("Put the command into the CommandHolder ------->  mapping = {}, name = {}, level = {}, menu = {}, source = {}, bean = {}, class = {}, method = {}",
                                 command.mapping(), command.name(), command.level(), command.menu().name(), command.src().name(), StringUtils.uncapitalize(clz.getSimpleName()), clz.getName(), method.getName());
+                    } else if (method.isAnnotationPresent(Operate.class)) {
+                        Operate operate = method.getAnnotation(Operate.class);
+                        OperateHolder.add(operate, clz, method);
+                        log.info("Put the operate into the OperateHolder ------->  mapping = {}, bean = {}, type = {}, class = {}, method = {}",
+                                operate.value(), StringUtils.uncapitalize(clz.getSimpleName()), operate.type().name(), clz.getName(), method.getName());
                     }
-//                    else if (method.isAnnotationPresent(Operate.class)) {
-//                        Operate operate = method.getAnnotation(Operate.class);
-//                        OperateHolder.add(operate, clz, method);
-//                        log.info("Put the operate into the OperateHolder ------->  mapping = {}, bean = {}, type = {}, class = {}, method = {}",
-//                                operate.value(), StringUtils.uncapitalize(clz.getSimpleName()), operate.type().name(), clz.getName(), method.getName());
-//                    }
                 }
             });
         }
