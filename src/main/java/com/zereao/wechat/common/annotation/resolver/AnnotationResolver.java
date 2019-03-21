@@ -1,5 +1,6 @@
 package com.zereao.wechat.common.annotation.resolver;
 
+import com.zereao.wechat.WechatApplication;
 import com.zereao.wechat.common.annotation.Command;
 import com.zereao.wechat.common.annotation.Operate;
 import com.zereao.wechat.common.holder.CommandsHolder;
@@ -21,9 +22,9 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 public class AnnotationResolver implements Runnable {
-    private Class cls;
+    private Class<WechatApplication> cls;
 
-    public AnnotationResolver(Class cls) {
+    public AnnotationResolver(Class<WechatApplication> cls) {
         this.cls = cls;
     }
 
