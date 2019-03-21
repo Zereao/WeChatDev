@@ -5,7 +5,7 @@ CREATE TABLE `message`
   `to_user_name`   VARCHAR(50)  DEFAULT NULL COMMENT '本条消息收件人的openid，即公众号对应的openid',
   `from_user_name` VARCHAR(50)  DEFAULT NULL COMMENT '发件人的openid',
   `create_time`    DATETIME     DEFAULT NULL COMMENT '消息创建时间',
-  `msg_id`         INT(64)      DEFAULT NULL COMMENT '消息ID，64位整型',
+  `msg_id`         BIGINT(64)      DEFAULT NULL COMMENT '消息ID，64位整型',
   `msg_type`       VARCHAR(10)  DEFAULT NULL COMMENT '消息类型',
   `content`        TEXT         DEFAULT NULL COMMENT '消息内容',
   `media_id`       VARCHAR(50)  DEFAULT NULL COMMENT '多媒体消息媒体ID，可以调用多媒体文件下载接口拉取数据。比如：图片消息、视频消息等',
