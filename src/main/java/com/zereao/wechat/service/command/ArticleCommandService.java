@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,7 +120,7 @@ public class ArticleCommandService extends AbstractCommandService {
         String openid = msgVO.getFromUserName();
         try {
             content = new StringBuilder("文章");
-            List<Future<String>> futureList = new ArrayList<>();
+            List<Future<String>> futureList = new CopyOnWriteArrayList<>();
             for (String url : urls) {
                 futureList.add(ThreadPoolUtils.submit(new AddArticleThread(url, latch)));
             }
