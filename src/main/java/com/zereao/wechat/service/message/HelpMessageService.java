@@ -7,6 +7,7 @@ import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
  * @version 2018/12/21  14:03
  */
 @Service
+@RefreshScope
 public class HelpMessageService {
     private String title;
     private String bannerUrl;
