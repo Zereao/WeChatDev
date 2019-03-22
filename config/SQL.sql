@@ -8,7 +8,7 @@ CREATE TABLE `message`
   `msg_id`         BIGINT(64)      DEFAULT NULL COMMENT '消息ID，64位整型',
   `msg_type`       VARCHAR(10)  DEFAULT NULL COMMENT '消息类型',
   `content`        TEXT         DEFAULT NULL COMMENT '消息内容',
-  `media_id`       VARCHAR(50)  DEFAULT NULL COMMENT '多媒体消息媒体ID，可以调用多媒体文件下载接口拉取数据。比如：图片消息、视频消息等',
+  `media_id`       VARCHAR(255)  DEFAULT NULL COMMENT '多媒体消息媒体ID，可以调用多媒体文件下载接口拉取数据。比如：图片消息、视频消息等',
   `pic_url`        VARCHAR(255) DEFAULT NULL COMMENT '图片链接（由系统生成）',
   `location_x`     FLOAT(12, 7) DEFAULT NULL COMMENT '地理位置纬度',
   `location_y`     FLOAT(12, 7) DEFAULT NULL COMMENT '地理位置经度',

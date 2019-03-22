@@ -38,6 +38,9 @@ public abstract class AbstractCommandService {
     protected String commonCmd;
     protected String header;
 
+    /**
+     * 初始化信息
+     */
     @PostConstruct
     public void init() {
         CommonConfig.Menu menu = commonConfig.getMenu();
@@ -48,7 +51,8 @@ public abstract class AbstractCommandService {
     /**
      * 执行命令
      *
-     * @param msgVO 封装了参数的消息实体
+     * @param msgVO   封装了参数的消息实体
+     * @param command 需要执行的命令
      * @return 返回值
      */
     public Object exec(MessageVO msgVO, Command command) {

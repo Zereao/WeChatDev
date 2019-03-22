@@ -101,7 +101,7 @@ public class ArticleCommandService extends AbstractCommandService {
         if (StringUtils.isEmpty(articleId) || (article = articlesDAO.findById(articleId).orElse(null)) == null) {
             return TextMessageVO.builder().toUserName(toUser).content("文章不存在哦~请检查您发送的代码是否正确~" + commonCmd).build();
         }
-        String picUrl = imgUrl.replace("{}", String.valueOf(RandomUtils.nextInt(1, 13)));
+        String picUrl = imgUrl.replace("{randomIndex}", String.valueOf(RandomUtils.nextInt(1, 13)));
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title(article.getTitle()).picUrl(picUrl)
                 .url(article.getUrl()).description(article.getContent().substring(0, 37).concat("....\n\n查看全文")).build();
         return NewsMessageVO.builder().articles(new NewsMessageVO.Articles(item)).toUserName(toUser).build();
@@ -171,7 +171,7 @@ public class ArticleCommandService extends AbstractCommandService {
             String articleId = matcher.find() ? matcher.group(1) : "";
             try {
 //
-                String result = OkHttp3Utils.doGet(infoBaseUrl.replace("{}", articleId));
+                String result = OkHttp3Utils.doGet(infoBaseUrl.replace("{articleId}", articleId));
                 JSONObject response = JSONObject.parseObject(result);
                 String title = response.getString("tl");
                 String text = Jsoup.parse(response.getString("content")).text();
