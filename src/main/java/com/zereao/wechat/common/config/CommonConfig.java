@@ -2,6 +2,7 @@ package com.zereao.wechat.common.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 2019/03/22  01:31
  */
 @Data
+@RefreshScope
 @Configuration
 @ConfigurationProperties(prefix = "common")
 public class CommonConfig {

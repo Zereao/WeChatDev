@@ -1,7 +1,7 @@
 # 公共配置
 common:
-  ecsHost: http://47.99.200.185/
-  tempPath: ./cache/wechat
+  ecsHost: "http://47.99.200.185/"
+  tempPath: "./cache/wechat"
   # 微信公众号的openID
   fromOpenid: gh_eeaaf5c9001c
 
@@ -10,7 +10,7 @@ common:
     title: 欢迎关注这个超正经的公众号~
     # 用户关注公众号后，触发自动回复，会回复一条图文消息，下面是图文消息的图片
     banner: ${common.escHost}static/imgs/banner/welcome_news_banner.jpg
-    description: 我看见，你从人群中走来...\n\n点击查看全文
+    description: "我看见，你从人群中走来...\n\n点击查看全文"
     url: http://note.youdao.com/noteshare?id=3df33d89adae7e91dbdf697eb88d3075&sub=E889E1B585C84DF08D25D4B1CE654823
 
   # 全局帮助信息
@@ -22,7 +22,7 @@ common:
 
   menu:
     headerInfo: 您可以回复前面的数字使用相关的功能哦~
-    commonCmd: \n\n您还可以使用以下特殊命令：\n-：返回上级菜单\n#：返回首页
+    commonCmd: "\n\n您还可以使用以下特殊命令：\n-：返回上级菜单\n#：返回首页"
 
   # 图片消息提示信息
   img:
@@ -35,7 +35,7 @@ wechat:
   # 用于服务器校验用的token
   token: lovebluesky
   # 基础接入域名
-  baseUrl: https://api.weixin.qq.com
+  baseUrl: "https://api.weixin.qq.com"
   # appid and secret
   appid: wxa68659fde8555471
   secret: 73f2796ecf1d04d6136b4b41eb603f3b
@@ -48,13 +48,13 @@ wechat:
 # 文章命令相关配置
 article:
   imgBaseUrl: ${common.escHost}static/imgs/articles/article_{}.jpg
-  addInfo: 您可以回复【url|wdxpn|url】，使用【|wdxpn|】将URL分隔开~${menu.commonCmd}
+  addInfo: "您可以回复【url|wdxpn|url】，使用【|wdxpn|】将URL分隔开~${menu.commonCmd}"
   youdaoUrl: https://note.youdao.com/yws/public/note/{}?editorType=0
 
 
 # 老黄历相关配置
 almanac:
-  url: http://m.laohuangli.net/
+  url: "http://m.laohuangli.net/"
   luckyImgUrl: ${common.escHost}static/imgs/almanac/luck_lucky.jpg
   restImgUrl: ${common.escHost}static/imgs/almanac/luck_rest.jpg
   errorInfo: 获取黄历信息失败，请稍后重试~
