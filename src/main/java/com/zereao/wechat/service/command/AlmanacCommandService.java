@@ -69,8 +69,7 @@ public class AlmanacCommandService extends AbstractCommandService {
     @Command(mapping = "2-2", name = "今日宜忌", level = Level.L2)
     public TextMessageVO getLuck(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        AlmanacDTO almanac = this.getAlmanacInfo();
-//        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
+        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
         int tag = 1;
         StringBuilder content = new StringBuilder("【今日老黄历宜】\n");
         for (String suitable : almanac.getSuitableList()) {
