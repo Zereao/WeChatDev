@@ -17,6 +17,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Service
+@RefreshScope
 public class ArticleCommandService extends AbstractCommandService {
     private final ArticlesDAO articlesDAO;
 

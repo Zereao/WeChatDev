@@ -6,6 +6,7 @@ import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Service
+@RefreshScope
 public class AccessTokenTask {
     private String accessTokenUrl;
 

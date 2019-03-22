@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,12 +33,12 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Service
+@RefreshScope
 public class AlmanacCommandService extends AbstractCommandService {
 
     private String url;
     private String luckyImg;
     private String restImg;
-
 
     private static final Pattern TIME_LUCK_PATTERN = Pattern.compile("时 (.*〗)");
 
@@ -68,7 +69,8 @@ public class AlmanacCommandService extends AbstractCommandService {
     @Command(mapping = "2-2", name = "今日宜忌", level = Level.L2)
     public TextMessageVO getLuck(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
+        AlmanacDTO almanac = this.getAlmanacInfo();
+//        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
         int tag = 1;
         StringBuilder content = new StringBuilder("【今日老黄历宜】\n");
         for (String suitable : almanac.getSuitableList()) {

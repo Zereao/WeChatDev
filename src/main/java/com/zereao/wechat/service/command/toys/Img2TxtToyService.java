@@ -8,6 +8,7 @@ import com.zereao.wechat.common.utils.gifencoder.GifDecoder;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RefreshScope
 public class Img2TxtToyService {
 
     private String strElements;

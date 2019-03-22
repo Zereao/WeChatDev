@@ -14,6 +14,7 @@ import com.zereao.wechat.service.command.toys.Img2TxtToyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
+@RefreshScope
 public class ToysCommandService extends AbstractCommandService {
     private final Img2TxtToyService img2TxtToyService;
 

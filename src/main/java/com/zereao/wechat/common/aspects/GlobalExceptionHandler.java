@@ -16,22 +16,22 @@ import java.text.ParseException;
 public class GlobalExceptionHandler {
     private static final String ERROR = "ERROR";
 
-    @ExceptionHandler(Exception.class)
     @ResponseBody
+    @ExceptionHandler(Exception.class)
     public String handleException(Exception e) {
         log.error("出现未知异常！错误信息：", e);
         return ERROR;
     }
 
-    @ExceptionHandler(ReflectiveOperationException.class)
     @ResponseBody
+    @ExceptionHandler(ReflectiveOperationException.class)
     public String handleReflectiveOperationException(ReflectiveOperationException e) {
         log.error("Bean的转换出现异常！", e);
         return ERROR;
     }
 
-    @ExceptionHandler(ParseException.class)
     @ResponseBody
+    @ExceptionHandler(ParseException.class)
     public String handleParseException(ParseException e) {
         log.error("时间处理异常！", e);
         return ERROR;

@@ -10,6 +10,7 @@ import com.zereao.wechat.service.message.HelpMessageService;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @version 2018/12/19  20:21
  */
 @Slf4j
+@RefreshScope
 public abstract class AbstractCommandService {
     @Autowired
     public HelpMessageService helpMessageService;

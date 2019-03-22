@@ -5,6 +5,7 @@ import com.zereao.wechat.pojo.vo.ApiTestVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Service
+@RefreshScope
 public class ApiTestService {
     private String token;
 
