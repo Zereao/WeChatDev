@@ -16,7 +16,7 @@ public class ThreadPoolUtils {
             10,
             60L,
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(10),
+            new ArrayBlockingQueue<>(50),
             new ThreadFactoryBuilder().setNameFormat("wechat-pool-%d").build(),
             new ThreadPoolExecutor.AbortPolicy());
 

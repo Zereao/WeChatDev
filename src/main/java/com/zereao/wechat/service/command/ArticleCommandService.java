@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class ArticleCommandService extends AbstractCommandService {
     private final ArticlesDAO articlesDAO;
 
-    private static final Pattern ARTICLE_ID_PATTERN = Pattern.compile("id=(.*)&");
+    private static final Pattern ARTICLE_ID_PATTERN = Pattern.compile("id=(.*)($|&)");
 
     private String infoBaseUrl;
     private String imgUrl;
@@ -173,6 +173,7 @@ public class ArticleCommandService extends AbstractCommandService {
             Matcher matcher = ARTICLE_ID_PATTERN.matcher(url);
             String articleId = matcher.find() ? matcher.group(1) : "";
             try {
+//
                 String result = OkHttp3Utils.doGet(infoBaseUrl.replace("{}", articleId));
                 JSONObject response = JSONObject.parseObject(result);
                 String title = response.getString("tl");

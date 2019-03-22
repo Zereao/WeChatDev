@@ -111,10 +111,9 @@ class UnitTest {
     }
 
     @Test
-    void test12() throws ExecutionException, InterruptedException {
-        for (int i = 0; i < 5; i++) {
-//            String index = ThreadPoolUtils.submit(new TestThreadClass(String.valueOf(i)));
-        }
+    void test12() {
+        Pattern ARTICLE_ID_PATTERN = Pattern.compile("id=(.*)($|&)");
+        String url = "http://note.youdao.com/noteshare?id=7cc3dea5a453a5e03336aef366cf1105";
 
     }
 
