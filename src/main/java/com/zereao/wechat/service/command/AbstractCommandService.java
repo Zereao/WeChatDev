@@ -84,7 +84,7 @@ public abstract class AbstractCommandService {
         String openid = msgVO.getFromUserName();
         Map<String, String> commandMap = CommandsHolder.list(openid, this.getClass(), level);
         StringBuilder sb = new StringBuilder(header).append("\n");
-        commandMap.forEach((name, mapping) -> sb.append("\n").append(mapping.substring(mapping.lastIndexOf("-"))).append("：").append(name));
+        commandMap.forEach((name, mapping) -> sb.append("\n").append(mapping.substring(mapping.lastIndexOf("-") + 1)).append("：").append(name));
         sb.append(commonCmd);
         return TextMessageVO.builder().toUserName(openid).content(sb.toString()).build();
     }
