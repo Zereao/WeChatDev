@@ -37,7 +37,6 @@ public class ImageMessageService extends AbstractMessageService {
         Operate operate = OperateHolder.get(curCmd.mapping);
         try {
             log.info("------->  {}准备执行命令 {}", operate.bean, operate.toString());
-            //noinspection unchecked 不检测下面这一行的 unchecked 警告
             return operate.method.invoke(SpringBeanUtils.getBean(operate.cls), msgVO);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("{}命令执行失败！\n", operate.toString(), e);

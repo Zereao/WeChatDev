@@ -1,9 +1,10 @@
 package com.zereao.wechat.service.test;
 
+import com.zereao.wechat.common.config.WechatConfig;
 import com.zereao.wechat.pojo.vo.ApiTestVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -16,8 +17,10 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 public class ApiTestService {
-    @Value("${wechat.token}")
     private String token;
+
+    @Autowired
+    public ApiTestService(WechatConfig wechatConfig) {this.token = wechatConfig.getToken();}
 
     public String checkParams(ApiTestVO apiTestVo) {
         String resultStr = Stream.of(token, apiTestVo.getTimestamp(), apiTestVo.getNonce()).sorted().collect(Collectors.joining());

@@ -1,6 +1,6 @@
 package com.zereao.wechat.common.utils;
 
-import com.zereao.wechat.common.TwoTuple;
+import com.zereao.wechat.common.tuple.TwoTuple;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

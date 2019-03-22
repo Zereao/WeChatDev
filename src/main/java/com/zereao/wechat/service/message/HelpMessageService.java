@@ -1,11 +1,12 @@
 package com.zereao.wechat.service.message;
 
 import com.zereao.wechat.common.annotation.Command;
+import com.zereao.wechat.common.config.CommonConfig;
 import com.zereao.wechat.common.holder.CommandsHolder;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
 import com.zereao.wechat.pojo.vo.TextMessageVO;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,26 +17,34 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class HelpMessageService {
-    @Value("${help.error.msg}")
-    private String errorMsg;
-    @Value("${welcome.msg.title}")
     private String title;
-    @Value("${welcome.msg.banner}")
     private String bannerUrl;
-    @Value("${welcome.msg.description}")
     private String description;
-    @Value("${welcome.msg.url}")
     private String detail;
-    @Value("${help.root.msg}")
+    private String errorMsg;
     private String rootMsg;
-    @Value("${help.common.msg}")
     private String helpMsg;
-    @Value("${help.permission.error.msg}")
     private String permissionErrorMsg;
-    @Value("${menu.common.cmd}")
     private String commonCmd;
-    @Value("${img.ready.error.msg}")
     private String imgErrorMsg;
+
+
+    @Autowired
+    public HelpMessageService(CommonConfig commonConfig) {
+        CommonConfig.Help help = commonConfig.getHelp();
+        CommonConfig.Welcome welcome = commonConfig.getWelcome();
+        this.title = welcome.getTitle();
+        this.bannerUrl = welcome.getBanner();
+        this.description = welcome.getDescription();
+        this.detail = welcome.getUrl();
+        this.errorMsg = help.getErrorMsg();
+        this.rootMsg = help.getRootMsg();
+        this.helpMsg = help.getCommonMsg();
+        this.permissionErrorMsg = help.getPermissionErrorMsg();
+        this.commonCmd = commonConfig.getMenu().getCommonCmd();
+        this.imgErrorMsg = commonConfig.getImg().getErrorMsg();
+    }
+
 
     /**
      * 获取首次登陆时的欢迎信息

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zereao.wechat.common.annotation.Command;
 import com.zereao.wechat.common.annotation.Command.Level;
 import com.zereao.wechat.common.annotation.Command.MenuType;
+import com.zereao.wechat.common.config.ArticleConfig;
 import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.dao.ArticlesDAO;
@@ -16,7 +17,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -41,19 +41,20 @@ public class ArticleCommandService extends AbstractCommandService {
 
     private static final Pattern ARTICLE_ID_PATTERN = Pattern.compile("id=(.*)&");
 
-    @Value("${youdao.getinfo.url}")
     private String infoBaseUrl;
-    @Value("${article.img.baseurl}")
     private String imgUrl;
-    @Value("${article.add.info}")
     private String addInfo;
 
     // 文章列表 - redisKey - 后缀
     private String redisKeySuffix = "|article-list";
 
+
     @Autowired
-    public ArticleCommandService(ArticlesDAO articlesDAO) {
+    public ArticleCommandService(ArticlesDAO articlesDAO, ArticleConfig articleConfig) {
         this.articlesDAO = articlesDAO;
+        this.infoBaseUrl = articleConfig.getYoudaoUrl();
+        this.imgUrl = articleConfig.getImgBaseUrl();
+        this.addInfo = articleConfig.getAddInfo();
     }
 
     @Command(mapping = "1", name = "伦哥的随笔", level = Level.L1)

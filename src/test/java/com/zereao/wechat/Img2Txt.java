@@ -41,9 +41,9 @@ public class Img2Txt {
 
     @Test
     void test007() throws IOException, InterruptedException, ExecutionException {
-        Img2TxtToyService toy = new Img2TxtToyService();
-        String path = "/Users/jupiter/Downloads/WX20190223-232232@2x.png";
-        toy.transfer2TextImg(new FileInputStream(path), path);
+//        Img2TxtToyService toy = new Img2TxtToyService();
+//        String path = "/Users/jupiter/Downloads/WX20190223-232232@2x.png";
+//        toy.transfer2TextImg(new FileInputStream(path), path);
 
     }
 
@@ -174,7 +174,7 @@ public class Img2Txt {
 
     @Test
     void test001() throws IOException {
-        Img2TxtToyService toy = new Img2TxtToyService();
+//        Img2TxtToyService toy = new Img2TxtToyService();
         String file = "C:/Users/Jupiter/Desktop/微信图片_20190215122021.jpg";
         BufferedImage img = ImageIO.read(new File(file));
 
@@ -192,7 +192,7 @@ public class Img2Txt {
 //        ImageIO.write(c, "jpg", new File(compressedPath));
         String outPath = "C:/Users/Jupiter/Desktop/2weixin0180619202355878.jpg";
 
-        String[][] chars = toy.transfer2CharArray(img);
+//        String[][] chars = toy.transfer2CharArray(img);
     }
 
     /**

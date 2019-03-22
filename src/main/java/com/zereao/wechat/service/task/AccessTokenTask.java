@@ -1,11 +1,11 @@
 package com.zereao.wechat.service.task;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zereao.wechat.common.config.WechatConfig;
 import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,7 +19,6 @@ import java.io.IOException;
 @Slf4j
 @Service
 public class AccessTokenTask {
-    @Value("${wechat.access_token.url}")
     private String accessTokenUrl;
 
     public static final String GLOBAL_TOKEN = "WECHAT_REDIS_GLOBAL_TOKEN_KEY";
@@ -27,7 +26,10 @@ public class AccessTokenTask {
     private final RedisService redisService;
 
     @Autowired
-    public AccessTokenTask(RedisService redisService) {this.redisService = redisService;}
+    public AccessTokenTask(WechatConfig wechatConfig, RedisService redisService) {
+        this.accessTokenUrl = wechatConfig.getAccessTokenUrl();
+        this.redisService = redisService;
+    }
 
     // 设置为每 1.5 小时获取一次。 1.5 * 60 * 60 * 1000 = 5400000
 //    @Scheduled(fixedRate = 5400000)

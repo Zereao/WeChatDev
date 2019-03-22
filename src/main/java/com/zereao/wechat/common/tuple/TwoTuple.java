@@ -1,4 +1,4 @@
-package com.zereao.wechat.common;
+package com.zereao.wechat.common.tuple;
 
 /**
  * 含有两个元素的元祖

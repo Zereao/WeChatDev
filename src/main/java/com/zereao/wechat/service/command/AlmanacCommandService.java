@@ -2,7 +2,9 @@ package com.zereao.wechat.service.command;
 
 import com.zereao.wechat.common.annotation.Command;
 import com.zereao.wechat.common.annotation.Command.Level;
+import com.zereao.wechat.common.config.AlmanacConfig;
 import com.zereao.wechat.common.utils.OkHttp3Utils;
+import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.pojo.dto.AlmanacDTO;
 import com.zereao.wechat.pojo.vo.MessageVO;
 import com.zereao.wechat.pojo.vo.NewsMessageVO;
@@ -14,7 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -32,20 +33,20 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 public class AlmanacCommandService extends AbstractCommandService {
-    @Value("${almanac.url}")
-    private String url;
-    @Value("${almanac.img.lucky.url}")
-    private String luckyImg;
-    @Value("${almanac.img.rest.url}")
-    private String restImg;
-    @Value("${almanac.error.info}")
-    private String errorInfo;
 
-    @Autowired
-    @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
-    private AlmanacCommandService commandService;
+    private String url;
+    private String luckyImg;
+    private String restImg;
+
 
     private static final Pattern TIME_LUCK_PATTERN = Pattern.compile("时 (.*〗)");
+
+    @Autowired
+    public AlmanacCommandService(AlmanacConfig almanacConfig) {
+        this.url = almanacConfig.getUrl();
+        this.luckyImg = almanacConfig.getLuckyImgUrl();
+        this.restImg = almanacConfig.getRestImgUrl();
+    }
 
     @Command(mapping = "2", name = "老爹的黄历", level = Level.L1)
     public TextMessageVO getFatherAlmanac(MessageVO msgVO) {
@@ -56,7 +57,7 @@ public class AlmanacCommandService extends AbstractCommandService {
     @Command(mapping = "2-1", name = "今日运势-网页版", level = Level.L2)
     public NewsMessageVO obWithHtml(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        AlmanacDTO almanac = commandService.getAlmanacInfo();
+        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
         String picUrl = almanac.getSuitableList().size() > almanac.getTabooList().size() ? luckyImg : restImg;
         NewsMessageVO.Articles.Item item = NewsMessageVO.Articles.Item.builder().title("今日运势")
                 .description(almanac.getDate()).url(url).picUrl(picUrl).build();
@@ -67,7 +68,7 @@ public class AlmanacCommandService extends AbstractCommandService {
     @Command(mapping = "2-2", name = "今日宜忌", level = Level.L2)
     public TextMessageVO getLuck(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        AlmanacDTO almanac = commandService.getAlmanacInfo();
+        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
         int tag = 1;
         StringBuilder content = new StringBuilder("【今日老黄历宜】\n");
         for (String suitable : almanac.getSuitableList()) {
@@ -88,7 +89,7 @@ public class AlmanacCommandService extends AbstractCommandService {
     @Command(mapping = "2-3", name = "时辰吉凶", level = Level.L2)
     public TextMessageVO getTimeLuck(MessageVO msgVO) {
         String openid = msgVO.getFromUserName();
-        AlmanacDTO almanac = commandService.getAlmanacInfo();
+        AlmanacDTO almanac = SpringBeanUtils.getBean(AlmanacCommandService.class).getAlmanacInfo();
         StringBuilder content = new StringBuilder("【今日老黄历时辰吉凶】\n");
         for (String luck : almanac.getTimeLuck()) {
             content.append("\n").append(luck);

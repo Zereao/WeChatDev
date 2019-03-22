@@ -1,12 +1,13 @@
 package com.zereao.wechat.service.command.toys;
 
+import com.zereao.wechat.common.config.ToysConfig;
 import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.common.utils.gifencoder.AnimatedGifEncoder;
 import com.zereao.wechat.common.utils.gifencoder.GifDecoder;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -15,7 +16,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
@@ -30,8 +34,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class Img2TxtToyService {
-    @Value("${toys.img2txt.elements}")
+
     private String strElements;
+
+    @Autowired
+    public Img2TxtToyService(ToysConfig toysConfig) {
+        this.strElements = toysConfig.getImg2txt().getElements();
+    }
 
     /**
      * 将源文件转换为字符画，实际转换操作为异步执行。

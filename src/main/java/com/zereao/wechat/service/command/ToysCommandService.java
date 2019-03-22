@@ -4,6 +4,8 @@ import com.zereao.wechat.common.annotation.Command;
 import com.zereao.wechat.common.annotation.Command.Level;
 import com.zereao.wechat.common.annotation.Command.TargetSource;
 import com.zereao.wechat.common.annotation.Operate;
+import com.zereao.wechat.common.config.CommonConfig;
+import com.zereao.wechat.common.config.ToysConfig;
 import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.pojo.vo.MessageVO;
@@ -12,7 +14,6 @@ import com.zereao.wechat.service.command.toys.Img2TxtToyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -34,17 +35,21 @@ import java.util.concurrent.TimeUnit;
 public class ToysCommandService extends AbstractCommandService {
     private final Img2TxtToyService img2TxtToyService;
 
-    @Value("${img.msg.ready.info}")
     private String imgReadyInfo;
-    @Value("${toys.img2txt.temp.result.path}")
-    private String imgOutBasePath;
-    @Value("${toys.img2txt.result.header}")
+    private String imgOutTempPath;
     private String resultInfoHeader;
-    @Value("${toys.img2txt.result.base.url}")
-    private String resultBathUrl;
+    private String resultBaseUrl;
+
 
     @Autowired
-    public ToysCommandService(Img2TxtToyService img2TxtToyService) {this.img2TxtToyService = img2TxtToyService;}
+    public ToysCommandService(Img2TxtToyService img2TxtToyService, ToysConfig toysConfig, CommonConfig commonConfig) {
+        this.img2TxtToyService = img2TxtToyService;
+        ToysConfig.Img2txt img2txtConfig = toysConfig.getImg2txt();
+        this.imgOutTempPath = img2txtConfig.getTempPath();
+        this.resultInfoHeader = img2txtConfig.getResultInfoHeader();
+        this.resultBaseUrl = img2txtConfig.getResultBaseUrl();
+        this.imgReadyInfo = commonConfig.getImg().getReadyInfo();
+    }
 
     @Command(mapping = "3", name = "胖妹的玩具", level = Level.L1)
     public TextMessageVO getDarlingToys(MessageVO msgVO) {
@@ -68,12 +73,12 @@ public class ToysCommandService extends AbstractCommandService {
         String openid = msgVO.getFromUserName();
         String curTime = String.valueOf(System.currentTimeMillis());
         String openidCut = openid.substring(openid.length() / 4, openid.length() / 2);
-        String sourcePath = imgOutBasePath.replace("{openid}", openidCut).replace("{current}", curTime);
+        String sourcePath = imgOutTempPath.replace("{openid}", openidCut).replace("{current}", curTime);
         InputStream stream = OkHttp3Utils.doGetStream(msgVO.getPicUrl());
         List<Map<String, String>> imgNameList = img2TxtToyService.transfer2TextImg(stream, sourcePath);
         StringBuilder content = new StringBuilder(resultInfoHeader);
         for (Map<String, String> imgInfo : imgNameList) {
-            String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", imgInfo.get("img_name"));
+            String url = resultBaseUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", imgInfo.get("img_name"));
             content.append("\n\n").append("字体大小：").append(imgInfo.get("font_size")).append("，缩放倍数：").append(imgInfo.get("zoom")).append("：\n").append(url);
         }
         content.append(commonCmd);
@@ -98,11 +103,11 @@ public class ToysCommandService extends AbstractCommandService {
         String openid = msgVO.getFromUserName();
         String curTime = String.valueOf(System.currentTimeMillis());
         String openidCut = openid.substring(openid.length() / 4, openid.length() / 2);
-        String outPath = imgOutBasePath.replace("{openid}", openidCut).replace("{current}", curTime);
+        String outPath = imgOutTempPath.replace("{openid}", openidCut).replace("{current}", curTime);
         InputStream stream = OkHttp3Utils.doGetStream(msgVO.getPicUrl());
         Map<String, String> gifInfo = img2TxtToyService.transfer2TextGif(stream, outPath);
         StringBuilder content = new StringBuilder(resultInfoHeader);
-        String url = resultBathUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", gifInfo.get("img_name"));
+        String url = resultBaseUrl.replace("{openid}", openidCut).replace("{current}", curTime).replace("{filename}", gifInfo.get("img_name"));
         content.append("\n\n").append("字体大小：").append(gifInfo.get("font_size")).append("，缩放倍数：")
                 .append(gifInfo.get("zoom")).append("：\n").append(url).append(commonCmd);
         ThreadPoolUtils.execute(new GcManager(outPath));

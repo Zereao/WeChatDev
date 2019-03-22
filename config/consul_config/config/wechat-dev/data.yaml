@@ -1,0 +1,75 @@
+# 公共配置
+common:
+  ecsHost: http://47.99.200.185/
+  tempPath: ./cache/wechat
+  # 微信公众号的openID
+  fromOpenid: gh_eeaaf5c9001c
+
+  # 用户订阅公众号后，触发的自动回复中的信息
+  welcome:
+    title: 欢迎关注这个超正经的公众号~
+    # 用户关注公众号后，触发自动回复，会回复一条图文消息，下面是图文消息的图片
+    banner: ${common.escHost}static/imgs/banner/welcome_news_banner.jpg
+    description: 我看见，你从人群中走来...\n\n点击查看全文
+    url: http://note.youdao.com/noteshare?id=3df33d89adae7e91dbdf697eb88d3075&sub=E889E1B585C84DF08D25D4B1CE654823
+
+  # 全局帮助信息
+  help:
+    errorMsg: 服务器出现了一点小故障，可以趁机撩撩伦哥^_^~${menu.commonCmd}
+    commonMsg: Hey!您的消息我已经收到啦！~您可以回复功能列表前的代码，使用相应的功能哦~
+    rootMsg: 已为当前用户开启root权限，您可以进行使用相关管理员功能，5分种内有效！
+    permissionErrorMsg: 权限不足！不能执行指定命令。若要使用相关功能，请主动撩伦哥获取ROOT权限！${menu.commonCmd}
+
+  menu:
+    headerInfo: 您可以回复前面的数字使用相关的功能哦~
+    commonCmd: \n\n您还可以使用以下特殊命令：\n-：返回上级菜单\n#：返回首页
+
+  # 图片消息提示信息
+  img:
+    readyInfo: 您可以向我发送一张需要转换的图片哦~图片等待状态持续两分钟~
+    errorMsg: 嘿，您的图片我已经收到，但您未指定需要进行的操作或命令已过期哦！您可以先根据菜单，选定您需要的操作后，再将图片发送给我，我将按照您指定的操作，对图片进行处理哦~
+
+
+# 微信相关配置
+wechat:
+  # 用于服务器校验用的token
+  token: lovebluesky
+  # 基础接入域名
+  baseUrl: https://api.weixin.qq.com
+  # appid and secret
+  appid: wxa68659fde8555471
+  secret: 73f2796ecf1d04d6136b4b41eb603f3b
+  # 获取 access_token 链接
+  accessTokenUrl: ${wechat.baseUrl}/cgi-bin/token?grant_type=client_credential&appid=${wechat.appid}&secret=${wechat.secret}
+  # 获取 微信服务器 IP地址
+  ipUrl: ${wechat.baseUrl}/cgi-bin/getcallbackip?access_token=
+
+
+# 文章命令相关配置
+article:
+  imgBaseUrl: ${common.escHost}static/imgs/articles/article_{}.jpg
+  addInfo: 您可以回复【url|wdxpn|url】，使用【|wdxpn|】将URL分隔开~${menu.commonCmd}
+  youdaoUrl: https://note.youdao.com/yws/public/note/{}?editorType=0
+
+
+# 老黄历相关配置
+almanac:
+  url: http://m.laohuangli.net/
+  luckyImgUrl: ${common.escHost}static/imgs/almanac/luck_lucky.jpg
+  restImgUrl: ${common.escHost}static/imgs/almanac/luck_rest.jpg
+  errorInfo: 获取黄历信息失败，请稍后重试~
+
+
+# 公交查询相关配置
+bus:
+  icon: 🚌
+
+
+# 图片转字符串，相关配置
+toys:
+  name: 张三
+  img2txt:
+    elements: "@#&$%*o!;\u0020"
+    tempPath: ${common.tempPath}imgs/{openid}/{current}.jpg
+    resultInfoHeader: 您可以点击下面的链接，下载转换后的图片哦~所有下载链接30分钟内有效！
+    resultBaseUrl: ${common.escHost}temp/wechat/imgs/{openid}/{filename}
