@@ -2,6 +2,7 @@ package com.zereao.wechat.controller;
 
 import com.zereao.wechat.WechatApplication;
 import com.zereao.wechat.common.annotation.resolver.AnnotationResolver;
+import com.zereao.wechat.common.constant.ReturnCode;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.pojo.vo.ApiTestVO;
 import com.zereao.wechat.pojo.vo.MessageVO;
@@ -9,6 +10,7 @@ import com.zereao.wechat.service.factory.MsgFactory;
 import com.zereao.wechat.service.message.HelpMessageService;
 import com.zereao.wechat.service.test.ApiTestService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +57,9 @@ public class WeChatController {
         } catch (Exception e) {
             log.error("消息处理发生了错误！", e);
             result = helpMessageService.getErrorMsg(msgVO.getFromUserName());
+        }
+        if (result instanceof String && StringUtils.equals(String.valueOf(result), ReturnCode.WAITING)) {
+            return null;
         }
         StringWriter sw = new StringWriter();
         JAXB.marshal(result, sw);

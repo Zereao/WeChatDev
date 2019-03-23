@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,8 +73,9 @@ public class ToysCommandService extends AbstractCommandService {
      * @return 文件路径
      */
     @Operate("3-1")
-    public TextMessageVO img2TextImgOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
-        return this.parseImg(msgVO, FileType.JPEG);
+    @Transactional(rollbackOn = Exception.class)
+    public Object img2TextImgOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
+        return this.frequencyLimit(msgVO, FileType.JPEG);
     }
 
     @Command(mapping = "3-2", name = "动态GIF转字符画(公众号原因，暂不支持)", level = Level.L2, src = TargetSource.IMAGE)
@@ -88,8 +90,34 @@ public class ToysCommandService extends AbstractCommandService {
      * @return 文件URL
      */
     @Operate("3-2")
-    public TextMessageVO gif2TextGifOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
-        return this.parseImg(msgVO, FileType.GIF);
+    public Object gif2TextGifOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
+        return this.frequencyLimit(msgVO, FileType.GIF);
+    }
+
+    /**
+     * 频率限制
+     *
+     * @param msgVO 包含相关参数的MessageVO
+     * @param type  文件类型
+     * @return 返回对象
+     * @throws InterruptedException 中断异常
+     * @throws ExecutionException   反射异常
+     * @throws IOException          IO异常
+     */
+    private Object frequencyLimit(MessageVO msgVO, FileType type) throws InterruptedException, ExecutionException, IOException {
+        String redisKey = MSG_FREQUENCY_PREFIX + msgVO.getMsgId();
+        String preMsgKey = PRE_MESSAGE_PREFIX + msgVO.getMsgId();
+        if (redisService.hasKey(redisKey)) {
+            return null;
+        } else if (redisService.hasKey(preMsgKey)) {
+            return TextMessageVO.builder().content(redisService.get(preMsgKey)).toUserName(msgVO.getFromUserName()).build();
+        }
+        // 最多存在 13秒
+        redisService.set(redisKey, "频率限制标记", 13L);
+        String result = this.parseImg(msgVO, FileType.JPEG);
+        redisService.del(redisKey);
+        redisService.set(preMsgKey, result);
+        return null;
     }
 
     /**
@@ -97,12 +125,12 @@ public class ToysCommandService extends AbstractCommandService {
      *
      * @param msgVO 包含数据的MessageVO
      * @param type  图片类型
-     * @return 包含信息的TextMessageVO
+     * @return 消息内容 String
      * @throws IOException          IO异常
      * @throws ExecutionException   反射异常
      * @throws InterruptedException 中断异常
      */
-    private TextMessageVO parseImg(MessageVO msgVO, FileType type) throws IOException, ExecutionException, InterruptedException {
+    private String parseImg(MessageVO msgVO, FileType type) throws IOException, ExecutionException, InterruptedException {
         String openid = msgVO.getFromUserName();
         String curTime = String.valueOf(System.currentTimeMillis());
         String openidCut = openid.substring(openid.length() / 4, openid.length() / 2);
@@ -124,7 +152,7 @@ public class ToysCommandService extends AbstractCommandService {
         }
         content.append(commonCmd);
         ThreadPoolUtils.execute(new GcManager(outPath));
-        return TextMessageVO.builder().content(content.toString()).toUserName(openid).build();
+        return content.toString();
     }
 
     /**

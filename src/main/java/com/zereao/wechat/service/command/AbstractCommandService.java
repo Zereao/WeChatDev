@@ -30,10 +30,22 @@ public abstract class AbstractCommandService {
     @Autowired
     private CommonConfig commonConfig;
 
-    // 某个用户的 命令树  redis Key 前缀
+    /**
+     * 某个用户的 命令树  redis Key 前缀
+     */
     private static final String COMMAND_TREE_PREFIX = "COMMAND_OF_";
-    // 某个用户正在等待图片消息 redis Key 前缀
+    /**
+     * 某个用户正在等待图片消息 redis Key 前缀
+     */
     protected static final String IMG_READY_PREFIX = "IMG_READY_OF_";
+    /**
+     * 消息频率限制，Redis key 前缀
+     */
+    protected static final String MSG_FREQUENCY_PREFIX = "MSG_FREQUENCY_LIMIT_OF_";
+    /**
+     * 消息频率限制，Redis key 前缀
+     */
+    protected static final String PRE_MESSAGE_PREFIX = "PRE_MESSAGE_OF_";
 
     protected String commonCmd;
     protected String header;

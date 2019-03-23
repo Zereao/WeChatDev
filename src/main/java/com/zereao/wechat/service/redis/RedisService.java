@@ -23,7 +23,10 @@ public class RedisService {
     private final StringRedisTemplate redisTemplate;
 
     @Autowired
-    public RedisService(StringRedisTemplate redisTemplate) {this.redisTemplate = redisTemplate;}
+    public RedisService(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.redisTemplate.setEnableTransactionSupport(true);
+    }
 
     /**
      * 查找所有符合给定 pattern 的 key
