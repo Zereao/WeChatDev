@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXB;
 import java.io.StringWriter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Darion Mograine H
@@ -50,7 +51,7 @@ public class WeChatController {
     }
 
     @PostMapping(value = "wechat")
-    public String parseMsg(@RequestBody MessageVO msgVO) {
+    public String parseMsg(@RequestBody MessageVO msgVO) throws InterruptedException {
         Object result;
         try {
             result = msgFactory.getInstance(msgVO).handleMsg(msgVO);
@@ -60,7 +61,8 @@ public class WeChatController {
         }
         if (result instanceof String && StringUtils.equals(String.valueOf(result), ReturnCode.WAITING)) {
             log.info("msgId = {} 的消息暂未处理完毕，等待腾讯下一次请求....", msgVO.getMsgId());
-            return null;
+            // 不回复任何东西，直接抛异常
+            TimeUnit.SECONDS.sleep(15);
         }
         StringWriter sw = new StringWriter();
         JAXB.marshal(result, sw);
