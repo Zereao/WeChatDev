@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +72,6 @@ public class ToysCommandService extends AbstractCommandService {
      * @return 文件路径
      */
     @Operate("3-1")
-    @Transactional(rollbackOn = Exception.class)
     public Object img2TextImgOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
         return this.frequencyLimit(msgVO, FileType.JPEG);
     }
@@ -114,7 +112,7 @@ public class ToysCommandService extends AbstractCommandService {
         }
         // 最多存在 13秒
         redisService.set(redisKey, "频率限制标记", 13L);
-        String result = this.parseImg(msgVO, FileType.JPEG);
+        String result = this.parseImg(msgVO, type);
         redisService.del(redisKey);
         redisService.set(preMsgKey, result);
         return null;

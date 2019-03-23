@@ -25,7 +25,6 @@ public class RedisService {
     @Autowired
     public RedisService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
-        this.redisTemplate.setEnableTransactionSupport(true);
     }
 
     /**
