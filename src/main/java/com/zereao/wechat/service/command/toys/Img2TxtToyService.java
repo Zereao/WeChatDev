@@ -61,7 +61,7 @@ public class Img2TxtToyService {
         }
         String[][] chars = this.transfer2CharArray(img);
         List<Future<Map<String, String>>> futureList = new ArrayList<>();
-        for (int fontSize = 6; fontSize <= 10; fontSize++) {
+        for (int fontSize = 7; fontSize <= 9; fontSize++) {
             futureList.add(ThreadPoolUtils.submit(new Text2ImgTask(chars, sourcePath, fontSize, fontSize / 2)));
         }
         List<Map<String, String>> imgNameList = new ArrayList<>();

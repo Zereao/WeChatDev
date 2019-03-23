@@ -27,3 +27,19 @@ Content-Type: application/xml
 </xml>
 
 ###
+GET http://localhost:8080/test1
+Accept: application/json
+
+###
+GET http://localhost:8080/test2
+Accept: application/json
+
+###
+GET http://localhost:8080/test3
+Accept: application/json
+
+###
+GET http://localhost:8080/test4
+Accept: application/json
+
+###
