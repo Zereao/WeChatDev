@@ -102,7 +102,6 @@ public class ToysCommandService extends AbstractCommandService {
      * @throws ExecutionException   反射异常
      * @throws InterruptedException 中断异常
      */
-    @SuppressWarnings("Duplicates")
     private TextMessageVO parseImg(MessageVO msgVO, FileType type) throws IOException, ExecutionException, InterruptedException {
         String openid = msgVO.getFromUserName();
         String curTime = String.valueOf(System.currentTimeMillis());

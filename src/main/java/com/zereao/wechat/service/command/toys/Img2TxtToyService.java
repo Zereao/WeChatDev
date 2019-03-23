@@ -65,7 +65,7 @@ public class Img2TxtToyService {
             futureList.add(ThreadPoolUtils.submit(new Text2ImgTask(chars, sourcePath, fontSize, fontSize / 2)));
         }
         List<Map<String, String>> imgNameList = new ArrayList<>();
-        int index = 5;
+        int index = 3;
         while (index > 0) {
             Iterator<Future<Map<String, String>>> iter = futureList.iterator();
             while (iter.hasNext()) {
