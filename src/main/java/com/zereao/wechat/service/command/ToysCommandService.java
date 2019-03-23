@@ -7,6 +7,7 @@ import com.zereao.wechat.common.annotation.Operate;
 import com.zereao.wechat.common.config.CommonConfig;
 import com.zereao.wechat.common.config.ToysConfig;
 import com.zereao.wechat.common.constant.FileType;
+import com.zereao.wechat.common.constant.ReturnCode;
 import com.zereao.wechat.common.utils.OkHttp3Utils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.pojo.vo.MessageVO;
@@ -106,7 +107,7 @@ public class ToysCommandService extends AbstractCommandService {
         String redisKey = MSG_FREQUENCY_PREFIX + msgVO.getMsgId();
         String preMsgKey = PRE_MESSAGE_PREFIX + msgVO.getMsgId();
         if (redisService.hasKey(redisKey)) {
-            return null;
+            return ReturnCode.WAITING;
         } else if (redisService.hasKey(preMsgKey)) {
             return TextMessageVO.builder().content(redisService.get(preMsgKey)).toUserName(msgVO.getFromUserName()).build();
         }
@@ -115,7 +116,7 @@ public class ToysCommandService extends AbstractCommandService {
         String result = this.parseImg(msgVO, type);
         redisService.del(redisKey);
         redisService.set(preMsgKey, result);
-        return null;
+        return ReturnCode.WAITING;
     }
 
     /**
