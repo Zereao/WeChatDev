@@ -9,7 +9,7 @@ common:
   welcome:
     title: "欢迎关注这个超正经的公众号~"
     # 用户关注公众号后，触发自动回复，会回复一条图文消息，下面是图文消息的图片
-    banner: "${common.escHost}static/imgs/banner/welcome_news_banner.jpg"
+    banner: "${common.ecsHost}static/imgs/banner/welcome_news_banner.jpg"
     description: "我看见，你从人群中走来...\n\n点击查看全文"
     url: "http://note.youdao.com/noteshare?id=3df33d89adae7e91dbdf697eb88d3075&sub=E889E1B585C84DF08D25D4B1CE654823"
 
@@ -47,7 +47,7 @@ wechat:
 
 # 文章命令相关配置
 article:
-  imgBaseUrl: "${common.escHost}static/imgs/articles/article_{}.jpg"
+  imgBaseUrl: "${common.ecsHost}static/imgs/articles/article_{}.jpg"
   addInfo: "您可以回复【url|wdxpn|url】，使用【|wdxpn|】将URL分隔开~${common.menu.commonCmd}"
   youdaoUrl: "https://note.youdao.com/yws/public/note/{}?editorType=0"
 
@@ -55,8 +55,8 @@ article:
 # 老黄历相关配置
 almanac:
   url: "http://m.laohuangli.net/"
-  luckyImgUrl: "${common.escHost}static/imgs/almanac/luck_lucky.jpg"
-  restImgUrl: "${common.escHost}static/imgs/almanac/luck_rest.jpg"
+  luckyImgUrl: "${common.ecsHost}static/imgs/almanac/luck_lucky.jpg"
+  restImgUrl: "${common.ecsHost}static/imgs/almanac/luck_rest.jpg"
   errorInfo: "获取黄历信息失败，请稍后重试~"
 
 
@@ -72,4 +72,4 @@ toys:
     elements: "@#&$%*o!;\u0020"
     tempPath: "${common.tempPath}imgs/{openid}/{current}.jpg"
     resultInfoHeader: "您可以点击下面的链接，下载转换后的图片哦~所有下载链接30分钟内有效！"
-    resultBaseUrl: "${common.escHost}temp/wechat/imgs/{openid}/{filename}"
+    resultBaseUrl: "${common.ecsHost}temp/wechat/imgs/{openid}/{filename}"

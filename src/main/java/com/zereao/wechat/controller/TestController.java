@@ -1,6 +1,6 @@
 package com.zereao.wechat.controller;
 
-import com.zereao.wechat.common.config.CommonConfig;
+import com.zereao.wechat.common.config.*;
 import com.zereao.wechat.service.test.MySqlAndRedisTransService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
 public class TestController {
-    @Autowired
-    private CommonConfig commonConfig;
     @Autowired
     private MySqlAndRedisTransService service;
 
@@ -49,5 +47,28 @@ public class TestController {
         return "SUCCESS";
     }
 
+    @Autowired
+    private AlmanacConfig almanacConfig;
 
+    @Autowired
+    private ArticleConfig articleConfig;
+
+    @Autowired
+    private CommonConfig commonConfig;
+
+    @Autowired
+    private ToysConfig toysConfig;
+
+    @Autowired
+    private WechatConfig wechatConfig;
+
+    @GetMapping("/test5")
+    public String test5() {
+        System.out.println(almanacConfig.toString());
+        System.out.println(articleConfig.toString());
+        System.out.println(commonConfig.toString());
+        System.out.println(toysConfig.toString());
+        System.out.println(wechatConfig.toString());
+        return "SUCCESS";
+    }
 }
