@@ -59,6 +59,7 @@ public class WeChatController {
             result = helpMessageService.getErrorMsg(msgVO.getFromUserName());
         }
         if (result instanceof String && StringUtils.equals(String.valueOf(result), ReturnCode.WAITING)) {
+            log.info("msgId = {} 的消息暂未处理完毕，等待腾讯下一次请求....", msgVO.getMsgId());
             return null;
         }
         StringWriter sw = new StringWriter();
