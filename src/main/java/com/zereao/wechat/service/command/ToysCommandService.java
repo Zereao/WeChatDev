@@ -104,9 +104,11 @@ public class ToysCommandService extends AbstractCommandService {
      * @throws IOException          IO异常
      */
     private Object frequencyLimit(MessageVO msgVO, FileType type) throws InterruptedException, ExecutionException, IOException {
-        String redisKey = MSG_FREQUENCY_PREFIX + msgVO.getMsgId();
-        String preMsgKey = PRE_MESSAGE_PREFIX + msgVO.getMsgId();
+        Long msgId = msgVO.getMsgId();
+        String redisKey = MSG_FREQUENCY_PREFIX + msgId;
+        String preMsgKey = PRE_MESSAGE_PREFIX + msgId;
         if (redisService.hasKey(redisKey)) {
+            log.info(" msgId = {} 的消息进入等待....", msgId);
             return ReturnCode.WAITING;
         } else if (redisService.hasKey(preMsgKey)) {
             return TextMessageVO.builder().content(redisService.get(preMsgKey)).toUserName(msgVO.getFromUserName()).build();
@@ -116,6 +118,7 @@ public class ToysCommandService extends AbstractCommandService {
         String result = this.parseImg(msgVO, type);
         redisService.del(redisKey);
         redisService.set(preMsgKey, result);
+        log.info(" msgId = {} 的消息处理完毕，进入等待....", msgId);
         return ReturnCode.WAITING;
     }
 
