@@ -82,6 +82,8 @@ public class CommandsHolder {
         MenuType menu = "true".equals(SpringBeanUtils.getBean(RedisService.class).get(ROOT_ENABLED_PREFIX + openid)) ? MenuType.ROOT : MenuType.USER;
         Map<String, String> resultMap = new LinkedHashMap<>();
         holder.entrySet().stream()
+                // 剔除被 @Deprecated 标注的Command
+                .filter(entry -> entry.getValue().cls.getAnnotation(Deprecated.class) == null)
                 .filter(entry -> {
                     Command command = entry.getValue();
                     return command.level == level && (menu.equals(MenuType.ROOT) || command.menu.equals(menu));

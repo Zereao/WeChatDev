@@ -77,6 +77,7 @@ public class ToysCommandService extends AbstractCommandService {
         return this.frequencyLimit(msgVO, FileType.JPEG);
     }
 
+    @Deprecated
     @Command(mapping = "3-2", name = "动态GIF转字符画(公众号原因，暂不支持)", level = Level.L2, src = TargetSource.IMAGE)
     public TextMessageVO gif2TextGif(MessageVO msgVO) {
         return this.getResult(msgVO.getFromUserName());
@@ -88,6 +89,7 @@ public class ToysCommandService extends AbstractCommandService {
      * @param msgVO 包含相关信息的msgVO
      * @return 文件URL
      */
+    @Deprecated
     @Operate("3-2")
     public Object gif2TextGifOperate(MessageVO msgVO) throws IOException, ExecutionException, InterruptedException {
         return this.frequencyLimit(msgVO, FileType.GIF);

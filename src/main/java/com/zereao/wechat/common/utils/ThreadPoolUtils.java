@@ -12,13 +12,17 @@ import java.util.concurrent.*;
  */
 public class ThreadPoolUtils {
     private static ExecutorService executor = new ThreadPoolExecutor(
-            5,
             10,
+            15,
             60L,
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(50),
+            new ArrayBlockingQueue<>(100),
             new ThreadFactoryBuilder().setNameFormat("wechat-pool-%d").build(),
             new ThreadPoolExecutor.AbortPolicy());
+
+    public static ExecutorService getExecutor() {
+        return ThreadPoolUtils.executor;
+    }
 
     public static void execute(Runnable task) {
         executor.execute(task);

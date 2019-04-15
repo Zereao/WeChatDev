@@ -1,7 +1,7 @@
 # 公共配置
 common:
   ecsHost: "http://47.99.200.185/"
-  tempPath: "./cache/wechat/"
+  tempPath: "${HOME}/cache/wechat/"
   # 微信公众号的openID
   fromOpenid: "gh_eeaaf5c9001c"
 

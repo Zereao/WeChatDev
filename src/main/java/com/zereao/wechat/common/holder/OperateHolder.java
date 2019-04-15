@@ -22,7 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OperateHolder {
     private static Map<String, Operate> holder = new ConcurrentHashMap<>(16);
 
-    // 是否启用ROOT 权限 redis key前缀
+    /**
+     * 是否启用ROOT 权限 redis key前缀
+     */
     private static final String ROOT_ENABLED_PREFIX = "ROOT_ENABLE_OF_";
 
     /**
@@ -79,7 +81,10 @@ public class OperateHolder {
         List<String> opList = new ArrayList<>();
         OperateType type = "true".equals(SpringBeanUtils.getBean(RedisService.class)
                 .get(ROOT_ENABLED_PREFIX + openid)) ? OperateType.ROOT : OperateType.USER;
-        holder.entrySet().stream().filter(entry -> type.equals(OperateType.ROOT) || entry.getValue().type.equals(type))
+        holder.entrySet().stream()
+                // 剔除被 @Deprecated 标注的Command
+                .filter(entry -> entry.getValue().cls.getAnnotation(Deprecated.class) == null)
+                .filter(entry -> type.equals(OperateType.ROOT) || entry.getValue().type.equals(type))
                 .sorted(Comparator.comparing(Map.Entry::getKey)).forEach(entry -> opList.add(entry.getKey()));
         return opList;
     }

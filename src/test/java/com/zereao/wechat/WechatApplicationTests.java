@@ -28,7 +28,7 @@ class WechatApplicationTests {
         String outPath = "/Users/jupiter/Documents/转.txt";
         File file = new File(path);
         BufferedImage img = Thumbnails.of(file).size(100, 100).asBufferedImage();
-        String[][] chars = toyService.transfer2CharArray(img);
+        char[][] chars = toyService.transfer2CharArray(img);
         File outFile = new File(outPath);
         if (outFile.isFile() && outFile.exists()) {
             boolean del = outFile.delete();

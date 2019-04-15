@@ -1,10 +1,10 @@
 package com.zereao.wechat.service.command.toys;
 
 import com.zereao.wechat.common.config.ToysConfig;
-import com.zereao.wechat.common.utils.SpringBeanUtils;
 import com.zereao.wechat.common.utils.ThreadPoolUtils;
 import com.zereao.wechat.common.utils.gifencoder.AnimatedGifEncoder;
 import com.zereao.wechat.common.utils.gifencoder.GifDecoder;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,30 +54,20 @@ public class Img2TxtToyService {
      */
     public List<Map<String, String>> transfer2TextImg(InputStream source, String sourcePath) throws IOException, ExecutionException, InterruptedException {
         BufferedImage img = ImageIO.read(source);
-        // 如果图片的长或宽超过1000像素，将其等比压缩至最长边为1000像素
-        if (img.getWidth() > 1000 || img.getHeight() > 1000) {
-            // 等比例缩放至 最长边为1000
-            img = Thumbnails.of(img).size(1000, 1000).asBufferedImage();
+        // 如果图片的长或宽超过500像素，将其等比压缩至最长边为500像素
+        int maxLine = 500;
+        if (img.getWidth() > maxLine || img.getHeight() > maxLine) {
+            img = Thumbnails.of(img).size(maxLine, maxLine).asBufferedImage();
         }
-        String[][] chars = this.transfer2CharArray(img);
-        List<Future<Map<String, String>>> futureList = new ArrayList<>();
+        char[][] chars = this.transfer2CharArray(img);
+        List<Map<String, String>> infoMapList = new ArrayList<>();
         for (int fontSize = 7; fontSize <= 9; fontSize++) {
-            futureList.add(ThreadPoolUtils.submit(new Text2ImgTask(chars, sourcePath, fontSize, fontSize / 2)));
+            ThreadPoolUtils.execute(new Text2ImgTask(chars, sourcePath, fontSize));
+            int zoom = fontSize / 2;
+            File resultImg = this.getOutputFile(sourcePath, fontSize, zoom);
+            infoMapList.add(this.getInfoMap(resultImg.getName(), fontSize, zoom));
         }
-        List<Map<String, String>> imgNameList = new ArrayList<>();
-        int index = 3;
-        while (index > 0) {
-            Iterator<Future<Map<String, String>>> iter = futureList.iterator();
-            while (iter.hasNext()) {
-                Future<Map<String, String>> future = iter.next();
-                if (future.isDone()) {
-                    imgNameList.add(future.get());
-                    iter.remove();
-                    --index;
-                }
-            }
-        }
-        return imgNameList;
+        return infoMapList;
     }
 
     /**
@@ -153,57 +143,18 @@ public class Img2TxtToyService {
      * @param img BufferedImage图片
      * @return 转换后二维字符数组
      */
-    public String[][] transfer2CharArray(BufferedImage img) {
+    public char[][] transfer2CharArray(BufferedImage img) {
         int len = strElements.length();
         int width = img.getWidth();
         int height = img.getHeight();
-        String[][] result = new String[height][width];
+        char[][] result = new char[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 int index = this.getCharIndex(img.getRGB(j, i));
-                result[i][j] = index >= len ? " " : String.valueOf(strElements.charAt(index));
+                result[i][j] = index >= len ? ' ' : strElements.charAt(index);
             }
         }
         return result;
-    }
-
-    /**
-     * 自己实现的等比压缩方法，已过时，不建议使用；
-     * 建议使用Thumbnails库
-     *
-     * @param source   需要压缩的源文件的BufferedImage对象
-     * @param longSize 压缩后较长边的大小
-     * @return 压缩后的BufferedImage对象
-     */
-    @Deprecated
-    public BufferedImage compress(BufferedImage source, int longSize) {
-        int type = source.getType();
-        int oldWidth = source.getWidth();
-        int oldHeight = source.getHeight();
-        double wZoom = (double) longSize / oldWidth;
-        double hZoom = (double) longSize / oldHeight;
-        int width = longSize, height = longSize;
-        if (wZoom < hZoom) {
-            hZoom = wZoom;
-            height = (int) (wZoom * oldHeight);
-        } else {
-            wZoom = hZoom;
-            width = (int) (hZoom * oldWidth);
-        }
-        BufferedImage target;
-        if (type == BufferedImage.TYPE_CUSTOM) {
-            ColorModel cm = source.getColorModel();
-            WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
-            boolean alphaPremultiplied = cm.isAlphaPremultiplied();
-            target = new BufferedImage(cm, raster, alphaPremultiplied, null);
-        } else {
-            target = new BufferedImage(width, height, type);
-        }
-        Graphics2D graphics2D = target.createGraphics();
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics2D.drawRenderedImage(source, AffineTransform.getScaleInstance(wZoom, hZoom));
-        graphics2D.dispose();
-        return target;
     }
 
     /**
@@ -214,18 +165,18 @@ public class Img2TxtToyService {
      * @param zoom     缩放倍数，推荐传 8 / 2 =4；
      * @return 生成的文件的信息Map
      */
-    public BufferedImage textToBufferedImage(String[][] chars, int fontSize, int zoom) {
+    public BufferedImage textToBufferedImage(char[][] chars, int fontSize, int zoom) {
         int width = chars[0].length * zoom;
         int height = chars.length * zoom;
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // 获取图像上下文
         Graphics graphics = this.createGraphics(bufferedImage, width, height, fontSize);
-        // 字体大小 pt = 像素 px 乘 3/4
-        int intervalOfWidth = chars[0].length * fontSize * 3 / 4 / chars[0].length / zoom + 1;
-        int intervalOfHeight = chars.length * fontSize * 3 / 4 / chars.length / zoom + 1;
-        for (int i = 0, lenOfH = chars.length; i < lenOfH; i += intervalOfHeight) {
-            for (int j = 0, lenOfW = chars[i].length; j < lenOfW; j += intervalOfWidth) {
-                graphics.drawString(chars[i][j], j * zoom, i * zoom);
+        /* 字体大小 单位换算   磅 pt = 像素 px 乘 3/4
+            int interval = fontSizePt * 3 / 4 / zoom + 1;  然而 zoom = fontSizePt / 2 ，所以计算出 interval 为固定值 2  */
+        int interval = 2;
+        for (int i = 0, lenOfH = chars.length; i < lenOfH; i += interval) {
+            for (int j = 0, lenOfW = chars[i].length; j < lenOfW; j += interval) {
+                graphics.drawString(String.valueOf(chars[i][j]), j * zoom, i * zoom);
             }
         }
         graphics.dispose();
@@ -241,7 +192,7 @@ public class Img2TxtToyService {
      * @param zoom     缩放倍数，推荐传 8 / 2 =4；
      * @return 生成的文件的信息Map
      */
-    public Map<String, String> textToImage(String[][] chars, String outPath, int fontSize, int zoom) throws IOException {
+    public Map<String, String> textToImage(char[][] chars, String outPath, int fontSize, int zoom) throws IOException {
         BufferedImage img = this.textToBufferedImage(chars, fontSize, zoom);
         File outImg = this.getOutputFile(outPath, fontSize, zoom);
         boolean result = ImageIO.write(img, outPath.substring(outPath.lastIndexOf(".") + 1), outImg);
@@ -277,42 +228,30 @@ public class Img2TxtToyService {
     /**
      * 图片转字符画多线程任务
      */
-    private static class Text2ImgTask implements Callable<Map<String, String>> {
-        private String[][] chars;
+    @AllArgsConstructor
+    private class Text2ImgTask implements Runnable {
+        private char[][] chars;
         private String outPath;
         private int fontSize;
-        private int zoom;
-
-        private static Img2TxtToyService toy = SpringBeanUtils.getBean(Img2TxtToyService.class);
-
-        Text2ImgTask(String[][] chars, String outPath, int fontSize, int zoom) {
-            this.chars = chars;
-            this.outPath = outPath;
-            this.fontSize = fontSize;
-            this.zoom = zoom;
-        }
 
         @Override
-        public Map<String, String> call() throws Exception {
-            return toy.textToImage(chars, outPath, fontSize, zoom);
+        public void run() {
+            try {
+                Map<String, String> infoMap = textToImage(chars, outPath, fontSize, fontSize / 2);
+            } catch (IOException e) {
+                log.error("Text2ImgTask执行出错！", e);
+            }
         }
     }
 
     /**
      * GIF图片转GIF字符画多线程ForkJoin任务
      */
-    private static class Text2GifForkJoinTask extends RecursiveTask<Map<Integer, BufferedImage>> {
+    @AllArgsConstructor
+    private class Text2GifForkJoinTask extends RecursiveTask<Map<Integer, BufferedImage>> {
         private Map<Integer, BufferedImage> frameMap;
         private Integer fontSize;
         private Integer zoom;
-
-        private static Img2TxtToyService toy = SpringBeanUtils.getBean(Img2TxtToyService.class);
-
-        Text2GifForkJoinTask(Map<Integer, BufferedImage> frameMap, Integer fontSize, Integer zoom) {
-            this.frameMap = frameMap;
-            this.fontSize = fontSize;
-            this.zoom = zoom;
-        }
 
         @Override
         protected Map<Integer, BufferedImage> compute() {
@@ -320,7 +259,7 @@ public class Img2TxtToyService {
             boolean canCompute = frameMap.size() <= everyThreadTaskNum;
             Map<Integer, BufferedImage> resultMap = Collections.synchronizedMap(new TreeMap<>());
             if (canCompute) {
-                frameMap.forEach((index, img) -> resultMap.put(index, toy.textToBufferedImage(toy.transfer2CharArray(img), fontSize, zoom)));
+                frameMap.forEach((index, img) -> resultMap.put(index, textToBufferedImage(transfer2CharArray(img), fontSize, zoom)));
                 return resultMap;
             } else {
                 List<Text2GifForkJoinTask> taskList = new ArrayList<>();
@@ -409,5 +348,44 @@ public class Img2TxtToyService {
         // 设置字体
         graphics.setFont(new Font("宋体", Font.PLAIN, fontSize));
         return graphics;
+    }
+
+    /**
+     * 自己实现的等比压缩方法，已过时，不建议使用；
+     * 建议使用Thumbnails库
+     *
+     * @param source   需要压缩的源文件的BufferedImage对象
+     * @param longSize 压缩后较长边的大小
+     * @return 压缩后的BufferedImage对象
+     */
+    @Deprecated
+    public BufferedImage compress(BufferedImage source, int longSize) {
+        int type = source.getType();
+        int oldWidth = source.getWidth();
+        int oldHeight = source.getHeight();
+        double wZoom = (double) longSize / oldWidth;
+        double hZoom = (double) longSize / oldHeight;
+        int width = longSize, height = longSize;
+        if (wZoom < hZoom) {
+            hZoom = wZoom;
+            height = (int) (wZoom * oldHeight);
+        } else {
+            wZoom = hZoom;
+            width = (int) (hZoom * oldWidth);
+        }
+        BufferedImage target;
+        if (type == BufferedImage.TYPE_CUSTOM) {
+            ColorModel cm = source.getColorModel();
+            WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
+            boolean alphaPremultiplied = cm.isAlphaPremultiplied();
+            target = new BufferedImage(cm, raster, alphaPremultiplied, null);
+        } else {
+            target = new BufferedImage(width, height, type);
+        }
+        Graphics2D graphics2D = target.createGraphics();
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        graphics2D.drawRenderedImage(source, AffineTransform.getScaleInstance(wZoom, hZoom));
+        graphics2D.dispose();
+        return target;
     }
 }
